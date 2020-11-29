@@ -13,10 +13,12 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <fastcall.version>0.0.1</fastcall.version>
         <spring.boot.version>2.2.10.RELEASE</spring.boot.version>
         <netty.version>5.0.0.Alpha2</netty.version>
         <msgpack.version>0.6.12</msgpack.version>
         <zookeeper.version>3.6.2</zookeeper.version>
+        <jackson.version>2.11.3</jackson.version>
     </properties>
 
     <dependencyManagement>
@@ -27,6 +29,11 @@
                 <version>${spring.boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.stackoverflow.fastcall</groupId>
+                <artifactId>fastcall-core</artifactId>
+                <version>${fastcall.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
@@ -42,6 +49,11 @@
                 <groupId>org.apache.zookeeper</groupId>
                 <artifactId>zookeeper</artifactId>
                 <version>${zookeeper.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

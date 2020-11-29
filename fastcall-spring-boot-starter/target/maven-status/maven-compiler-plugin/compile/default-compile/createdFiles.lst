@@ -1,0 +1,3 @@
+net\stackoverflow\fastcall\properties\FastcallProperties.class
+net\stackoverflow\fastcall\autoconfigure\FastcallAutoConfiguration.class
+META-INF\spring-configuration-metadata.json
