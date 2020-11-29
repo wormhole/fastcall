@@ -3,7 +3,7 @@ package net.stackoverflow.fastcall.codec;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
-import net.stackoverflow.fastcall.model.NettyMessage;
+import net.stackoverflow.fastcall.model.Message;
 import org.msgpack.MessagePack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,12 +15,12 @@ import java.util.Map;
  *
  * @author wormhole
  */
-public class NettyMessageEncoder extends MessageToByteEncoder<NettyMessage> {
+public class MessageEncoder extends MessageToByteEncoder<Message> {
 
-    public static final Logger log = LoggerFactory.getLogger(NettyMessageEncoder.class);
+    public static final Logger log = LoggerFactory.getLogger(MessageEncoder.class);
 
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, NettyMessage message, ByteBuf buff) throws Exception {
+    protected void encode(ChannelHandlerContext channelHandlerContext, Message message, ByteBuf buff) throws Exception {
         buff.writeBytes(message.getHeader().getMagic());
         buff.writeShort(message.getHeader().getVersion());
         buff.writeInt(message.getHeader().getLength());

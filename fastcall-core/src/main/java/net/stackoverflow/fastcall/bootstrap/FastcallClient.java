@@ -9,8 +9,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
-import net.stackoverflow.fastcall.codec.NettyMessageDecoder;
-import net.stackoverflow.fastcall.codec.NettyMessageEncoder;
+import net.stackoverflow.fastcall.codec.MessageDecoder;
+import net.stackoverflow.fastcall.codec.MessageEncoder;
 import net.stackoverflow.fastcall.handler.client.ClientAuthHandler;
 import net.stackoverflow.fastcall.handler.client.ClientCallHandler;
 import net.stackoverflow.fastcall.handler.client.ClientHeatBeatHandler;
@@ -81,12 +81,12 @@ public class FastcallClient {
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            socketChannel.pipeline().addLast(new NettyMessageDecoder(1024 * 1024, 10, 4, 0));
-                            socketChannel.pipeline().addLast("MessageEncoder", new NettyMessageEncoder());
-                            socketChannel.pipeline().addLast("TimeoutHandler", new ReadTimeoutHandler(timeout));
-                            socketChannel.pipeline().addLast("ClientAuthHandler", new ClientAuthHandler());
-                            socketChannel.pipeline().addLast("ClientHeartBeatHandler", new ClientHeatBeatHandler());
-                            socketChannel.pipeline().addLast("ClientCallHandler", new ClientCallHandler());
+                            socketChannel.pipeline().addLast(new MessageDecoder(1024 * 1024, 10, 4, 0));
+                            socketChannel.pipeline().addLast(new MessageEncoder());
+                            socketChannel.pipeline().addLast(new ReadTimeoutHandler(timeout));
+                            socketChannel.pipeline().addLast(new ClientAuthHandler());
+                            socketChannel.pipeline().addLast(new ClientHeatBeatHandler());
+                            socketChannel.pipeline().addLast(new ClientCallHandler());
                         }
                     });
             if (localHost != null && localPort != null) {

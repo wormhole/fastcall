@@ -5,7 +5,7 @@ package net.stackoverflow.fastcall.model;
  *
  * @author wormhole
  */
-public class NettyMessage {
+public class Message {
 
     /**
      * 协议头
@@ -17,16 +17,16 @@ public class NettyMessage {
      */
     private Object body;
 
-    public NettyMessage() {
+    public Message() {
 
     }
 
-    public NettyMessage(MessageType type) {
+    public Message(MessageType type) {
         header = new Header();
         header.setType(type.value());
     }
 
-    public NettyMessage(MessageType type, Object body) {
+    public Message(MessageType type, Object body) {
         this.header = new Header();
         this.header.setType(type.value());
         this.body = body;
@@ -50,7 +50,7 @@ public class NettyMessage {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("NettyMessage{");
+        final StringBuffer sb = new StringBuffer("Message{");
         sb.append("header=").append(header);
         sb.append(", body=").append(body);
         sb.append('}');

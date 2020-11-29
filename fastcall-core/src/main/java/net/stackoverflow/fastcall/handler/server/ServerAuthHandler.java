@@ -4,8 +4,8 @@ import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import net.stackoverflow.fastcall.model.Header;
+import net.stackoverflow.fastcall.model.Message;
 import net.stackoverflow.fastcall.model.MessageType;
-import net.stackoverflow.fastcall.model.NettyMessage;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,16 +33,16 @@ public class ServerAuthHandler extends ChannelHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        NettyMessage message = (NettyMessage) msg;
+        Message message = (Message) msg;
         Header header = message.getHeader();
         if (header != null && header.getType() == MessageType.AUTH_REQUEST.value()) {
             String nodeIndex = ctx.channel().remoteAddress().toString();
-            NettyMessage response = null;
+            Message response = null;
 
             if (nodeCheck.containsKey(nodeIndex)) {
-                response = new NettyMessage(MessageType.AUTH_RESPONSE, (byte) -1);
+                response = new Message(MessageType.AUTH_RESPONSE, (byte) -1);
             } else {
-                response = new NettyMessage(MessageType.AUTH_RESPONSE, (byte) 0);
+                response = new Message(MessageType.AUTH_RESPONSE, (byte) 0);
                 nodeCheck.put(nodeIndex, true);
             }
 

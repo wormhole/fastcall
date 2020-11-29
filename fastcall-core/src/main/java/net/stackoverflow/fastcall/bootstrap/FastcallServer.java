@@ -11,8 +11,8 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
-import net.stackoverflow.fastcall.codec.NettyMessageDecoder;
-import net.stackoverflow.fastcall.codec.NettyMessageEncoder;
+import net.stackoverflow.fastcall.codec.MessageDecoder;
+import net.stackoverflow.fastcall.codec.MessageEncoder;
 import net.stackoverflow.fastcall.handler.server.ServerAuthHandler;
 import net.stackoverflow.fastcall.handler.server.ServerCallHandler;
 import net.stackoverflow.fastcall.handler.server.ServerHeatBeatHandler;
@@ -75,12 +75,12 @@ public class FastcallServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            socketChannel.pipeline().addLast(new NettyMessageDecoder(1024 * 1024, 10, 4, 0));
-                            socketChannel.pipeline().addLast("MessageEncoder", new NettyMessageEncoder());
-                            socketChannel.pipeline().addLast("TimeoutHandler", new ReadTimeoutHandler(timeout));
-                            socketChannel.pipeline().addLast("ServerAuthHandler", new ServerAuthHandler());
-                            socketChannel.pipeline().addLast("ServerHeartBeatHandler", new ServerHeatBeatHandler());
-                            socketChannel.pipeline().addLast("ServerCallHandler", new ServerCallHandler());
+                            socketChannel.pipeline().addLast(new MessageDecoder(1024 * 1024, 10, 4, 0));
+                            socketChannel.pipeline().addLast(new MessageEncoder());
+                            socketChannel.pipeline().addLast(new ReadTimeoutHandler(timeout));
+                            socketChannel.pipeline().addLast(new ServerAuthHandler());
+                            socketChannel.pipeline().addLast(new ServerHeatBeatHandler());
+                            socketChannel.pipeline().addLast(new ServerCallHandler());
                         }
                     });
             ChannelFuture future = bootstrap.bind(host, port).sync();

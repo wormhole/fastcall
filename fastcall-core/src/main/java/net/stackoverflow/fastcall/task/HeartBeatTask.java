@@ -1,7 +1,7 @@
 package net.stackoverflow.fastcall.task;
 
 import io.netty.channel.ChannelHandlerContext;
-import net.stackoverflow.fastcall.model.NettyMessage;
+import net.stackoverflow.fastcall.model.Message;
 import net.stackoverflow.fastcall.model.MessageType;
 
 /**
@@ -18,7 +18,7 @@ public class HeartBeatTask implements Runnable {
 
     @Override
     public void run() {
-        NettyMessage ping = new NettyMessage(MessageType.HEARTBEAT_PING);
+        Message ping = new Message(MessageType.HEARTBEAT_PING);
         ctx.writeAndFlush(ping);
     }
 }

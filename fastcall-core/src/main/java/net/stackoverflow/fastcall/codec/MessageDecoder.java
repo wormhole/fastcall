@@ -16,11 +16,11 @@ import java.util.Map;
  *
  * @author wormhole
  */
-public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder {
+public class MessageDecoder extends LengthFieldBasedFrameDecoder {
 
-    public static final Logger log = LoggerFactory.getLogger(NettyMessageDecoder.class);
+    public static final Logger log = LoggerFactory.getLogger(MessageDecoder.class);
 
-    public NettyMessageDecoder(int maxFrameLength, int lengthFieldOffset, int lengthFieldLength, int lengthAdjustment) {
+    public MessageDecoder(int maxFrameLength, int lengthFieldOffset, int lengthFieldLength, int lengthAdjustment) {
         super(maxFrameLength, lengthFieldOffset, lengthFieldLength, lengthAdjustment, 0);
     }
 
@@ -30,7 +30,7 @@ public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder {
         if (frame == null) {
             return null;
         }
-        NettyMessage message = new NettyMessage();
+        Message message = new Message();
         Header header = new Header();
         frame.readBytes(header.getMagic(), 0, 8);
         header.setVersion(frame.readShort());
