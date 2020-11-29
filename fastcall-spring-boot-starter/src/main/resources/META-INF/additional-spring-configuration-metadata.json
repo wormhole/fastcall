@@ -54,6 +54,12 @@
       "type": "java.lang.Integer",
       "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties$Zookeeper",
       "defaultValue": 2181
+    },
+    {
+      "name": "fastcall.zookeeper.session-timeout",
+      "type": "java.lang.Integer",
+      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties$Zookeeper",
+      "defaultValue": 5000
     }
   ],
   "hints": []

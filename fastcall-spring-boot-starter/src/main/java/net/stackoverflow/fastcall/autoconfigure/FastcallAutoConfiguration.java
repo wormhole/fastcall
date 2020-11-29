@@ -1,13 +1,12 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
-import net.stackoverflow.fastcall.annotation.FastcallService;
-import net.stackoverflow.fastcall.bootstrap.FastcallServer;
-import net.stackoverflow.fastcall.model.ServiceMeta;
-import net.stackoverflow.fastcall.model.ZkData;
+import net.stackoverflow.fastcall.io.FastcallServer;
 import net.stackoverflow.fastcall.properties.FastcallProperties;
-import net.stackoverflow.fastcall.util.JsonUtils;
-import org.apache.zookeeper.*;
-import org.apache.zookeeper.data.Stat;
+import net.stackoverflow.fastcall.register.RegisterManager;
+import net.stackoverflow.fastcall.register.ServiceMeta;
+import net.stackoverflow.fastcall.register.annotation.FastcallService;
+import net.stackoverflow.fastcall.register.zookeeper.ZkClient;
+import net.stackoverflow.fastcall.register.zookeeper.ZooKeeperRegisterManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -23,7 +22,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * fastcall自动化配置类
@@ -48,69 +46,44 @@ public class FastcallAutoConfiguration implements CommandLineRunner {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "fastcall.register", value = "zookeeper", matchIfMissing = true)
-    public ZooKeeper zooKeeper() throws IOException, InterruptedException {
-        String connection = properties.getZookeeper().getHost() + ":" + properties.getZookeeper().getPort();
-        CountDownLatch connectedSignal = new CountDownLatch(1);
-        ZooKeeper zooKeeper = new ZooKeeper(connection, 5000, new Watcher() {
-            @Override
-            public void process(WatchedEvent watchedEvent) {
-                if (watchedEvent.getState() == Event.KeeperState.SyncConnected) {
-                    connectedSignal.countDown();
-                }
-            }
-        });
-        connectedSignal.await();
-        return zooKeeper;
+    public RegisterManager registerManager() throws IOException, InterruptedException {
+        RegisterManager manager = null;
+        switch (properties.getRegister()) {
+            case "zookeeper":
+                FastcallProperties.Zookeeper zk = properties.getZookeeper();
+                ZkClient client = new ZkClient(zk.getHost(), zk.getPort(), zk.getSessionTimeout());
+                manager = new ZooKeeperRegisterManager(client);
+                break;
+            default:
+                break;
+        }
+        return manager;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        ZooKeeper zookeeper = zooKeeper();
-        init(zookeeper);
-
+        RegisterManager manager = registerManager();
+        FastcallServer server = fastcallServer();
         List<ServiceMeta> metas = getServiceMeta();
-        String host = getIp();
 
         for (ServiceMeta meta : metas) {
-            String path = "/fastcall/" + meta.getInterfaces();
-            Stat stat = zookeeper.exists(path, false);
-            if (stat == null) {
-                ZkData data = new ZkData();
-                data.addRoute(meta.getGroup(), host, properties.getPort());
-                String json = JsonUtils.bean2json(data);
-                if (json != null) {
-                    zookeeper.create(path, json.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-                }
-            } else {
-                byte[] data = zookeeper.getData(path, true, new Stat());
-                String json = new String(data);
-                ZkData zkData = (ZkData) JsonUtils.json2bean(json, ZkData.class);
-                zkData.addRoute(meta.getGroup(), host, properties.getPort());
-                json = JsonUtils.bean2json(zkData);
-                zookeeper.setData(path, json.getBytes(), stat.getVersion());
-            }
+            manager.register(meta);
         }
-    }
-
-    private void init(ZooKeeper zookeeper) throws KeeperException, InterruptedException {
-        Stat stat = zookeeper.exists("/fastcall", true);
-        if (stat == null) {
-            zookeeper.create("/fastcall", "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-        }
+        server.bind();
     }
 
     private List<ServiceMeta> getServiceMeta() throws UnknownHostException {
         Map<String, Object> map = applicationContext.getBeansWithAnnotation(FastcallService.class);
         List<ServiceMeta> metas = new ArrayList<>();
+        String host = getIp();
+
         for (Object obj : map.values()) {
             Class<?> clazz = obj.getClass();
             FastcallService fastcallService = clazz.getAnnotation(FastcallService.class);
             String group = fastcallService.group();
-
             Class<?>[] interfaces = clazz.getInterfaces();
             for (Class<?> itf : interfaces) {
-                metas.add(new ServiceMeta(group, itf.getName()));
+                metas.add(new ServiceMeta(group, itf.getName(), host, properties.getPort()));
             }
         }
         return metas;

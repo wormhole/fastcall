@@ -27,6 +27,8 @@ public class FastcallProperties {
 
         private Integer port = 2181;
 
+        private Integer sessionTimeout = 5000;
+
         public String getHost() {
             return host;
         }
@@ -41,6 +43,14 @@ public class FastcallProperties {
 
         public void setPort(Integer port) {
             this.port = port;
+        }
+
+        public Integer getSessionTimeout() {
+            return sessionTimeout;
+        }
+
+        public void setSessionTimeout(Integer sessionTimeout) {
+            this.sessionTimeout = sessionTimeout;
         }
     }
 
