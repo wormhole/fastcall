@@ -34,7 +34,10 @@ public class RegisterData {
         } else {
             addresses = route.get(group);
         }
-        addresses.add(new Address(host, port));
+        Address address = new Address(host, port);
+        if (!addresses.contains(address)) {
+            addresses.add(new Address(host, port));
+        }
     }
 
     /**
@@ -74,6 +77,20 @@ public class RegisterData {
 
         public void setPort(Integer port) {
             this.port = port;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            Address address = (Address) obj;
+            if (this.host != null && this.port != null) {
+                return this.host.equals(address.host) && this.port.equals(address.port);
+            } else if (this.host != null && this.port == null) {
+                return this.host.equals(address.host) && (address.port == null);
+            } else if (this.host == null && this.port != null) {
+                return (address.host == null) && this.port.equals(address.port);
+            } else {
+                return (address.host == null) && (address.port == null);
+            }
         }
     }
 }
