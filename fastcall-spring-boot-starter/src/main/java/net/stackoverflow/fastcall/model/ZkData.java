@@ -25,6 +25,7 @@ public class ZkData {
         List<Address> addresses = null;
         if (route.get(group) == null) {
             addresses = new ArrayList<>();
+            route.put(group, addresses);
         } else {
             addresses = route.get(group);
         }

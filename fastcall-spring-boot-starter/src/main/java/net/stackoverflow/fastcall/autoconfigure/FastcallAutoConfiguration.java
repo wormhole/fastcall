@@ -67,12 +67,14 @@ public class FastcallAutoConfiguration implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         ZooKeeper zookeeper = zooKeeper();
+        init(zookeeper);
+
         List<ServiceMeta> metas = getServiceMeta();
         String host = getIp();
 
         for (ServiceMeta meta : metas) {
             String path = "/fastcall/" + meta.getInterfaces();
-            Stat stat = zookeeper.exists(path, true);
+            Stat stat = zookeeper.exists(path, false);
             if (stat == null) {
                 ZkData data = new ZkData();
                 data.addRoute(meta.getGroup(), host, properties.getPort());
@@ -88,6 +90,13 @@ public class FastcallAutoConfiguration implements CommandLineRunner {
                 json = JsonUtils.bean2json(zkData);
                 zookeeper.setData(path, json.getBytes(), stat.getVersion());
             }
+        }
+    }
+
+    private void init(ZooKeeper zookeeper) throws KeeperException, InterruptedException {
+        Stat stat = zookeeper.exists("/fastcall", true);
+        if (stat == null) {
+            zookeeper.create("/fastcall", "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
         }
     }
 
