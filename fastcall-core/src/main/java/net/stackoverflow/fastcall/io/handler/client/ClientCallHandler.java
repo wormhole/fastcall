@@ -2,7 +2,7 @@ package net.stackoverflow.fastcall.io.handler.client;
 
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
-import net.stackoverflow.fastcall.io.model.Message;
+import net.stackoverflow.fastcall.io.proto.Message;
 
 /**
  * 客户端业务Handler

@@ -1,4 +1,4 @@
-package net.stackoverflow.fastcall.io.model;
+package net.stackoverflow.fastcall.io.proto;
 
 /**
  * 应用层协议报文

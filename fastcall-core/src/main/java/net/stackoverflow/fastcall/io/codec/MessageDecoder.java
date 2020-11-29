@@ -3,7 +3,7 @@ package net.stackoverflow.fastcall.io.codec;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import net.stackoverflow.fastcall.io.model.*;
+import net.stackoverflow.fastcall.io.proto.*;
 import org.msgpack.MessagePack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

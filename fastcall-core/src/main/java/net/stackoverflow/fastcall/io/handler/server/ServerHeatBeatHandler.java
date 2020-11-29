@@ -2,9 +2,9 @@ package net.stackoverflow.fastcall.io.handler.server;
 
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
-import net.stackoverflow.fastcall.io.model.Message;
-import net.stackoverflow.fastcall.io.model.Header;
-import net.stackoverflow.fastcall.io.model.MessageType;
+import net.stackoverflow.fastcall.io.proto.Message;
+import net.stackoverflow.fastcall.io.proto.Header;
+import net.stackoverflow.fastcall.io.proto.MessageType;
 
 /**
  * 服务端心跳handler

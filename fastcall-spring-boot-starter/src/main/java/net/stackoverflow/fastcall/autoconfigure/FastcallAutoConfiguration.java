@@ -4,7 +4,7 @@ import net.stackoverflow.fastcall.io.FastcallServer;
 import net.stackoverflow.fastcall.properties.FastcallProperties;
 import net.stackoverflow.fastcall.register.RegisterManager;
 import net.stackoverflow.fastcall.register.ServiceMeta;
-import net.stackoverflow.fastcall.register.annotation.FastcallService;
+import net.stackoverflow.fastcall.annotation.FastcallService;
 import net.stackoverflow.fastcall.register.zookeeper.ZkClient;
 import net.stackoverflow.fastcall.register.zookeeper.ZooKeeperRegisterManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class FastcallAutoConfiguration implements CommandLineRunner {
     @Bean
     @ConditionalOnProperty(prefix = "fastcall", value = "enabled", matchIfMissing = true)
     public FastcallServer fastcallServer() {
-        FastcallServer server = new FastcallServer(properties.getBacklog(), properties.getTimeout(), properties.getHost(), properties.getPort());
+        FastcallServer server = new FastcallServer(properties.getBacklog(), properties.getTimeout(), properties.getHost(), properties.getPort(), applicationContext);
         return server;
     }
 

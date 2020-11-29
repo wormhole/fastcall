@@ -1,4 +1,4 @@
-package net.stackoverflow.fastcall.io.model;
+package net.stackoverflow.fastcall.io.proto;
 
 import java.util.HashMap;
 import java.util.Map;

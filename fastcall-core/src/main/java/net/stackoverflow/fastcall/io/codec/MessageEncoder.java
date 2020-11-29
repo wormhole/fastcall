@@ -3,7 +3,10 @@ package net.stackoverflow.fastcall.io.codec;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
-import net.stackoverflow.fastcall.io.model.Message;
+import net.stackoverflow.fastcall.io.proto.CallResponse;
+import net.stackoverflow.fastcall.io.proto.Header;
+import net.stackoverflow.fastcall.io.proto.Message;
+import net.stackoverflow.fastcall.io.proto.MessageType;
 import org.msgpack.MessagePack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,15 +24,16 @@ public class MessageEncoder extends MessageToByteEncoder<Message> {
 
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, Message message, ByteBuf buff) throws Exception {
-        buff.writeBytes(message.getHeader().getMagic());
-        buff.writeShort(message.getHeader().getVersion());
-        buff.writeInt(message.getHeader().getLength());
-        buff.writeByte(message.getHeader().getType());
-        buff.writeInt(message.getHeader().getAttachment().size());
+        Header header = message.getHeader();
+        buff.writeBytes(header.getMagic());
+        buff.writeShort(header.getVersion());
+        buff.writeInt(header.getLength());
+        buff.writeByte(header.getType());
+        buff.writeInt(header.getAttachment().size());
 
         MessagePack messagePack = new MessagePack();
 
-        for (Map.Entry<String, String> entry : message.getHeader().getAttachment().entrySet()) {
+        for (Map.Entry<String, String> entry : header.getAttachment().entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
 

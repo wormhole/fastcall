@@ -18,6 +18,8 @@ import net.stackoverflow.fastcall.io.handler.server.ServerCallHandler;
 import net.stackoverflow.fastcall.io.handler.server.ServerHeatBeatHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.StaticApplicationContext;
 
 /**
  * Netty服务端
@@ -49,18 +51,25 @@ public class FastcallServer {
     private Integer port;
 
     /**
+     * bean容器
+     */
+    private ApplicationContext context;
+
+    /**
      * 构造方法
      *
-     * @param backlog   监听队列
-     * @param timeout   心跳检测超时时间
-     * @param host      监听地址
-     * @param port      监听端口
+     * @param backlog 监听队列
+     * @param timeout 心跳检测超时时间
+     * @param host    监听地址
+     * @param port    监听端口
+     * @param context bean容器
      */
-    public FastcallServer(Integer backlog, Integer timeout, String host, Integer port) {
+    public FastcallServer(Integer backlog, Integer timeout, String host, Integer port, ApplicationContext context) {
         this.backlog = backlog;
         this.timeout = timeout;
         this.host = host;
         this.port = port;
+        this.context = context;
     }
 
     public void bind() {
@@ -80,7 +89,7 @@ public class FastcallServer {
                             socketChannel.pipeline().addLast(new ReadTimeoutHandler(timeout));
                             socketChannel.pipeline().addLast(new ServerAuthHandler());
                             socketChannel.pipeline().addLast(new ServerHeatBeatHandler());
-                            socketChannel.pipeline().addLast(new ServerCallHandler());
+                            socketChannel.pipeline().addLast(new ServerCallHandler(context));
                         }
                     });
             ChannelFuture future = bootstrap.bind(host, port).sync();

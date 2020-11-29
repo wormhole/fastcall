@@ -1,4 +1,4 @@
-package net.stackoverflow.fastcall.io.model;
+package net.stackoverflow.fastcall.io.proto;
 
 /**
  * 消息类型

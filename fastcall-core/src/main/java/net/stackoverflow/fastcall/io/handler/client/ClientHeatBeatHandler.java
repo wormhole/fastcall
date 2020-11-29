@@ -2,8 +2,8 @@ package net.stackoverflow.fastcall.io.handler.client;
 
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
-import net.stackoverflow.fastcall.io.model.Message;
-import net.stackoverflow.fastcall.io.model.MessageType;
+import net.stackoverflow.fastcall.io.proto.Message;
+import net.stackoverflow.fastcall.io.proto.MessageType;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
