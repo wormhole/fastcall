@@ -46,17 +46,23 @@ public class FastcallAutoConfiguration implements CommandLineRunner {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "fastcall", name = "register", havingValue = "zookeeper")
-    public RegisterManager zookeeperRegisterManager() throws IOException, InterruptedException {
-        FastcallProperties.Zookeeper zk = properties.getZookeeper();
-        ZkClient client = new ZkClient(zk.getHost(), zk.getPort(), zk.getSessionTimeout());
-        RegisterManager manager = new ZooKeeperRegisterManager(client);
+    public RegisterManager registerManager() throws IOException, InterruptedException {
+        RegisterManager manager = null;
+        switch (properties.getRegister()) {
+            case "zookeeper":
+                FastcallProperties.Zookeeper zk = properties.getZookeeper();
+                ZkClient client = new ZkClient(zk.getHost(), zk.getPort(), zk.getSessionTimeout());
+                manager = new ZooKeeperRegisterManager(client);
+                break;
+            default:
+                break;
+        }
         return manager;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        RegisterManager manager = zookeeperRegisterManager();
+        RegisterManager manager = registerManager();
         FastcallServer server = fastcallServer();
         List<ServiceMeta> metas = getServiceMeta();
 
