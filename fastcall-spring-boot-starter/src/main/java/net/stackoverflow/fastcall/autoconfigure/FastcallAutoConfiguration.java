@@ -7,6 +7,7 @@ import net.stackoverflow.fastcall.register.ServiceMeta;
 import net.stackoverflow.fastcall.annotation.FastcallService;
 import net.stackoverflow.fastcall.register.zookeeper.ZkClient;
 import net.stackoverflow.fastcall.register.zookeeper.ZooKeeperRegisterManager;
+import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

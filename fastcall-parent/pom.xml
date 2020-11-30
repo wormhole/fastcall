@@ -19,6 +19,8 @@
         <msgpack.version>0.6.12</msgpack.version>
         <zookeeper.version>3.6.2</zookeeper.version>
         <jackson.version>2.11.3</jackson.version>
+        <reflection.version>0.9.12</reflection.version>
+        <guava.version>30.0-jre</guava.version>
     </properties>
 
     <dependencyManagement>
@@ -54,6 +56,16 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>${reflection.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
