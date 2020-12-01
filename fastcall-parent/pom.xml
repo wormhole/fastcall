@@ -21,6 +21,7 @@
         <jackson.version>2.11.3</jackson.version>
         <reflection.version>0.9.12</reflection.version>
         <guava.version>30.0-jre</guava.version>
+        <marshalling.version>2.0.10.Final</marshalling.version>
     </properties>
 
     <dependencyManagement>
@@ -66,6 +67,11 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.marshalling</groupId>
+                <artifactId>jboss-marshalling</artifactId>
+                <version>${marshalling.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
