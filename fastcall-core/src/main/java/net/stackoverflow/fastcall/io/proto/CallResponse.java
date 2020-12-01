@@ -10,21 +10,21 @@ import org.msgpack.annotation.Message;
 @Message
 public class CallResponse {
 
-    private Object ret;
+    private String ret;
 
     public CallResponse() {
 
     }
 
-    public CallResponse(Object ret) {
+    public CallResponse(String ret) {
         this.ret = ret;
     }
 
-    public Object getRet() {
+    public String getRet() {
         return ret;
     }
 
-    public void setRet(Object ret) {
+    public void setRet(String ret) {
         this.ret = ret;
     }
 }

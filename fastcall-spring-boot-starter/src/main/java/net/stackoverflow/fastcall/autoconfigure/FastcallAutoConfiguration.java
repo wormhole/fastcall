@@ -10,6 +10,7 @@ import net.stackoverflow.fastcall.register.zookeeper.ZkClient;
 import net.stackoverflow.fastcall.register.zookeeper.ZooKeeperRegisterManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -63,6 +64,7 @@ public class FastcallAutoConfiguration implements CommandLineRunner {
     }
 
     @Bean
+    @ConditionalOnMissingBean(type = {"net.stackoverflow.fastcall.demo.api.SayService"})
     public Object buildProxy() throws ClassNotFoundException, IOException, InterruptedException {
         //TODO 构建代理对象
         List<Class<?>> classes = getReferenceClass();

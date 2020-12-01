@@ -30,11 +30,11 @@ public class ServerCallHandler extends ChannelInboundHandlerAdapter {
         if (header != null && header.getType() == MessageType.BUSINESS_REQUEST.value()) {
             CallRequest request = (CallRequest) message.getBody();
             Object obj = context.getBean(Class.forName(request.getClassName()));
-            List<Object> args = request.getParameters();
+            List<String> args = request.getParameters();
             List<Class<?>> argClasses = args.stream().map(Object::getClass).collect(Collectors.toList());
             Method method = obj.getClass().getMethod(request.getMethod(), argClasses.toArray(new Class[0]));
             Object ret = method.invoke(obj, args);
-            ctx.writeAndFlush(new Message(MessageType.BUSINESS_RESPONSE, new CallResponse(ret)));
+            ctx.writeAndFlush(new Message(MessageType.BUSINESS_RESPONSE, new CallResponse((String) ret)));
         } else {
             ctx.fireChannelRead(msg);
         }

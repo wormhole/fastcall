@@ -30,7 +30,7 @@ public class CallRequest {
     /**
      * 参数
      */
-    private List<Object> parameters;
+    private List<String> parameters;
 
     public String getGroup() {
         return group;
@@ -56,11 +56,11 @@ public class CallRequest {
         this.method = method;
     }
 
-    public List<Object> getParameters() {
+    public List<String> getParameters() {
         return parameters;
     }
 
-    public void setParameters(List<Object> parameters) {
+    public void setParameters(List<String> parameters) {
         this.parameters = parameters;
     }
 }

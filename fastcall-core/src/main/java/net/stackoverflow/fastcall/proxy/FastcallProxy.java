@@ -34,7 +34,7 @@ public class FastcallProxy implements InvocationHandler {
             request.setClassName(className);
             request.setMethod(methodName);
             request.setGroup(group);
-            request.setParameters(Arrays.asList(args));
+            request.setParameters(Arrays.asList((String) args[0]));
             InetSocketAddress address = manager.getRemoteAddr(group, className);
             FastcallClient client = new FastcallClient(address.getHostName(), address.getPort(), 60, request);
             client.connect();
