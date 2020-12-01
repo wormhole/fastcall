@@ -1,13 +1,13 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
+import net.stackoverflow.fastcall.annotation.FastcallService;
 import net.stackoverflow.fastcall.io.FastcallServer;
 import net.stackoverflow.fastcall.properties.FastcallProperties;
+import net.stackoverflow.fastcall.proxy.FastcallProxy;
 import net.stackoverflow.fastcall.register.RegisterManager;
 import net.stackoverflow.fastcall.register.ServiceMeta;
-import net.stackoverflow.fastcall.annotation.FastcallService;
 import net.stackoverflow.fastcall.register.zookeeper.ZkClient;
 import net.stackoverflow.fastcall.register.zookeeper.ZooKeeperRegisterManager;
-import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
+import java.lang.reflect.Proxy;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -59,6 +60,13 @@ public class FastcallAutoConfiguration implements CommandLineRunner {
                 break;
         }
         return manager;
+    }
+
+    @Bean
+    public Object buildProxy() throws ClassNotFoundException {
+        Class<?> clazz = Class.forName("net.stackoverflow.fastcall.demo.api.SayService");
+        Object proxy = Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, new FastcallProxy());
+        return proxy;
     }
 
     @Override
