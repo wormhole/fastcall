@@ -63,9 +63,10 @@ public class FastcallAutoConfiguration implements CommandLineRunner {
     }
 
     @Bean
-    public Object buildProxy() throws ClassNotFoundException {
-        Class<?> clazz = Class.forName("net.stackoverflow.fastcall.demo.api.SayService");
-        Object proxy = Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, new FastcallProxy());
+    public Object buildProxy() throws ClassNotFoundException, IOException, InterruptedException {
+        //TODO 构建代理对象
+        List<Class<?>> classes = getReferenceClass();
+        Object proxy = Proxy.newProxyInstance(classes.get(0).getClassLoader(), new Class[]{classes.get(0)}, new FastcallProxy(registerManager()));
         return proxy;
     }
 
@@ -79,6 +80,14 @@ public class FastcallAutoConfiguration implements CommandLineRunner {
             manager.register(meta);
         }
         server.bind();
+    }
+
+
+    private List<Class<?>> getReferenceClass() throws ClassNotFoundException {
+        //TODO 获取被@FastcallReference注解的属性Class对象
+        List<Class<?>> classes = new ArrayList<>();
+        classes.add(Class.forName("net.stackoverflow.fastcall.demo.api.SayService"));
+        return classes;
     }
 
     private List<ServiceMeta> getServiceMeta() throws UnknownHostException {

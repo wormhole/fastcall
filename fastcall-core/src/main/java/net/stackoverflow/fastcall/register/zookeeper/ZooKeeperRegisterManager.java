@@ -7,6 +7,9 @@ import net.stackoverflow.fastcall.util.JsonUtils;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 
+import java.net.Inet4Address;
+import java.net.InetSocketAddress;
+
 /**
  * zookeeper注册中心管理器
  *
@@ -37,6 +40,12 @@ public class ZooKeeperRegisterManager implements RegisterManager {
             json = JsonUtils.bean2json(data);
             client.setData(path, json.getBytes(), stat.getVersion());
         }
+    }
+
+    @Override
+    public InetSocketAddress getRemoteAddr(String group, String className) {
+        //TODO 获取远程服务地址
+        return new InetSocketAddress("127.0.0.1", 9966);
     }
 
     /**

@@ -1,16 +1,25 @@
 package net.stackoverflow.fastcall.proxy;
 
+import net.stackoverflow.fastcall.io.FastcallClient;
 import net.stackoverflow.fastcall.io.proto.CallRequest;
+import net.stackoverflow.fastcall.register.RegisterManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.net.InetSocketAddress;
 import java.util.Arrays;
 
 public class FastcallProxy implements InvocationHandler {
 
     private static final Logger log = LoggerFactory.getLogger(FastcallProxy.class);
+
+    private RegisterManager manager;
+
+    public FastcallProxy(RegisterManager manager) {
+        this.manager = manager;
+    }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -26,6 +35,9 @@ public class FastcallProxy implements InvocationHandler {
             request.setMethod(methodName);
             request.setGroup(group);
             request.setParameters(Arrays.asList(args));
+            InetSocketAddress address = manager.getRemoteAddr(group, className);
+            FastcallClient client = new FastcallClient(address.getHostName(), address.getPort(), 60, request);
+            client.connect();
             return "proxy interface";
         }
     }
