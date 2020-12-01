@@ -14,6 +14,7 @@ import net.stackoverflow.fastcall.io.codec.MessageEncoder;
 import net.stackoverflow.fastcall.io.handler.client.ClientAuthHandler;
 import net.stackoverflow.fastcall.io.handler.client.ClientCallHandler;
 import net.stackoverflow.fastcall.io.handler.client.ClientHeatBeatHandler;
+import net.stackoverflow.fastcall.io.proto.CallRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,19 +40,14 @@ public class FastcallClient {
     private Integer remotePort;
 
     /**
-     * 本地地址
-     */
-    private String localHost;
-
-    /**
-     * 本地端口
-     */
-    private Integer localPort;
-
-    /**
      * 心跳检测超时时间
      */
     private Integer timeout;
+
+    /**
+     * 远程调用请求
+     */
+    private CallRequest request;
 
 
     /**
@@ -59,16 +55,13 @@ public class FastcallClient {
      *
      * @param remoteHost 远程地址
      * @param remotePort 远程端口
-     * @param localHost  本地地址
-     * @param localPort  本地端口
      * @param timeout    心跳检测超时时间
      */
-    public FastcallClient(String remoteHost, Integer remotePort, String localHost, Integer localPort, Integer timeout) {
+    public FastcallClient(String remoteHost, Integer remotePort, Integer timeout, CallRequest request) {
         this.remoteHost = remoteHost;
         this.remotePort = remotePort;
-        this.localHost = localHost;
-        this.localPort = localPort;
         this.timeout = timeout;
+        this.request = request;
     }
 
     public void connect() {
@@ -86,14 +79,9 @@ public class FastcallClient {
                             socketChannel.pipeline().addLast(new ReadTimeoutHandler(timeout));
                             socketChannel.pipeline().addLast(new ClientAuthHandler());
                             socketChannel.pipeline().addLast(new ClientHeatBeatHandler());
-                            socketChannel.pipeline().addLast(new ClientCallHandler());
+                            socketChannel.pipeline().addLast(new ClientCallHandler(request));
                         }
                     });
-            if (localHost != null && localPort != null) {
-                bootstrap.localAddress(localHost, localPort);
-            } else if (localHost == null && localPort != null) {
-                bootstrap.localAddress(localPort);
-            }
             ChannelFuture future = bootstrap.connect(new InetSocketAddress(remoteHost, remotePort)).sync();
             future.channel().closeFuture().sync();
         } catch (Exception e) {

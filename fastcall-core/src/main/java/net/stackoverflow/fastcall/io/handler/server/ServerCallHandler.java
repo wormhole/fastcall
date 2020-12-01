@@ -2,10 +2,12 @@ package net.stackoverflow.fastcall.io.handler.server;
 
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
-import net.stackoverflow.fastcall.io.proto.Header;
-import net.stackoverflow.fastcall.io.proto.Message;
-import net.stackoverflow.fastcall.io.proto.MessageType;
+import net.stackoverflow.fastcall.io.proto.*;
 import org.springframework.context.ApplicationContext;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 服务端业务处理
@@ -25,8 +27,14 @@ public class ServerCallHandler extends ChannelHandlerAdapter {
         Message message = (Message) msg;
         Header header = message.getHeader();
         if (header != null && header.getType() == MessageType.BUSINESS_REQUEST.value()) {
-
-        }else {
+            CallRequest request = (CallRequest) message.getBody();
+            Object obj = context.getBean(Class.forName(request.getClassName()));
+            List<Object> args = request.getParameters();
+            List<Class<?>> argClasses = args.stream().map(Object::getClass).collect(Collectors.toList());
+            Method method = obj.getClass().getMethod(request.getMethod(), argClasses.toArray(new Class[0]));
+            Object ret = method.invoke(obj, args);
+            ctx.writeAndFlush(new Message(MessageType.BUSINESS_RESPONSE, new CallResponse(ret)));
+        } else {
             ctx.fireChannelRead(msg);
         }
     }

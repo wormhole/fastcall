@@ -12,6 +12,14 @@ public class CallResponse {
 
     private Object ret;
 
+    public CallResponse() {
+
+    }
+
+    public CallResponse(Object ret) {
+        this.ret = ret;
+    }
+
     public Object getRet() {
         return ret;
     }
