@@ -2,6 +2,7 @@ package net.stackoverflow.fastcall.io.handler.client;
 
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.stackoverflow.fastcall.io.proto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author wormhole
  */
-public class ClientCallHandler extends ChannelHandlerAdapter {
+public class ClientCallHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(ClientCallHandler.class);
 

@@ -1,9 +1,9 @@
 package net.stackoverflow.fastcall.io.handler.server;
 
-import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
-import net.stackoverflow.fastcall.io.proto.Message;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.stackoverflow.fastcall.io.proto.Header;
+import net.stackoverflow.fastcall.io.proto.Message;
 import net.stackoverflow.fastcall.io.proto.MessageType;
 
 /**
@@ -11,7 +11,7 @@ import net.stackoverflow.fastcall.io.proto.MessageType;
  *
  * @author wormhole
  */
-public class ServerHeatBeatHandler extends ChannelHandlerAdapter {
+public class ServerHeatBeatHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {

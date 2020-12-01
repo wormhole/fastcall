@@ -2,6 +2,7 @@ package net.stackoverflow.fastcall.io.handler.server;
 
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.stackoverflow.fastcall.io.proto.*;
 import org.springframework.context.ApplicationContext;
 
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
  *
  * @author wormhole
  */
-public class ServerCallHandler extends ChannelHandlerAdapter {
+public class ServerCallHandler extends ChannelInboundHandlerAdapter {
 
     private ApplicationContext context;
 

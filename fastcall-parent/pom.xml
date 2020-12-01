@@ -15,7 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <fastcall.version>0.0.1</fastcall.version>
         <spring.boot.version>2.2.10.RELEASE</spring.boot.version>
-        <netty.version>5.0.0.Alpha2</netty.version>
+        <netty.version>4.1.52.Final</netty.version>
         <msgpack.version>0.6.12</msgpack.version>
         <zookeeper.version>3.6.2</zookeeper.version>
         <jackson.version>2.11.3</jackson.version>

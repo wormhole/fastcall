@@ -1,8 +1,6 @@
 package net.stackoverflow.fastcall.io.handler.server;
 
-import io.netty.channel.ChannelHandlerAdapter;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPromise;
+import io.netty.channel.*;
 import net.stackoverflow.fastcall.io.proto.Header;
 import net.stackoverflow.fastcall.io.proto.Message;
 import net.stackoverflow.fastcall.io.proto.MessageType;
@@ -15,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author wormhole
  */
-public class ServerAuthHandler extends ChannelHandlerAdapter {
+public class ServerAuthHandler extends ChannelInboundHandlerAdapter {
 
     private static Map<String, Boolean> nodeCheck = new ConcurrentHashMap<>();
 
@@ -50,17 +48,5 @@ public class ServerAuthHandler extends ChannelHandlerAdapter {
         } else {
             ctx.fireChannelRead(msg);
         }
-    }
-
-    @Override
-    public void disconnect(ChannelHandlerContext ctx, ChannelPromise promise) throws Exception {
-        nodeCheck.remove(ctx.channel().remoteAddress().toString());
-        ctx.close();
-    }
-
-    @Override
-    public void close(ChannelHandlerContext ctx, ChannelPromise promise) throws Exception {
-        nodeCheck.remove(ctx.channel().remoteAddress().toString());
-        ctx.close();
     }
 }

@@ -2,6 +2,7 @@ package net.stackoverflow.fastcall.io.handler.client;
 
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.stackoverflow.fastcall.io.proto.Message;
 import net.stackoverflow.fastcall.io.proto.Header;
 import net.stackoverflow.fastcall.io.proto.MessageType;
@@ -11,7 +12,7 @@ import net.stackoverflow.fastcall.io.proto.MessageType;
  *
  * @author wormhole
  */
-public class ClientAuthHandler extends ChannelHandlerAdapter {
+public class ClientAuthHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {

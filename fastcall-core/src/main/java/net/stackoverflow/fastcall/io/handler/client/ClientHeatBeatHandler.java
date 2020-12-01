@@ -2,6 +2,7 @@ package net.stackoverflow.fastcall.io.handler.client;
 
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.stackoverflow.fastcall.io.proto.Message;
 import net.stackoverflow.fastcall.io.proto.MessageType;
 
@@ -13,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author wormhole
  */
-public class ClientHeatBeatHandler extends ChannelHandlerAdapter {
+public class ClientHeatBeatHandler extends ChannelInboundHandlerAdapter {
 
     private volatile ScheduledFuture<?> heartBeatFuture;
 
