@@ -4,6 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * json序列化实现
+ *
+ * @author wormhole
+ */
 public class JsonSerializeManager implements SerializeManager {
 
     private static final Logger log = LoggerFactory.getLogger(JsonSerializeManager.class);

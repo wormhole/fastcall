@@ -2,6 +2,7 @@ package net.stackoverflow.fastcall.transport.handler.client;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import net.stackoverflow.fastcall.proxy.ResponseFuture;
 import net.stackoverflow.fastcall.transport.proto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,14 +12,17 @@ import org.slf4j.LoggerFactory;
  *
  * @author wormhole
  */
-public class ClientCallHandler extends ChannelInboundHandlerAdapter {
+public class ClientRpcHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Logger log = LoggerFactory.getLogger(ClientCallHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(ClientRpcHandler.class);
 
-    private CallRequest request;
+    private RpcRequest request;
 
-    public ClientCallHandler(CallRequest request) {
+    private ResponseFuture future;
+
+    public ClientRpcHandler(RpcRequest request, ResponseFuture future) {
         this.request = request;
+        this.future = future;
     }
 
     @Override
@@ -28,8 +32,8 @@ public class ClientCallHandler extends ChannelInboundHandlerAdapter {
         if (header != null && header.getType() == MessageType.AUTH_RESPONSE.value()) {
             ctx.writeAndFlush(new Message(MessageType.BUSINESS_REQUEST, request));
         } else if (header != null && header.getType() == MessageType.BUSINESS_RESPONSE.value()) {
-            CallResponse response = (CallResponse) message.getBody();
-            log.info((String) response.getRet());
+            RpcResponse response = (RpcResponse) message.getBody();
+            future.setResponse(response.getRet());
             ctx.close();
         } else {
             ctx.fireChannelRead(msg);

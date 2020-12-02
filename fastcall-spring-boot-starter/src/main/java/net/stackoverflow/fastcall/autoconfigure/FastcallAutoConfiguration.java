@@ -1,9 +1,11 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
 import net.stackoverflow.fastcall.annotation.FastcallService;
+import net.stackoverflow.fastcall.serialize.JsonSerializeManager;
+import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.FastcallServer;
 import net.stackoverflow.fastcall.properties.FastcallProperties;
-import net.stackoverflow.fastcall.proxy.FastcallProxy;
+import net.stackoverflow.fastcall.proxy.RpcInvocationHandler;
 import net.stackoverflow.fastcall.register.RegisterManager;
 import net.stackoverflow.fastcall.register.ServiceMeta;
 import net.stackoverflow.fastcall.register.zookeeper.ZkClient;
@@ -44,8 +46,14 @@ public class FastcallAutoConfiguration implements CommandLineRunner {
     @Bean
     @ConditionalOnProperty(prefix = "fastcall", value = "enabled", matchIfMissing = true)
     public FastcallServer fastcallServer() {
-        FastcallServer server = new FastcallServer(properties.getBacklog(), properties.getTimeout(), properties.getHost(), properties.getPort(), applicationContext);
+        FastcallServer server = new FastcallServer(properties.getBacklog(), properties.getTimeout(), properties.getHost(), properties.getPort(), applicationContext, serializeManager());
         return server;
+    }
+
+    @Bean
+    public SerializeManager serializeManager() {
+        SerializeManager serializeManager = new JsonSerializeManager();
+        return serializeManager;
     }
 
     @Bean
@@ -68,7 +76,7 @@ public class FastcallAutoConfiguration implements CommandLineRunner {
     public Object buildProxy() throws ClassNotFoundException, IOException, InterruptedException {
         //TODO 构建代理对象
         List<Class<?>> classes = getReferenceClass();
-        Object proxy = Proxy.newProxyInstance(classes.get(0).getClassLoader(), new Class[]{classes.get(0)}, new FastcallProxy(registerManager()));
+        Object proxy = Proxy.newProxyInstance(classes.get(0).getClassLoader(), new Class[]{classes.get(0)}, new RpcInvocationHandler(registerManager(), serializeManager()));
         return proxy;
     }
 

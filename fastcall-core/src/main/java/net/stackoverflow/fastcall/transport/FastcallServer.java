@@ -11,10 +11,11 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.codec.MessageDecoder;
 import net.stackoverflow.fastcall.transport.codec.MessageEncoder;
 import net.stackoverflow.fastcall.transport.handler.server.ServerAuthHandler;
-import net.stackoverflow.fastcall.transport.handler.server.ServerCallHandler;
+import net.stackoverflow.fastcall.transport.handler.server.ServerRpcHandler;
 import net.stackoverflow.fastcall.transport.handler.server.ServerHeatBeatHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,20 +56,27 @@ public class FastcallServer {
     private ApplicationContext context;
 
     /**
+     * 序列化Manager
+     */
+    private SerializeManager serializeManager;
+
+    /**
      * 构造方法
      *
-     * @param backlog 监听队列
-     * @param timeout 心跳检测超时时间
-     * @param host    监听地址
-     * @param port    监听端口
-     * @param context bean容器
+     * @param backlog          监听队列
+     * @param timeout          心跳检测超时时间
+     * @param host             监听地址
+     * @param port             监听端口
+     * @param context          bean容器
+     * @param serializeManager 序列化Manager
      */
-    public FastcallServer(Integer backlog, Integer timeout, String host, Integer port, ApplicationContext context) {
+    public FastcallServer(Integer backlog, Integer timeout, String host, Integer port, ApplicationContext context, SerializeManager serializeManager) {
         this.backlog = backlog;
         this.timeout = timeout;
         this.host = host;
         this.port = port;
         this.context = context;
+        this.serializeManager = serializeManager;
     }
 
     public void bind() {
@@ -83,12 +91,12 @@ public class FastcallServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            socketChannel.pipeline().addLast(new MessageDecoder(1024 * 1024, 10, 4, 0));
-                            socketChannel.pipeline().addLast(new MessageEncoder());
+                            socketChannel.pipeline().addLast(new MessageDecoder(serializeManager));
+                            socketChannel.pipeline().addLast(new MessageEncoder(serializeManager));
                             socketChannel.pipeline().addLast(new ReadTimeoutHandler(timeout));
                             socketChannel.pipeline().addLast(new ServerAuthHandler());
                             socketChannel.pipeline().addLast(new ServerHeatBeatHandler());
-                            socketChannel.pipeline().addLast(new ServerCallHandler(context));
+                            socketChannel.pipeline().addLast(new ServerRpcHandler(context));
                         }
                     });
             ChannelFuture future = bootstrap.bind(host, port).sync();

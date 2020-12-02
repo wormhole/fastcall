@@ -3,6 +3,7 @@ package net.stackoverflow.fastcall.transport.codec;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.proto.Header;
 import net.stackoverflow.fastcall.transport.proto.Message;
 import org.msgpack.MessagePack;
@@ -20,6 +21,12 @@ public class MessageEncoder extends MessageToByteEncoder<Message> {
 
     public static final Logger log = LoggerFactory.getLogger(MessageEncoder.class);
 
+    private SerializeManager serializeManager;
+
+    public MessageEncoder(SerializeManager serializeManager){
+        this.serializeManager = serializeManager;
+    }
+
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, Message message, ByteBuf buff) throws Exception {
         Header header = message.getHeader();
@@ -28,8 +35,6 @@ public class MessageEncoder extends MessageToByteEncoder<Message> {
         buff.writeInt(header.getLength());
         buff.writeByte(header.getType());
         buff.writeInt(header.getAttachment().size());
-
-        MessagePack messagePack = new MessagePack();
 
         for (Map.Entry<String, String> entry : header.getAttachment().entrySet()) {
             String key = entry.getKey();
@@ -46,7 +51,7 @@ public class MessageEncoder extends MessageToByteEncoder<Message> {
 
         if (message.getBody() != null) {
             Object body = message.getBody();
-            byte[] bodyBytes = messagePack.write(body);
+            byte[] bodyBytes = serializeManager.serialize(body);
             buff.writeInt(bodyBytes.length);
             buff.writeBytes(bodyBytes);
         } else {

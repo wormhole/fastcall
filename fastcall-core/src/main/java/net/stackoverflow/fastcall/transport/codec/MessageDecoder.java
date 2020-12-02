@@ -3,6 +3,7 @@ package net.stackoverflow.fastcall.transport.codec;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.proto.*;
 import org.msgpack.MessagePack;
 import org.slf4j.Logger;
@@ -20,8 +21,11 @@ public class MessageDecoder extends LengthFieldBasedFrameDecoder {
 
     public static final Logger log = LoggerFactory.getLogger(MessageDecoder.class);
 
-    public MessageDecoder(int maxFrameLength, int lengthFieldOffset, int lengthFieldLength, int lengthAdjustment) {
-        super(maxFrameLength, lengthFieldOffset, lengthFieldLength, lengthAdjustment, 0);
+    private SerializeManager serializeManager;
+
+    public MessageDecoder(SerializeManager serializeManager) {
+        super(1024 * 1024, 10, 4, 0, 0);
+        this.serializeManager = serializeManager;
     }
 
     @Override
@@ -40,7 +44,6 @@ public class MessageDecoder extends LengthFieldBasedFrameDecoder {
         int size = frame.readInt();
         Map<String, String> attachment = new HashMap<>();
 
-        MessagePack messagePack = new MessagePack();
         for (int i = 0; i < size; i++) {
             int keySize = frame.readInt();
             byte[] keyBytes = new byte[keySize];
@@ -64,10 +67,10 @@ public class MessageDecoder extends LengthFieldBasedFrameDecoder {
                 byte body = bodyBytes[0];
                 message.setBody(body);
             } else if (header.getType() == MessageType.BUSINESS_REQUEST.value()) {
-                CallRequest request = messagePack.read(bodyBytes, CallRequest.class);
+                RpcRequest request = serializeManager.deserialize(bodyBytes, RpcRequest.class);
                 message.setBody(request);
             } else if (header.getType() == MessageType.BUSINESS_RESPONSE.value()) {
-                CallResponse response = messagePack.read(bodyBytes, CallResponse.class);
+                RpcResponse response = serializeManager.deserialize(bodyBytes, RpcResponse.class);
                 message.setBody(response);
             }
         }

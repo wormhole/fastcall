@@ -1,7 +1,6 @@
 package net.stackoverflow.fastcall.transport;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -9,12 +8,14 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import net.stackoverflow.fastcall.proxy.ResponseFuture;
+import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.codec.MessageDecoder;
 import net.stackoverflow.fastcall.transport.codec.MessageEncoder;
 import net.stackoverflow.fastcall.transport.handler.client.ClientAuthHandler;
-import net.stackoverflow.fastcall.transport.handler.client.ClientCallHandler;
+import net.stackoverflow.fastcall.transport.handler.client.ClientRpcHandler;
 import net.stackoverflow.fastcall.transport.handler.client.ClientHeatBeatHandler;
-import net.stackoverflow.fastcall.transport.proto.CallRequest;
+import net.stackoverflow.fastcall.transport.proto.RpcRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,26 +46,28 @@ public class FastcallClient {
     private Integer timeout;
 
     /**
-     * 远程调用请求
+     * 序列化Manager
      */
-    private CallRequest request;
+    private SerializeManager serializeManager;
 
 
     /**
      * 构造方法
      *
-     * @param remoteHost 远程地址
-     * @param remotePort 远程端口
-     * @param timeout    心跳检测超时时间
+     * @param remoteHost       远程地址
+     * @param remotePort       远程端口
+     * @param timeout          心跳检测超时时间
+     * @param serializeManager 序列化Manager
      */
-    public FastcallClient(String remoteHost, Integer remotePort, Integer timeout, CallRequest request) {
+    public FastcallClient(String remoteHost, Integer remotePort, Integer timeout, SerializeManager serializeManager) {
         this.remoteHost = remoteHost;
         this.remotePort = remotePort;
         this.timeout = timeout;
-        this.request = request;
+        this.serializeManager = serializeManager;
     }
 
-    public void connect() {
+    public ResponseFuture call(RpcRequest request) {
+        ResponseFuture future = new ResponseFuture();
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap bootstrap = new Bootstrap();
@@ -74,20 +77,20 @@ public class FastcallClient {
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            socketChannel.pipeline().addLast(new MessageDecoder(1024 * 1024, 10, 4, 0));
-                            socketChannel.pipeline().addLast(new MessageEncoder());
+                            socketChannel.pipeline().addLast(new MessageDecoder(serializeManager));
+                            socketChannel.pipeline().addLast(new MessageEncoder(serializeManager));
                             socketChannel.pipeline().addLast(new ReadTimeoutHandler(timeout));
                             socketChannel.pipeline().addLast(new ClientAuthHandler());
                             socketChannel.pipeline().addLast(new ClientHeatBeatHandler());
-                            socketChannel.pipeline().addLast(new ClientCallHandler(request));
+                            socketChannel.pipeline().addLast(new ClientRpcHandler(request, future));
                         }
                     });
-            ChannelFuture future = bootstrap.connect(new InetSocketAddress(remoteHost, remotePort)).sync();
-            future.channel().closeFuture().sync();
+            bootstrap.connect(new InetSocketAddress(remoteHost, remotePort)).sync();
         } catch (Exception e) {
             log.error("NettyClient.connect()", e);
         } finally {
             group.shutdownGracefully();
         }
+        return future;
     }
 }
