@@ -1,11 +1,10 @@
-package net.stackoverflow.fastcall.io.handler.client;
+package net.stackoverflow.fastcall.transport.handler.client;
 
-import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import net.stackoverflow.fastcall.io.proto.Message;
-import net.stackoverflow.fastcall.io.proto.Header;
-import net.stackoverflow.fastcall.io.proto.MessageType;
+import net.stackoverflow.fastcall.transport.proto.Message;
+import net.stackoverflow.fastcall.transport.proto.Header;
+import net.stackoverflow.fastcall.transport.proto.MessageType;
 
 /**
  * 客户端认证handler

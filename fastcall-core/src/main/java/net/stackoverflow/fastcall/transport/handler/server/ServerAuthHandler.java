@@ -1,9 +1,9 @@
-package net.stackoverflow.fastcall.io.handler.server;
+package net.stackoverflow.fastcall.transport.handler.server;
 
 import io.netty.channel.*;
-import net.stackoverflow.fastcall.io.proto.Header;
-import net.stackoverflow.fastcall.io.proto.Message;
-import net.stackoverflow.fastcall.io.proto.MessageType;
+import net.stackoverflow.fastcall.transport.proto.Header;
+import net.stackoverflow.fastcall.transport.proto.Message;
+import net.stackoverflow.fastcall.transport.proto.MessageType;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

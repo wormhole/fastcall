@@ -1,4 +1,4 @@
-package net.stackoverflow.fastcall.io.serial;
+package net.stackoverflow.fastcall.serialize;
 
 import io.netty.handler.codec.marshalling.*;
 import org.jboss.marshalling.MarshallerFactory;

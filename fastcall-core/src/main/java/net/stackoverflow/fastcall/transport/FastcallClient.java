@@ -1,4 +1,4 @@
-package net.stackoverflow.fastcall.io;
+package net.stackoverflow.fastcall.transport;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -9,12 +9,12 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
-import net.stackoverflow.fastcall.io.codec.MessageDecoder;
-import net.stackoverflow.fastcall.io.codec.MessageEncoder;
-import net.stackoverflow.fastcall.io.handler.client.ClientAuthHandler;
-import net.stackoverflow.fastcall.io.handler.client.ClientCallHandler;
-import net.stackoverflow.fastcall.io.handler.client.ClientHeatBeatHandler;
-import net.stackoverflow.fastcall.io.proto.CallRequest;
+import net.stackoverflow.fastcall.transport.codec.MessageDecoder;
+import net.stackoverflow.fastcall.transport.codec.MessageEncoder;
+import net.stackoverflow.fastcall.transport.handler.client.ClientAuthHandler;
+import net.stackoverflow.fastcall.transport.handler.client.ClientCallHandler;
+import net.stackoverflow.fastcall.transport.handler.client.ClientHeatBeatHandler;
+import net.stackoverflow.fastcall.transport.proto.CallRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

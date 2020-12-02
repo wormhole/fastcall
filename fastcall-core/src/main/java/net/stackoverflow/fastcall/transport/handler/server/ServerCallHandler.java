@@ -1,9 +1,8 @@
-package net.stackoverflow.fastcall.io.handler.server;
+package net.stackoverflow.fastcall.transport.handler.server;
 
-import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import net.stackoverflow.fastcall.io.proto.*;
+import net.stackoverflow.fastcall.transport.proto.*;
 import org.springframework.context.ApplicationContext;
 
 import java.lang.reflect.Method;

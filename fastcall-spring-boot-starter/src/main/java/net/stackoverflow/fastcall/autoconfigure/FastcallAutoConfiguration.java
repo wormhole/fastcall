@@ -1,7 +1,7 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
 import net.stackoverflow.fastcall.annotation.FastcallService;
-import net.stackoverflow.fastcall.io.FastcallServer;
+import net.stackoverflow.fastcall.transport.FastcallServer;
 import net.stackoverflow.fastcall.properties.FastcallProperties;
 import net.stackoverflow.fastcall.proxy.FastcallProxy;
 import net.stackoverflow.fastcall.register.RegisterManager;

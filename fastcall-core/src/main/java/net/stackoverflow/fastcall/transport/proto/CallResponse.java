@@ -1,4 +1,4 @@
-package net.stackoverflow.fastcall.io.proto;
+package net.stackoverflow.fastcall.transport.proto;
 
 import org.msgpack.annotation.Message;
 
