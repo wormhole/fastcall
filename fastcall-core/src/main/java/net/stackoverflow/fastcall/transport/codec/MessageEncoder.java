@@ -6,7 +6,6 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.proto.Header;
 import net.stackoverflow.fastcall.transport.proto.Message;
-import org.msgpack.MessagePack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -16,12 +16,8 @@
         <fastcall.version>0.0.1</fastcall.version>
         <spring.boot.version>2.2.10.RELEASE</spring.boot.version>
         <netty.version>4.1.52.Final</netty.version>
-        <msgpack.version>0.6.12</msgpack.version>
         <zookeeper.version>3.6.2</zookeeper.version>
         <jackson.version>2.11.3</jackson.version>
-        <reflection.version>0.9.12</reflection.version>
-        <guava.version>30.0-jre</guava.version>
-        <marshalling.version>2.0.10.Final</marshalling.version>
     </properties>
 
     <dependencyManagement>
@@ -44,11 +40,6 @@
                 <version>${netty.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.msgpack</groupId>
-                <artifactId>msgpack</artifactId>
-                <version>${msgpack.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.zookeeper</groupId>
                 <artifactId>zookeeper</artifactId>
                 <version>${zookeeper.version}</version>
@@ -57,21 +48,6 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.reflections</groupId>
-                <artifactId>reflections</artifactId>
-                <version>${reflection.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.marshalling</groupId>
-                <artifactId>jboss-marshalling</artifactId>
-                <version>${marshalling.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
