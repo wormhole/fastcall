@@ -20,20 +20,20 @@ public class ServerAuthHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         nodeCheck.remove(ctx.channel().remoteAddress().toString());
-        ctx.fireExceptionCaught(cause);
+        super.exceptionCaught(ctx, cause);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         nodeCheck.remove(ctx.channel().remoteAddress().toString());
-        ctx.fireChannelInactive();
+        super.channelInactive(ctx);
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         Message message = (Message) msg;
         Header header = message.getHeader();
-        if (header != null && header.getType() == MessageType.AUTH_REQUEST.value()) {
+        if (header.getType() == MessageType.AUTH_REQUEST.value()) {
             String nodeIndex = ctx.channel().remoteAddress().toString();
             Message response = null;
 
@@ -45,8 +45,7 @@ public class ServerAuthHandler extends ChannelInboundHandlerAdapter {
             }
 
             ctx.writeAndFlush(response);
-        } else {
-            ctx.fireChannelRead(msg);
         }
+        super.channelRead(ctx, msg);
     }
 }

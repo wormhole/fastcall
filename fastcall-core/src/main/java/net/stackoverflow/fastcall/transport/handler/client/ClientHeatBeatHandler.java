@@ -22,17 +22,17 @@ public class ClientHeatBeatHandler extends ChannelInboundHandlerAdapter {
         if (heartBeatFuture != null) {
             heartBeatFuture.cancel(true);
         }
-        ctx.fireExceptionCaught(cause);
+        super.exceptionCaught(ctx, cause);
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (heartBeatFuture == null) {
-            heartBeatFuture = ctx.executor().scheduleAtFixedRate(()->{
+            heartBeatFuture = ctx.executor().scheduleAtFixedRate(() -> {
                 Message ping = new Message(MessageType.HEARTBEAT_PING);
                 ctx.writeAndFlush(ping);
             }, 0, 5000, TimeUnit.MILLISECONDS);
         }
-        ctx.fireChannelRead(msg);
+        super.channelRead(ctx, msg);
     }
 }

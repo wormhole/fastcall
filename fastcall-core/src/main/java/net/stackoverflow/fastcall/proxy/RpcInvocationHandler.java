@@ -10,7 +10,10 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * RpcInvocation
@@ -21,28 +24,23 @@ public class RpcInvocationHandler implements InvocationHandler {
 
     private static final Logger log = LoggerFactory.getLogger(RpcInvocationHandler.class);
 
-    private RegisterManager registerManager;
+    private FastcallClient client;
 
-    private SerializeManager serializeManager;
-
-    public RpcInvocationHandler(RegisterManager registerManager, SerializeManager serializeManager) {
-        this.registerManager = registerManager;
-        this.serializeManager = serializeManager;
+    public RpcInvocationHandler(FastcallClient client) {
+        this.client = client;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        String group = "group-1";
         RpcRequest request = new RpcRequest();
+        request.setId(UUID.randomUUID().toString());
         request.setClazz(method.getDeclaringClass());
         request.setMethod(method.getName());
-        request.setGroup(group);
+        request.setGroup("group-1");
         request.setParams(Arrays.asList(args));
-        request.setParamsType(Arrays.asList(args[0].getClass()));
-        InetSocketAddress address = registerManager.getRemoteAddr(group, method.getDeclaringClass().getName());
-        FastcallClient client = new FastcallClient(address.getHostName(), address.getPort(), 60, serializeManager);
+        request.setParamsType(Arrays.asList(method.getParameterTypes()));
         ResponseFuture future = client.call(request);
-        Object ret = future.getResponse();
-        return ret;
+        Object response = future.getResponse();
+        return response;
     }
 }

@@ -23,16 +23,13 @@ public class ClientAuthHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         Message message = (Message) msg;
         Header header = message.getHeader();
-        if (header != null && header.getType() == MessageType.AUTH_RESPONSE.value()) {
+        if (header.getType() == MessageType.AUTH_RESPONSE.value()) {
             byte body = (byte) message.getBody();
             if (!isAuthSuccess(body)) {
                 ctx.close();
-            } else {
-                ctx.fireChannelRead(msg);
             }
-        } else {
-            ctx.fireChannelRead(msg);
         }
+        super.channelRead(ctx, msg);
     }
 
     private boolean isAuthSuccess(byte body) {

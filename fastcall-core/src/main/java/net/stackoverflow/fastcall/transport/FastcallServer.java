@@ -99,8 +99,8 @@ public class FastcallServer {
                             socketChannel.pipeline().addLast(new ServerRpcHandler(context));
                         }
                     });
-            ChannelFuture future = bootstrap.bind(host, port).sync();
-            future.channel().closeFuture().sync();
+            ChannelFuture channelFuture = bootstrap.bind(host, port).sync();
+            channelFuture.channel().closeFuture().sync();
         } catch (Exception e) {
             log.error("NettyServer.bind()", e);
         } finally {

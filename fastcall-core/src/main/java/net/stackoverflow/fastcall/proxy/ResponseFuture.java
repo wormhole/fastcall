@@ -11,7 +11,7 @@ public class ResponseFuture {
 
     private volatile boolean success = false;
 
-    private volatile Object ret;
+    private volatile Object response;
 
     public boolean isSuccess() {
         synchronized (lock) {
@@ -19,10 +19,13 @@ public class ResponseFuture {
         }
     }
 
-    public void setResponse(Object ret) {
+    public void setResponse(Object response) {
         synchronized (lock) {
+            if (this.response != null) {
+                return;
+            }
             this.success = true;
-            this.ret = ret;
+            this.response = response;
             lock.notifyAll();
         }
     }
@@ -36,7 +39,7 @@ public class ResponseFuture {
                     e.printStackTrace();
                 }
             }
-            return ret;
+            return response;
         }
     }
 }

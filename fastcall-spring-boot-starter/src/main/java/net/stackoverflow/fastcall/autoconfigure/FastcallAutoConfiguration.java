@@ -1,8 +1,10 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
 import net.stackoverflow.fastcall.annotation.FastcallService;
+import net.stackoverflow.fastcall.proxy.RpcProxyFactory;
 import net.stackoverflow.fastcall.serialize.JsonSerializeManager;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
+import net.stackoverflow.fastcall.transport.FastcallClient;
 import net.stackoverflow.fastcall.transport.FastcallServer;
 import net.stackoverflow.fastcall.properties.FastcallProperties;
 import net.stackoverflow.fastcall.proxy.RpcInvocationHandler;
@@ -10,6 +12,7 @@ import net.stackoverflow.fastcall.register.RegisterManager;
 import net.stackoverflow.fastcall.register.ServiceMeta;
 import net.stackoverflow.fastcall.register.zookeeper.ZkClient;
 import net.stackoverflow.fastcall.register.zookeeper.ZooKeeperRegisterManager;
+import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -46,14 +49,17 @@ public class FastcallAutoConfiguration implements CommandLineRunner {
     @Bean
     @ConditionalOnProperty(prefix = "fastcall", value = "enabled", matchIfMissing = true)
     public FastcallServer fastcallServer() {
-        FastcallServer server = new FastcallServer(properties.getBacklog(), properties.getTimeout(), properties.getHost(), properties.getPort(), applicationContext, serializeManager());
-        return server;
+        return new FastcallServer(properties.getBacklog(), properties.getTimeout(), properties.getHost(), properties.getPort(), applicationContext, serializeManager());
+    }
+
+    @Bean
+    public FastcallClient fastcallClient() throws IOException, InterruptedException {
+        return new FastcallClient(serializeManager(), registerManager());
     }
 
     @Bean
     public SerializeManager serializeManager() {
-        SerializeManager serializeManager = new JsonSerializeManager();
-        return serializeManager;
+        return new JsonSerializeManager();
     }
 
     @Bean
@@ -76,8 +82,7 @@ public class FastcallAutoConfiguration implements CommandLineRunner {
     public Object buildProxy() throws ClassNotFoundException, IOException, InterruptedException {
         //TODO 构建代理对象
         List<Class<?>> classes = getReferenceClass();
-        Object proxy = Proxy.newProxyInstance(classes.get(0).getClassLoader(), new Class[]{classes.get(0)}, new RpcInvocationHandler(registerManager(), serializeManager()));
-        return proxy;
+        return RpcProxyFactory.create(classes.get(0), fastcallClient());
     }
 
     @Override

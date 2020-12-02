@@ -7,21 +7,32 @@ package net.stackoverflow.fastcall.transport.proto;
  */
 public class RpcResponse {
 
-    private Object ret;
+    private String id;
+
+    private Object response;
 
     public RpcResponse() {
 
     }
 
-    public RpcResponse(Object ret) {
-        this.ret = ret;
+    public RpcResponse(String id, Object response) {
+        this.id = id;
+        this.response = response;
     }
 
-    public Object getRet() {
-        return ret;
+    public String getId() {
+        return id;
     }
 
-    public void setRet(Object ret) {
-        this.ret = ret;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Object getResponse() {
+        return response;
+    }
+
+    public void setResponse(Object response) {
+        this.response = response;
     }
 }

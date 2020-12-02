@@ -10,6 +10,11 @@ import java.util.List;
 public class RpcRequest {
 
     /**
+     * 唯一标识
+     */
+    private String id;
+
+    /**
      * 所属分组
      */
     private String group;
@@ -33,6 +38,14 @@ public class RpcRequest {
      * 参数
      */
     private List<Object> params;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getGroup() {
         return group;
