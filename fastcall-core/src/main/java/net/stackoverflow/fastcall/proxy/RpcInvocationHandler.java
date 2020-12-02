@@ -38,6 +38,7 @@ public class RpcInvocationHandler implements InvocationHandler {
         request.setMethod(method.getName());
         request.setGroup(group);
         request.setParams(Arrays.asList(args));
+        request.setParamsType(Arrays.asList(args[0].getClass()));
         InetSocketAddress address = registerManager.getRemoteAddr(group, method.getDeclaringClass().getName());
         FastcallClient client = new FastcallClient(address.getHostName(), address.getPort(), 60, serializeManager);
         ResponseFuture future = client.call(request);

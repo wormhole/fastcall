@@ -64,7 +64,7 @@ public class MessageDecoder extends LengthFieldBasedFrameDecoder {
             byte[] bodyBytes = new byte[bodySize];
             frame.readBytes(bodyBytes, 0, bodySize);
             if (header.getType() == MessageType.AUTH_RESPONSE.value()) {
-                byte body = bodyBytes[0];
+                byte body = serializeManager.deserialize(bodyBytes, byte.class);
                 message.setBody(body);
             } else if (header.getType() == MessageType.BUSINESS_REQUEST.value()) {
                 RpcRequest request = serializeManager.deserialize(bodyBytes, RpcRequest.class);
