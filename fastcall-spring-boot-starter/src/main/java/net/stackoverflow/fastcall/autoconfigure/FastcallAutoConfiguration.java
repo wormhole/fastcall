@@ -1,5 +1,6 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
+import net.stackoverflow.fastcall.annotation.FastcallReference;
 import net.stackoverflow.fastcall.annotation.FastcallService;
 import net.stackoverflow.fastcall.proxy.RpcProxyFactory;
 import net.stackoverflow.fastcall.serialize.JsonSerializeManager;
@@ -13,7 +14,10 @@ import net.stackoverflow.fastcall.register.ServiceMeta;
 import net.stackoverflow.fastcall.register.zookeeper.ZkClient;
 import net.stackoverflow.fastcall.register.zookeeper.ZooKeeperRegisterManager;
 import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.aop.support.AopUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -23,6 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -78,11 +83,8 @@ public class FastcallAutoConfiguration implements CommandLineRunner {
     }
 
     @Bean
-    @ConditionalOnMissingBean(type = {"net.stackoverflow.fastcall.demo.api.SayService"})
-    public Object buildProxy() throws ClassNotFoundException, IOException, InterruptedException {
-        //TODO 构建代理对象
-        List<Class<?>> classes = getReferenceClass();
-        return RpcProxyFactory.create(classes.get(0), fastcallClient());
+    public BeanPostProcessor beanPostProcessor() throws IOException, InterruptedException {
+        return new FastcallBeanPostProcessor(fastcallClient());
     }
 
     @Override
@@ -95,14 +97,6 @@ public class FastcallAutoConfiguration implements CommandLineRunner {
             manager.register(meta);
         }
         server.bind();
-    }
-
-
-    private List<Class<?>> getReferenceClass() throws ClassNotFoundException {
-        //TODO 获取被@FastcallReference注解的属性Class对象
-        List<Class<?>> classes = new ArrayList<>();
-        classes.add(Class.forName("net.stackoverflow.fastcall.demo.api.SayService"));
-        return classes;
     }
 
     private List<ServiceMeta> getServiceMeta() throws UnknownHostException {
