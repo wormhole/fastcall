@@ -1,13 +1,16 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
+import net.stackoverflow.fastcall.ConnectionManager;
 import net.stackoverflow.fastcall.annotation.FastcallReference;
 import net.stackoverflow.fastcall.proxy.RpcProxyFactory;
+import net.stackoverflow.fastcall.register.RegisterManager;
 import net.stackoverflow.fastcall.transport.FastcallClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import java.lang.reflect.Field;
 
@@ -20,10 +23,13 @@ public class FastcallBeanPostProcessor implements BeanPostProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(FastcallBeanPostProcessor.class);
 
-    private FastcallClient client;
+    private final RegisterManager registerManager;
 
-    public FastcallBeanPostProcessor(FastcallClient client) {
-        this.client = client;
+    private final ConnectionManager connectionManager;
+
+    public FastcallBeanPostProcessor(RegisterManager registerManager, ConnectionManager connectionManager) {
+        this.registerManager = registerManager;
+        this.connectionManager = connectionManager;
     }
 
     @Override
@@ -40,7 +46,7 @@ public class FastcallBeanPostProcessor implements BeanPostProcessor {
             if (reference != null) {
                 try {
                     field.setAccessible(true);
-                    field.set(bean, RpcProxyFactory.create(field.getType(), client));
+                    field.set(bean, RpcProxyFactory.create(field.getType(), connectionManager, registerManager, reference.group()));
                 } catch (Exception e) {
                     log.error("postProcessBeforeInitialization", e);
                 }

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class FastcallController {
 
-    @FastcallReference
+    @FastcallReference(group = "group-1")
     private SayService sayService;
 
     @GetMapping("/say")

@@ -1,5 +1,6 @@
 package net.stackoverflow.fastcall.proxy;
 
+import net.stackoverflow.fastcall.ConnectionManager;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.FastcallClient;
 import net.stackoverflow.fastcall.transport.proto.RpcRequest;
@@ -24,21 +25,30 @@ public class RpcInvocationHandler implements InvocationHandler {
 
     private static final Logger log = LoggerFactory.getLogger(RpcInvocationHandler.class);
 
-    private FastcallClient client;
+    private ConnectionManager connectionManager;
 
-    public RpcInvocationHandler(FastcallClient client) {
-        this.client = client;
+    private RegisterManager registerManager;
+
+    private String group;
+
+    public RpcInvocationHandler(ConnectionManager connectionManager, RegisterManager registerManager,String group) {
+        this.connectionManager = connectionManager;
+        this.registerManager = registerManager;
+        this.group = group;
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) {
         RpcRequest request = new RpcRequest();
         request.setId(UUID.randomUUID().toString());
         request.setClazz(method.getDeclaringClass());
         request.setMethod(method.getName());
-        request.setGroup("group-1");
+        request.setGroup(group);
         request.setParams(Arrays.asList(args));
         request.setParamsType(Arrays.asList(method.getParameterTypes()));
+
+        InetSocketAddress address = registerManager.getRemoteAddr(request.getGroup(), request.getClazz().getName());
+        FastcallClient client = connectionManager.getClient(address);
         ResponseFuture future = client.call(request);
         Object response = future.getResponse();
         return response;

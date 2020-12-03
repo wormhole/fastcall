@@ -33,7 +33,6 @@ public class ServerRpcHandler extends ChannelInboundHandlerAdapter implements Ap
             RpcRequest request = (RpcRequest) message.getBody();
             RpcResponse response = handlerRequest(request);
             ctx.writeAndFlush(new Message(MessageType.BUSINESS_RESPONSE, response));
-            ctx.close();
         } else {
             ctx.fireChannelRead(msg);
         }

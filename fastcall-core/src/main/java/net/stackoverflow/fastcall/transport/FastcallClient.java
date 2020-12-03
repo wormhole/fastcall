@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import java.net.InetSocketAddress;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -33,26 +34,28 @@ public class FastcallClient {
 
     private static final Logger log = LoggerFactory.getLogger(FastcallClient.class);
 
-    private SerializeManager serializeManager;
+    private final SerializeManager serializeManager;
 
-    private RegisterManager registerManager;
+    private final ClientRpcHandler clientRpcHandler;
 
-    private ClientRpcHandler clientRpcHandler;
+    private final int timeout;
 
+    private Channel channel;
 
     /**
      * 构造方法
      *
      * @param serializeManager 序列化器
-     * @param registerManager  注册管理器
+     * @param clientRpcHandler rpc处理器
+     * @param timeout          超时时间
      */
-    public FastcallClient(SerializeManager serializeManager, RegisterManager registerManager) {
+    public FastcallClient(int timeout, SerializeManager serializeManager, ClientRpcHandler clientRpcHandler) {
+        this.timeout = timeout;
         this.serializeManager = serializeManager;
-        this.registerManager = registerManager;
-        this.clientRpcHandler = new ClientRpcHandler(serializeManager);
+        this.clientRpcHandler = clientRpcHandler;
     }
 
-    private void connect(String host, int port, int timeout, RpcRequest request) {
+    public void connect(InetSocketAddress socketAddress, CountDownLatch countDownLatch) {
         Bootstrap bootstrap = new Bootstrap();
         EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
         try {
@@ -61,30 +64,39 @@ public class FastcallClient {
                     .option(ChannelOption.TCP_NODELAY, true)
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            socketChannel.pipeline().addLast(new MessageDecoder(serializeManager));
-                            socketChannel.pipeline().addLast(new MessageEncoder(serializeManager));
-                            socketChannel.pipeline().addLast(new ReadTimeoutHandler(timeout));
-                            socketChannel.pipeline().addLast(new ClientAuthHandler());
-                            socketChannel.pipeline().addLast(new ClientHeatBeatHandler());
-                            socketChannel.pipeline().addLast(clientRpcHandler);
+                        protected void initChannel(SocketChannel socketChannel) {
+                            ChannelPipeline pipeline = socketChannel.pipeline();
+                            pipeline.addLast(new MessageDecoder(serializeManager));
+                            pipeline.addLast(new MessageEncoder(serializeManager));
+                            pipeline.addLast(new ReadTimeoutHandler(timeout));
+                            pipeline.addLast(new ClientAuthHandler());
+                            pipeline.addLast(new ClientHeatBeatHandler());
+                            pipeline.addLast(clientRpcHandler);
                         }
                     });
-            ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
-            Channel channel = channelFuture.channel();
-            channel.writeAndFlush(new Message(MessageType.BUSINESS_REQUEST, request)).sync();
+            ChannelFuture channelFuture = bootstrap.connect(socketAddress).sync();
+            this.channel = channelFuture.channel();
+            countDownLatch.countDown();
             channel.closeFuture().sync();
         } catch (Exception e) {
             log.error("NettyClient.connect()", e);
         } finally {
+            channel = null;
             eventLoopGroup.shutdownGracefully();
         }
     }
 
+    public boolean isActive() {
+        return channel != null && channel.isActive();
+    }
+
     public ResponseFuture call(RpcRequest request) {
-        clientRpcHandler.putFuture(request.getId());
-        InetSocketAddress address = registerManager.getRemoteAddr(request.getGroup(), request.getClazz().getName());
-        connect(address.getHostName(), address.getPort(), 60, request);
-        return clientRpcHandler.getResponse(request.getId());
+        if (isActive()) {
+            ResponseFuture future = clientRpcHandler.getFuture(request.getId());
+            channel.writeAndFlush(new Message(MessageType.BUSINESS_REQUEST, request));
+            return future;
+        } else {
+            return null;
+        }
     }
 }

@@ -16,6 +16,8 @@ public class FastcallProperties {
 
     private Provider provider = new Provider();
 
+    private Consumer consumer = new Consumer();
+
     private Zookeeper zookeeper = new Zookeeper();
 
     public static class Provider {
@@ -80,6 +82,18 @@ public class FastcallProperties {
         }
     }
 
+    public static class Consumer {
+        private Integer timeout = 60;
+
+        public Integer getTimeout() {
+            return timeout;
+        }
+
+        public void setTimeout(Integer timeout) {
+            this.timeout = timeout;
+        }
+    }
+
     public static class Zookeeper {
         private String host = "127.0.0.1";
 
@@ -134,6 +148,14 @@ public class FastcallProperties {
 
     public void setProvider(Provider provider) {
         this.provider = provider;
+    }
+
+    public Consumer getConsumer() {
+        return consumer;
+    }
+
+    public void setConsumer(Consumer consumer) {
+        this.consumer = consumer;
     }
 
     public Zookeeper getZookeeper() {

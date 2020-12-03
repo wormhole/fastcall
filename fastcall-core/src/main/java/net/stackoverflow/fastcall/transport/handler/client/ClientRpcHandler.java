@@ -41,19 +41,14 @@ public class ClientRpcHandler extends ChannelInboundHandlerAdapter {
     }
 
     public synchronized void setResponse(RpcResponse response) {
-        futureMap.get(response.getId()).setResponse(response.getResponse());
+        ResponseFuture future = futureMap.get(response.getId());
+        future.setResponse(response.getResponse());
+        futureMap.remove(response.getId());
     }
 
-    public synchronized ResponseFuture getResponse(String id) {
-        try {
-            ResponseFuture future = futureMap.get(id);
-            return future;
-        } finally {
-            futureMap.remove(id);
-        }
-    }
-
-    public synchronized void putFuture(String id) {
-        futureMap.put(id, new ResponseFuture());
+    public synchronized ResponseFuture getFuture(String id) {
+        ResponseFuture future = new ResponseFuture();
+        futureMap.put(id, future);
+        return future;
     }
 }
