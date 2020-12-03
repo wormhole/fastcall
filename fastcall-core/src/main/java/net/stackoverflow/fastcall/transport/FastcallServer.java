@@ -15,18 +15,20 @@ import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.codec.MessageDecoder;
 import net.stackoverflow.fastcall.transport.codec.MessageEncoder;
 import net.stackoverflow.fastcall.transport.handler.server.ServerAuthHandler;
-import net.stackoverflow.fastcall.transport.handler.server.ServerRpcHandler;
 import net.stackoverflow.fastcall.transport.handler.server.ServerHeatBeatHandler;
+import net.stackoverflow.fastcall.transport.handler.server.ServerRpcHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  * Netty服务端
  *
  * @author wormhole
  */
-public class FastcallServer {
+public class FastcallServer implements ApplicationContextAware {
 
     private static final Logger log = LoggerFactory.getLogger(FastcallServer.class);
 
@@ -51,14 +53,19 @@ public class FastcallServer {
     private Integer port;
 
     /**
-     * bean容器
-     */
-    private ApplicationContext context;
-
-    /**
      * 序列化Manager
      */
     private SerializeManager serializeManager;
+
+    /**
+     * bean容器
+     */
+    private ApplicationContext applicationContext;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 
     /**
      * 构造方法
@@ -67,15 +74,13 @@ public class FastcallServer {
      * @param timeout          心跳检测超时时间
      * @param host             监听地址
      * @param port             监听端口
-     * @param context          bean容器
      * @param serializeManager 序列化Manager
      */
-    public FastcallServer(Integer backlog, Integer timeout, String host, Integer port, ApplicationContext context, SerializeManager serializeManager) {
+    public FastcallServer(Integer backlog, Integer timeout, String host, Integer port, SerializeManager serializeManager) {
         this.backlog = backlog;
         this.timeout = timeout;
         this.host = host;
         this.port = port;
-        this.context = context;
         this.serializeManager = serializeManager;
     }
 
@@ -96,7 +101,7 @@ public class FastcallServer {
                             socketChannel.pipeline().addLast(new ReadTimeoutHandler(timeout));
                             socketChannel.pipeline().addLast(new ServerAuthHandler());
                             socketChannel.pipeline().addLast(new ServerHeatBeatHandler());
-                            socketChannel.pipeline().addLast(new ServerRpcHandler(context));
+                            socketChannel.pipeline().addLast(new ServerRpcHandler(applicationContext));
                         }
                     });
             ChannelFuture channelFuture = bootstrap.bind(host, port).sync();

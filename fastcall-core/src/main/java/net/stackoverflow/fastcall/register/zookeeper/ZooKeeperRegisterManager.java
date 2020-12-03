@@ -7,7 +7,6 @@ import net.stackoverflow.fastcall.util.JsonUtils;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 
-import java.net.Inet4Address;
 import java.net.InetSocketAddress;
 
 /**
