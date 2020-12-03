@@ -26,6 +26,12 @@
       "defaultValue": 1024
     },
     {
+      "name": "fastcall.provider.enabled",
+      "type": "java.lang.Boolean",
+      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties$Provider",
+      "defaultValue": false
+    },
+    {
       "name": "fastcall.provider.host",
       "type": "java.lang.String",
       "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties$Provider",

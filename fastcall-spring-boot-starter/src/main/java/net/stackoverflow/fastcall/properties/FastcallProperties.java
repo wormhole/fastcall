@@ -19,6 +19,8 @@ public class FastcallProperties {
     private Zookeeper zookeeper = new Zookeeper();
 
     public static class Provider {
+        private Boolean enabled = false;
+
         private Integer backlog = 1024;
 
         private Integer timeout = 60;
@@ -28,6 +30,14 @@ public class FastcallProperties {
         private Integer port = 9966;
 
         private Integer threads = 100;
+
+        public Boolean getEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(Boolean enabled) {
+            this.enabled = enabled;
+        }
 
         public Integer getBacklog() {
             return backlog;

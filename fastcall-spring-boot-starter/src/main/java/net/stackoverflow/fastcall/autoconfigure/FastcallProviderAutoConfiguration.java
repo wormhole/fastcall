@@ -34,6 +34,7 @@ import java.util.Map;
  */
 @Configuration
 @AutoConfigureAfter(FastcallCommonAutoConfiguration.class)
+@ConditionalOnProperty(prefix = "fastcall.provider", name = "enabled", havingValue = "true")
 public class FastcallProviderAutoConfiguration implements InitializingBean, ApplicationContextAware {
 
     @Autowired
