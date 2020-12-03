@@ -13,6 +13,11 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
 
+/**
+ * fastcall common自动化配置类
+ *
+ * @author wormhole
+ */
 @Configuration
 @EnableConfigurationProperties(FastcallProperties.class)
 public class FastcallCommonAutoConfiguration {
@@ -20,11 +25,31 @@ public class FastcallCommonAutoConfiguration {
     @Autowired
     private FastcallProperties properties;
 
+    /**
+     * 初始化序列化管理器
+     *
+     * @return
+     */
     @Bean
     public SerializeManager serializeManager() {
-        return new JsonSerializeManager();
+        SerializeManager manager = null;
+        switch (properties.getSerialize()) {
+            case "json":
+                manager = new JsonSerializeManager();
+                break;
+            default:
+                break;
+        }
+        return manager;
     }
 
+    /**
+     * 初始化注册管理器
+     *
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
     @Bean
     public RegisterManager registerManager() throws IOException, InterruptedException {
         RegisterManager manager = null;

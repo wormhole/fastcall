@@ -6,6 +6,12 @@
       "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties"
     },
     {
+      "name": "fastcall.provider",
+      "type": "net.stackoverflow.fastcall.properties.FastcallProperties$Provider",
+      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties",
+      "sourceMethod": "getProvider()"
+    },
+    {
       "name": "fastcall.zookeeper",
       "type": "net.stackoverflow.fastcall.properties.FastcallProperties$Zookeeper",
       "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties",
@@ -14,22 +20,34 @@
   ],
   "properties": [
     {
-      "name": "fastcall.backlog",
+      "name": "fastcall.provider.backlog",
       "type": "java.lang.Integer",
-      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties",
+      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties$Provider",
       "defaultValue": 1024
     },
     {
-      "name": "fastcall.host",
+      "name": "fastcall.provider.host",
       "type": "java.lang.String",
-      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties",
+      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties$Provider",
       "defaultValue": "0.0.0.0"
     },
     {
-      "name": "fastcall.port",
+      "name": "fastcall.provider.port",
       "type": "java.lang.Integer",
-      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties",
+      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties$Provider",
       "defaultValue": 9966
+    },
+    {
+      "name": "fastcall.provider.threads",
+      "type": "java.lang.Integer",
+      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties$Provider",
+      "defaultValue": 100
+    },
+    {
+      "name": "fastcall.provider.timeout",
+      "type": "java.lang.Integer",
+      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties$Provider",
+      "defaultValue": 60
     },
     {
       "name": "fastcall.register",
@@ -38,10 +56,10 @@
       "defaultValue": "zookeeper"
     },
     {
-      "name": "fastcall.timeout",
-      "type": "java.lang.Integer",
+      "name": "fastcall.serialize",
+      "type": "java.lang.String",
       "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties",
-      "defaultValue": 60
+      "defaultValue": "json"
     },
     {
       "name": "fastcall.zookeeper.host",

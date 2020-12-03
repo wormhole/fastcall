@@ -12,6 +12,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -46,33 +48,51 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
     private ApplicationContext applicationContext;
 
     @Override
-    public void afterPropertiesSet() throws Exception {
-        List<ServiceMeta> metas = getServiceMeta();
-        for (ServiceMeta meta : metas) {
-            registerManager.register(meta);
-        }
-        new Thread(() -> fastcallServer().bind()).start();
-    }
-
-    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * 向注册中心注册服务信息，并启动netty服务
+     *
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.registerService();
+        new Thread(() -> fastcallServer().bind()).start();
+    }
+
+    /**
+     * netty服务端
+     *
+     * @return
+     */
     @Bean
-    @ConditionalOnProperty(prefix = "fastcall", value = "enabled", matchIfMissing = true)
     public FastcallServer fastcallServer() {
-        FastcallServer server = new FastcallServer(properties.getBacklog(), properties.getTimeout(), properties.getHost(), properties.getPort(), 100);
+        FastcallProperties.Provider provider = properties.getProvider();
+        FastcallServer server = new FastcallServer(provider.getBacklog(), provider.getTimeout(), provider.getHost(), provider.getPort(), provider.getThreads());
         server.setSerializeManager(serializeManager);
         server.setRpcHandler(serverRpcHandler());
         return server;
     }
 
+    /**
+     * rpc处理器
+     *
+     * @return
+     */
     @Bean
     public ServerRpcHandler serverRpcHandler() {
         return new ServerRpcHandler();
     }
 
+    /**
+     * 获取服务元数据
+     *
+     * @return
+     * @throws UnknownHostException
+     */
     private List<ServiceMeta> getServiceMeta() throws UnknownHostException {
         Map<String, Object> map = applicationContext.getBeansWithAnnotation(FastcallService.class);
         List<ServiceMeta> metas = new ArrayList<>();
@@ -84,18 +104,36 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
             String group = fastcallService.group();
             Class<?>[] interfaces = clazz.getInterfaces();
             for (Class<?> itf : interfaces) {
-                metas.add(new ServiceMeta(group, itf.getName(), host, properties.getPort()));
+                metas.add(new ServiceMeta(group, itf.getName(), host, properties.getProvider().getPort()));
             }
         }
         return metas;
     }
 
+    /**
+     * 向注册中心注册服务信息
+     *
+     * @throws UnknownHostException
+     */
+    private void registerService() throws UnknownHostException {
+        List<ServiceMeta> metas = getServiceMeta();
+        for (ServiceMeta meta : metas) {
+            registerManager.register(meta);
+        }
+    }
+
+    /**
+     * 获取服务ip
+     *
+     * @return
+     * @throws UnknownHostException
+     */
     private String getIp() throws UnknownHostException {
-        if (properties.getHost().equals("0.0.0.0")) {
+        if (properties.getProvider().getHost().equals("0.0.0.0")) {
             InetAddress ip4 = Inet4Address.getLocalHost();
             return ip4.getHostAddress();
         } else {
-            return properties.getHost();
+            return properties.getProvider().getHost();
         }
     }
 }

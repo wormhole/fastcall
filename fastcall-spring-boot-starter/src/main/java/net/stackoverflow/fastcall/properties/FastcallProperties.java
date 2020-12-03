@@ -10,17 +10,65 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "fastcall")
 public class FastcallProperties {
 
-    private Integer backlog = 1024;
-
-    private Integer timeout = 60;
-
-    private String host = "0.0.0.0";
-
-    private Integer port = 9966;
+    private String serialize = "json";
 
     private String register = "zookeeper";
 
+    private Provider provider = new Provider();
+
     private Zookeeper zookeeper = new Zookeeper();
+
+    public static class Provider {
+        private Integer backlog = 1024;
+
+        private Integer timeout = 60;
+
+        private String host = "0.0.0.0";
+
+        private Integer port = 9966;
+
+        private Integer threads = 100;
+
+        public Integer getBacklog() {
+            return backlog;
+        }
+
+        public void setBacklog(Integer backlog) {
+            this.backlog = backlog;
+        }
+
+        public Integer getTimeout() {
+            return timeout;
+        }
+
+        public void setTimeout(Integer timeout) {
+            this.timeout = timeout;
+        }
+
+        public String getHost() {
+            return host;
+        }
+
+        public void setHost(String host) {
+            this.host = host;
+        }
+
+        public Integer getPort() {
+            return port;
+        }
+
+        public void setPort(Integer port) {
+            this.port = port;
+        }
+
+        public Integer getThreads() {
+            return threads;
+        }
+
+        public void setThreads(Integer threads) {
+            this.threads = threads;
+        }
+    }
 
     public static class Zookeeper {
         private String host = "127.0.0.1";
@@ -54,36 +102,12 @@ public class FastcallProperties {
         }
     }
 
-    public Integer getBacklog() {
-        return backlog;
+    public String getSerialize() {
+        return serialize;
     }
 
-    public void setBacklog(Integer backlog) {
-        this.backlog = backlog;
-    }
-
-    public Integer getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(Integer timeout) {
-        this.timeout = timeout;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public Integer getPort() {
-        return port;
-    }
-
-    public void setPort(Integer port) {
-        this.port = port;
+    public void setSerialize(String serialize) {
+        this.serialize = serialize;
     }
 
     public String getRegister() {
@@ -92,6 +116,14 @@ public class FastcallProperties {
 
     public void setRegister(String register) {
         this.register = register;
+    }
+
+    public Provider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(Provider provider) {
+        this.provider = provider;
     }
 
     public Zookeeper getZookeeper() {

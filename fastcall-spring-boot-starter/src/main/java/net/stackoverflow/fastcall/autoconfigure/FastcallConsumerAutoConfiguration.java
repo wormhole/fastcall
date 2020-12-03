@@ -9,6 +9,11 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * fastcall client自动化配置类
+ *
+ * @author wormhole
+ */
 @Configuration
 @AutoConfigureAfter(FastcallCommonAutoConfiguration.class)
 public class FastcallConsumerAutoConfiguration {
@@ -24,6 +29,11 @@ public class FastcallConsumerAutoConfiguration {
         return new FastcallClient(serializeManager, registerManager);
     }
 
+    /**
+     * 动态代理@FastcallReference注解接口
+     *
+     * @return
+     */
     @Bean
     public BeanPostProcessor beanPostProcessor() {
         return new FastcallBeanPostProcessor(fastcallClient());
