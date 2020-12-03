@@ -1,8 +1,5 @@
 package net.stackoverflow.fastcall.register;
 
-import net.stackoverflow.fastcall.register.ServiceMeta;
-
-import java.net.Inet4Address;
 import java.net.InetSocketAddress;
 
 /**

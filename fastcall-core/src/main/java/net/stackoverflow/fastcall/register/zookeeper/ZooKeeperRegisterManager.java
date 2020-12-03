@@ -8,6 +8,8 @@ import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 
 import java.net.InetSocketAddress;
+import java.util.List;
+import java.util.Map;
 
 /**
  * zookeeper注册中心管理器
@@ -34,7 +36,7 @@ public class ZooKeeperRegisterManager implements RegisterManager {
             client.create(path, json.getBytes(), CreateMode.PERSISTENT);
         } else {
             String json = client.getData(path);
-            RegisterData data = (RegisterData) JsonUtils.json2bean(json, RegisterData.class);
+            RegisterData data = JsonUtils.json2bean(json, RegisterData.class);
             data.addRoute(meta.getGroup(), meta.getHost(), meta.getPort());
             json = JsonUtils.bean2json(data);
             client.setData(path, json.getBytes(), stat.getVersion());
@@ -43,8 +45,16 @@ public class ZooKeeperRegisterManager implements RegisterManager {
 
     @Override
     public InetSocketAddress getRemoteAddr(String group, String className) {
-        //TODO 获取远程服务地址
-        return new InetSocketAddress("127.0.0.1", 9966);
+        String json = client.getData(PathConst.root + "/" + className);
+        RegisterData data = JsonUtils.json2bean(json, RegisterData.class);
+        Map<String, List<RegisterData.Address>> map = data.getRoute();
+        List<RegisterData.Address> addresses = map.get(group);
+        if (addresses != null) {
+            RegisterData.Address address = addresses.get(0);
+            return new InetSocketAddress(address.getHost(), address.getPort());
+        } else {
+            return null;
+        }
     }
 
     /**

@@ -43,7 +43,7 @@ public class RegisterData {
     /**
      * 路由地址
      */
-    private static class Address {
+    public static class Address {
         /**
          * ip地址
          */

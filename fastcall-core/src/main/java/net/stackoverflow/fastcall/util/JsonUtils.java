@@ -35,10 +35,11 @@ public class JsonUtils {
      *
      * @param json
      * @param clazz
+     * @param <T>
      * @return
      */
-    public static Object json2bean(String json, Class<?> clazz) {
-        Object obj = null;
+    public static <T> T json2bean(String json, Class<T> clazz) {
+        T obj = null;
         try {
             ObjectMapper mapper = new ObjectMapper();
             obj = mapper.readValue(json, clazz);
