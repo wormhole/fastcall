@@ -1,16 +1,14 @@
 package net.stackoverflow.fastcall.transport;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import net.stackoverflow.fastcall.serialize.JsonSerializeManager;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.codec.MessageDecoder;
 import net.stackoverflow.fastcall.transport.codec.MessageEncoder;
@@ -28,65 +26,53 @@ import org.springframework.context.ApplicationContextAware;
  *
  * @author wormhole
  */
-public class FastcallServer implements ApplicationContextAware {
+public class FastcallServer {
 
     private static final Logger log = LoggerFactory.getLogger(FastcallServer.class);
 
-    /**
-     * 监听队列
-     */
-    private Integer backlog;
+    private final Integer backlog;
 
-    /**
-     * 心跳检测超时时间
-     */
-    private Integer timeout;
+    private final Integer timeout;
 
-    /**
-     * 绑定地址
-     */
-    private String host;
+    private final String host;
 
-    /**
-     * 绑定端口
-     */
-    private Integer port;
+    private final Integer port;
 
-    /**
-     * 序列化Manager
-     */
+    private final Integer threads;
+
     private SerializeManager serializeManager;
 
-    /**
-     * bean容器
-     */
-    private ApplicationContext applicationContext;
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
+    private ServerRpcHandler serverRpcHandler;
 
     /**
      * 构造方法
      *
-     * @param backlog          监听队列
-     * @param timeout          心跳检测超时时间
-     * @param host             监听地址
-     * @param port             监听端口
-     * @param serializeManager 序列化Manager
+     * @param backlog 监听队列
+     * @param timeout 心跳检测超时时间
+     * @param host    监听地址
+     * @param port    监听端口
+     * @param threads 业务线程池大小
      */
-    public FastcallServer(Integer backlog, Integer timeout, String host, Integer port, SerializeManager serializeManager) {
+    public FastcallServer(Integer backlog, Integer timeout, String host, Integer port, Integer threads) {
         this.backlog = backlog;
         this.timeout = timeout;
         this.host = host;
         this.port = port;
+        this.threads = threads;
+    }
+
+    public void setSerializeManager(SerializeManager serializeManager) {
         this.serializeManager = serializeManager;
+    }
+
+    public void setRpcHandler(ServerRpcHandler serverRpcHandler) {
+        this.serverRpcHandler = serverRpcHandler;
     }
 
     public void bind() {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workGroup = new NioEventLoopGroup();
+        NioEventLoopGroup businessGroup = new NioEventLoopGroup(threads);
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workGroup)
@@ -95,13 +81,14 @@ public class FastcallServer implements ApplicationContextAware {
                     .handler(new LoggingHandler(LogLevel.INFO))
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            socketChannel.pipeline().addLast(new MessageDecoder(serializeManager));
-                            socketChannel.pipeline().addLast(new MessageEncoder(serializeManager));
-                            socketChannel.pipeline().addLast(new ReadTimeoutHandler(timeout));
-                            socketChannel.pipeline().addLast(new ServerAuthHandler());
-                            socketChannel.pipeline().addLast(new ServerHeatBeatHandler());
-                            socketChannel.pipeline().addLast(new ServerRpcHandler(applicationContext));
+                        protected void initChannel(SocketChannel socketChannel) {
+                            ChannelPipeline pipeline = socketChannel.pipeline();
+                            pipeline.addLast(new MessageDecoder(serializeManager));
+                            pipeline.addLast(new MessageEncoder(serializeManager));
+                            pipeline.addLast(new ReadTimeoutHandler(timeout));
+                            pipeline.addLast(new ServerAuthHandler());
+                            pipeline.addLast(new ServerHeatBeatHandler());
+                            pipeline.addLast(businessGroup, serverRpcHandler);
                         }
                     });
             ChannelFuture channelFuture = bootstrap.bind(host, port).sync();

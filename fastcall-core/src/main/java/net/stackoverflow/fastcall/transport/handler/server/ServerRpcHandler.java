@@ -3,7 +3,9 @@ package net.stackoverflow.fastcall.transport.handler.server;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.stackoverflow.fastcall.transport.proto.*;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -14,12 +16,13 @@ import java.util.List;
  *
  * @author wormhole
  */
-public class ServerRpcHandler extends ChannelInboundHandlerAdapter {
+public class ServerRpcHandler extends ChannelInboundHandlerAdapter implements ApplicationContextAware {
 
     private ApplicationContext context;
 
-    public ServerRpcHandler(ApplicationContext context) {
-        this.context = context;
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.context = applicationContext;
     }
 
     @Override

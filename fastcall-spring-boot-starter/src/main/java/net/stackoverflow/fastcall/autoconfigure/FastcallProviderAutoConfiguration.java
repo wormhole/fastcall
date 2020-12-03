@@ -5,7 +5,9 @@ import net.stackoverflow.fastcall.properties.FastcallProperties;
 import net.stackoverflow.fastcall.register.RegisterManager;
 import net.stackoverflow.fastcall.register.ServiceMeta;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
+import net.stackoverflow.fastcall.transport.FastcallClient;
 import net.stackoverflow.fastcall.transport.FastcallServer;
+import net.stackoverflow.fastcall.transport.handler.server.ServerRpcHandler;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +62,15 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
     @Bean
     @ConditionalOnProperty(prefix = "fastcall", value = "enabled", matchIfMissing = true)
     public FastcallServer fastcallServer() {
-        return new FastcallServer(properties.getBacklog(), properties.getTimeout(), properties.getHost(), properties.getPort(), serializeManager);
+        FastcallServer server = new FastcallServer(properties.getBacklog(), properties.getTimeout(), properties.getHost(), properties.getPort(), 100);
+        server.setSerializeManager(serializeManager);
+        server.setRpcHandler(serverRpcHandler());
+        return server;
+    }
+
+    @Bean
+    public ServerRpcHandler serverRpcHandler() {
+        return new ServerRpcHandler();
     }
 
     private List<ServiceMeta> getServiceMeta() throws UnknownHostException {
