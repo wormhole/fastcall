@@ -10,11 +10,11 @@ import java.util.Map;
  *
  * @author wormhole
  */
-public class RegisterData {
+public class RegistryData {
 
     private Map<String, List<Address>> route;
 
-    public RegisterData() {
+    public RegistryData() {
         route = new HashMap<>();
     }
 

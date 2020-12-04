@@ -1,8 +1,7 @@
 package net.stackoverflow.fastcall.proxy;
 
 import net.stackoverflow.fastcall.ConnectionManager;
-import net.stackoverflow.fastcall.serialize.SerializeManager;
-import net.stackoverflow.fastcall.transport.FastcallClient;
+import net.stackoverflow.fastcall.transport.NettyClient;
 import net.stackoverflow.fastcall.transport.proto.RpcRequest;
 import net.stackoverflow.fastcall.register.RegisterManager;
 import org.slf4j.Logger;
@@ -11,9 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -48,7 +45,7 @@ public class RpcInvocationHandler implements InvocationHandler {
         request.setParamsType(Arrays.asList(method.getParameterTypes()));
 
         InetSocketAddress address = registerManager.getRemoteAddr(request.getGroup(), request.getClazz().getName());
-        FastcallClient client = connectionManager.getClient(address);
+        NettyClient client = connectionManager.getClient(address);
         ResponseFuture future = client.call(request);
         Object response = future.getResponse();
         return response;

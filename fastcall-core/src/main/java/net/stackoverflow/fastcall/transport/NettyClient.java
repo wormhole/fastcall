@@ -7,7 +7,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import net.stackoverflow.fastcall.proxy.ResponseFuture;
-import net.stackoverflow.fastcall.register.RegisterManager;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.codec.MessageDecoder;
 import net.stackoverflow.fastcall.transport.codec.MessageEncoder;
@@ -20,19 +19,17 @@ import net.stackoverflow.fastcall.transport.proto.RpcRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PreDestroy;
 import java.net.InetSocketAddress;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Netty客户端
  *
  * @author wormhole
  */
-public class FastcallClient {
+public class NettyClient {
 
-    private static final Logger log = LoggerFactory.getLogger(FastcallClient.class);
+    private static final Logger log = LoggerFactory.getLogger(NettyClient.class);
 
     private final SerializeManager serializeManager;
 
@@ -49,7 +46,7 @@ public class FastcallClient {
      * @param clientRpcHandler rpc处理器
      * @param timeout          超时时间
      */
-    public FastcallClient(int timeout, SerializeManager serializeManager, ClientRpcHandler clientRpcHandler) {
+    public NettyClient(int timeout, SerializeManager serializeManager, ClientRpcHandler clientRpcHandler) {
         this.timeout = timeout;
         this.serializeManager = serializeManager;
         this.clientRpcHandler = clientRpcHandler;

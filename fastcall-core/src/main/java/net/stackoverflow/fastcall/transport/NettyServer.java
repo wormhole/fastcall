@@ -22,9 +22,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author wormhole
  */
-public class FastcallServer {
+public class NettyServer {
 
-    private static final Logger log = LoggerFactory.getLogger(FastcallServer.class);
+    private static final Logger log = LoggerFactory.getLogger(NettyServer.class);
 
     private final Integer backlog;
 
@@ -49,7 +49,7 @@ public class FastcallServer {
      * @param port    监听端口
      * @param threads 业务线程池大小
      */
-    public FastcallServer(Integer backlog, Integer timeout, String host, Integer port, Integer threads) {
+    public NettyServer(Integer backlog, Integer timeout, String host, Integer port, Integer threads) {
         this.backlog = backlog;
         this.timeout = timeout;
         this.host = host;

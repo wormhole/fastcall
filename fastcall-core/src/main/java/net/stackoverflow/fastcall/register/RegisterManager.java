@@ -14,7 +14,7 @@ public interface RegisterManager {
      *
      * @param meta
      */
-    void register(ServiceMeta meta);
+    void register(ServiceMetaData meta);
 
     /**
      * 获取服务

@@ -2,7 +2,6 @@ package net.stackoverflow.fastcall.autoconfigure;
 
 import net.stackoverflow.fastcall.properties.FastcallProperties;
 import net.stackoverflow.fastcall.register.RegisterManager;
-import net.stackoverflow.fastcall.register.zookeeper.ZkClient;
 import net.stackoverflow.fastcall.register.zookeeper.ZooKeeperRegisterManager;
 import net.stackoverflow.fastcall.serialize.JsonSerializeManager;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
@@ -56,8 +55,7 @@ public class FastcallCommonAutoConfiguration {
         switch (properties.getRegister()) {
             case "zookeeper":
                 FastcallProperties.Zookeeper zk = properties.getZookeeper();
-                ZkClient client = new ZkClient(zk.getHost(), zk.getPort(), zk.getSessionTimeout());
-                manager = new ZooKeeperRegisterManager(client);
+                manager = new ZooKeeperRegisterManager(zk.getHost(), zk.getPort(), zk.getSessionTimeout());
                 break;
             default:
                 break;

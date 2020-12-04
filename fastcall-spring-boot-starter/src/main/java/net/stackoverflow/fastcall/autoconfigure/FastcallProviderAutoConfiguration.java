@@ -3,9 +3,9 @@ package net.stackoverflow.fastcall.autoconfigure;
 import net.stackoverflow.fastcall.annotation.FastcallService;
 import net.stackoverflow.fastcall.properties.FastcallProperties;
 import net.stackoverflow.fastcall.register.RegisterManager;
-import net.stackoverflow.fastcall.register.ServiceMeta;
+import net.stackoverflow.fastcall.register.ServiceMetaData;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
-import net.stackoverflow.fastcall.transport.FastcallServer;
+import net.stackoverflow.fastcall.transport.NettyServer;
 import net.stackoverflow.fastcall.transport.handler.server.ServerRpcHandler;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -67,9 +67,9 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
      * @return
      */
     @Bean
-    public FastcallServer fastcallServer() {
+    public NettyServer fastcallServer() {
         FastcallProperties.Provider provider = properties.getProvider();
-        FastcallServer server = new FastcallServer(provider.getBacklog(), provider.getTimeout(), provider.getHost(), provider.getPort(), provider.getThreads());
+        NettyServer server = new NettyServer(provider.getBacklog(), provider.getTimeout(), provider.getHost(), provider.getPort(), provider.getThreads());
         server.setSerializeManager(serializeManager);
         server.setRpcHandler(serverRpcHandler());
         return server;
@@ -91,9 +91,9 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
      * @return
      * @throws UnknownHostException
      */
-    private List<ServiceMeta> getServiceMeta() throws UnknownHostException {
+    private List<ServiceMetaData> getServiceMeta() throws UnknownHostException {
         Map<String, Object> map = applicationContext.getBeansWithAnnotation(FastcallService.class);
-        List<ServiceMeta> metas = new ArrayList<>();
+        List<ServiceMetaData> metas = new ArrayList<>();
         String host = getIp();
 
         for (Object obj : map.values()) {
@@ -102,7 +102,7 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
             String group = fastcallService.group();
             Class<?>[] interfaces = clazz.getInterfaces();
             for (Class<?> itf : interfaces) {
-                metas.add(new ServiceMeta(group, itf.getName(), host, properties.getProvider().getPort()));
+                metas.add(new ServiceMetaData(group, itf.getName(), host, properties.getProvider().getPort()));
             }
         }
         return metas;
@@ -114,8 +114,8 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
      * @throws UnknownHostException
      */
     private void registerService() throws UnknownHostException {
-        List<ServiceMeta> metas = getServiceMeta();
-        for (ServiceMeta meta : metas) {
+        List<ServiceMetaData> metas = getServiceMeta();
+        for (ServiceMetaData meta : metas) {
             registerManager.register(meta);
         }
     }

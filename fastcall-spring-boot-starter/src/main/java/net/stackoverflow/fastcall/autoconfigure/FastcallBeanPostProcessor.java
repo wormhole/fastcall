@@ -4,13 +4,11 @@ import net.stackoverflow.fastcall.ConnectionManager;
 import net.stackoverflow.fastcall.annotation.FastcallReference;
 import net.stackoverflow.fastcall.proxy.RpcProxyFactory;
 import net.stackoverflow.fastcall.register.RegisterManager;
-import net.stackoverflow.fastcall.transport.FastcallClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import java.lang.reflect.Field;
 

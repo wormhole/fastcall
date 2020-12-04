@@ -5,7 +5,7 @@ package net.stackoverflow.fastcall.register;
  *
  * @author wormhole
  */
-public class ServiceMeta {
+public class ServiceMetaData {
 
     /**
      * 分组
@@ -27,11 +27,11 @@ public class ServiceMeta {
      */
     private Integer port;
 
-    public ServiceMeta() {
+    public ServiceMetaData() {
 
     }
 
-    public ServiceMeta(String group, String interfaces, String host, Integer port) {
+    public ServiceMetaData(String group, String interfaces, String host, Integer port) {
         this.group = group;
         this.interfaces = interfaces;
         this.host = host;

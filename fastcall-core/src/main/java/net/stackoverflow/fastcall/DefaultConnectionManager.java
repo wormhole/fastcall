@@ -1,7 +1,7 @@
 package net.stackoverflow.fastcall;
 
 import net.stackoverflow.fastcall.serialize.SerializeManager;
-import net.stackoverflow.fastcall.transport.FastcallClient;
+import net.stackoverflow.fastcall.transport.NettyClient;
 import net.stackoverflow.fastcall.transport.handler.client.ClientRpcHandler;
 
 import java.net.InetSocketAddress;
@@ -10,7 +10,7 @@ import java.util.concurrent.*;
 
 public class DefaultConnectionManager implements ConnectionManager {
 
-    private Map<String, FastcallClient> map;
+    private Map<String, NettyClient> map;
 
     private ExecutorService executorService;
 
@@ -29,13 +29,13 @@ public class DefaultConnectionManager implements ConnectionManager {
     }
 
     @Override
-    public synchronized FastcallClient getClient(InetSocketAddress address) {
+    public synchronized NettyClient getClient(InetSocketAddress address) {
         String host = address.getAddress().getHostAddress();
         Integer port = address.getPort();
         String key = host + ":" + port;
-        FastcallClient client = map.get(key);
+        NettyClient client = map.get(key);
         if (client == null) {
-            client = new FastcallClient(timeout, serializeManager, clientRpcHandler);
+            client = new NettyClient(timeout, serializeManager, clientRpcHandler);
             map.put(key, client);
             initClient(client, new InetSocketAddress(host, port));
         } else {
@@ -46,7 +46,7 @@ public class DefaultConnectionManager implements ConnectionManager {
         return client;
     }
 
-    private void initClient(FastcallClient client, InetSocketAddress socketAddress) {
+    private void initClient(NettyClient client, InetSocketAddress socketAddress) {
         CountDownLatch countDownLatch = new CountDownLatch(1);
         executorService.execute(() -> client.connect(socketAddress, countDownLatch));
         try {
