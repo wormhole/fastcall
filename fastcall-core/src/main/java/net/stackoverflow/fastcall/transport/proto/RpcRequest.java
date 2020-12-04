@@ -22,7 +22,7 @@ public class RpcRequest {
     /**
      * 接口Class对象
      */
-    private Class<?> clazz;
+    private Class<?> interfaceType;
 
     /**
      * 方法名
@@ -55,12 +55,12 @@ public class RpcRequest {
         this.group = group;
     }
 
-    public Class<?> getClazz() {
-        return clazz;
+    public Class<?> getInterfaceType() {
+        return interfaceType;
     }
 
-    public void setClazz(Class<?> clazz) {
-        this.clazz = clazz;
+    public void setInterfaceType(Class<?> interfaceType) {
+        this.interfaceType = interfaceType;
     }
 
     public String getMethod() {
@@ -85,5 +85,18 @@ public class RpcRequest {
 
     public void setParams(List<Object> params) {
         this.params = params;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("RpcRequest{");
+        sb.append("id='").append(id).append('\'');
+        sb.append(", group='").append(group).append('\'');
+        sb.append(", interfaceType=").append(interfaceType);
+        sb.append(", method='").append(method).append('\'');
+        sb.append(", paramsType=").append(paramsType);
+        sb.append(", params=").append(params);
+        sb.append('}');
+        return sb.toString();
     }
 }

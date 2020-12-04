@@ -6,6 +6,8 @@ import net.stackoverflow.fastcall.properties.FastcallProperties;
 import net.stackoverflow.fastcall.register.RegisterManager;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.handler.client.ClientRpcHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -21,6 +23,8 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureAfter(FastcallCommonAutoConfiguration.class)
 public class FastcallConsumerAutoConfiguration {
 
+    private static final Logger log = LoggerFactory.getLogger(FastcallConsumerAutoConfiguration.class);
+
     @Autowired
     private SerializeManager serializeManager;
 
@@ -32,12 +36,16 @@ public class FastcallConsumerAutoConfiguration {
 
     @Bean
     public ClientRpcHandler clientRpcHandler() {
-        return new ClientRpcHandler(serializeManager);
+        ClientRpcHandler clientRpcHandler = new ClientRpcHandler();
+        log.info("instance ClientRpcHandler");
+        return clientRpcHandler;
     }
 
     @Bean
     public ConnectionManager connectionManager() {
-        return new DefaultConnectionManager(serializeManager,clientRpcHandler(),properties.getConsumer().getTimeout());
+        ConnectionManager connectionManager = new DefaultConnectionManager(serializeManager, clientRpcHandler(), properties.getConsumer().getTimeout());
+        log.info("instance DefaultConnectionManager");
+        return connectionManager;
     }
 
     /**
@@ -47,7 +55,9 @@ public class FastcallConsumerAutoConfiguration {
      */
     @Bean
     public BeanPostProcessor beanPostProcessor() {
-        return new FastcallBeanPostProcessor(registerManager, connectionManager());
+        FastcallBeanPostProcessor fastcallBeanPostProcessor = new FastcallBeanPostProcessor(registerManager, connectionManager());
+        log.info("instance FastcallBeanPostProcessor");
+        return fastcallBeanPostProcessor;
     }
 
 }

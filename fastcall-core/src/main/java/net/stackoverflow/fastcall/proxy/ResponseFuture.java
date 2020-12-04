@@ -1,7 +1,7 @@
 package net.stackoverflow.fastcall.proxy;
 
 /**
- * 异步调用Promise对象
+ * 异步调用结果Future对象
  *
  * @author wormhole
  */

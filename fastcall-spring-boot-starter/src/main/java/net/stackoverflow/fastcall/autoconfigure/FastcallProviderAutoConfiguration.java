@@ -7,6 +7,8 @@ import net.stackoverflow.fastcall.register.ServiceMetaData;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.NettyServer;
 import net.stackoverflow.fastcall.transport.handler.server.ServerRpcHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,8 @@ import java.util.Map;
 @ConditionalOnProperty(prefix = "fastcall.provider", name = "enabled", havingValue = "true")
 public class FastcallProviderAutoConfiguration implements InitializingBean, ApplicationContextAware {
 
+    private static final Logger log = LoggerFactory.getLogger(FastcallProviderAutoConfiguration.class);
+
     @Autowired
     private FastcallProperties properties;
 
@@ -58,6 +62,7 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
     @Override
     public void afterPropertiesSet() throws Exception {
         this.registerService();
+        log.info("start bind server");
         new Thread(() -> fastcallServer().bind()).start();
     }
 
@@ -72,6 +77,7 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
         NettyServer server = new NettyServer(provider.getBacklog(), provider.getTimeout(), provider.getHost(), provider.getPort(), provider.getThreads());
         server.setSerializeManager(serializeManager);
         server.setRpcHandler(serverRpcHandler());
+        log.info("instance NettyServer");
         return server;
     }
 
@@ -82,7 +88,9 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
      */
     @Bean
     public ServerRpcHandler serverRpcHandler() {
-        return new ServerRpcHandler();
+        ServerRpcHandler serverRpcHandler = new ServerRpcHandler();
+        log.info("instance ServerRpcHandler");
+        return serverRpcHandler;
     }
 
     /**
@@ -118,6 +126,7 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
         for (ServiceMetaData meta : metas) {
             registerManager.register(meta);
         }
+        log.info("end register service meta");
     }
 
     /**

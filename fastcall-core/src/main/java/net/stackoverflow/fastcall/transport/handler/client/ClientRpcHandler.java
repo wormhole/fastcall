@@ -20,13 +20,10 @@ public class ClientRpcHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(ClientRpcHandler.class);
 
-    private Map<String, ResponseFuture> futureMap;
+    private volatile Map<String, ResponseFuture> futureMap;
 
-    private SerializeManager serializeManager;
-
-    public ClientRpcHandler(SerializeManager serializeManager) {
+    public ClientRpcHandler() {
         this.futureMap = new ConcurrentHashMap<>();
-        this.serializeManager = serializeManager;
     }
 
     @Override
@@ -44,6 +41,7 @@ public class ClientRpcHandler extends ChannelInboundHandlerAdapter {
         ResponseFuture future = futureMap.get(response.getId());
         future.setResponse(response.getResponse());
         futureMap.remove(response.getId());
+        log.debug("set response, response id:{}, response code:{}", response.getId(), response.getCode());
     }
 
     public synchronized ResponseFuture getFuture(String id) {

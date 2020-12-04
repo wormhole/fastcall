@@ -6,6 +6,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import net.stackoverflow.fastcall.exception.ConnectionInActiveException;
 import net.stackoverflow.fastcall.proxy.ResponseFuture;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.codec.MessageDecoder;
@@ -37,6 +38,8 @@ public class NettyClient {
 
     private final int timeout;
 
+    private InetSocketAddress inetSocketAddress;
+
     private Channel channel;
 
     /**
@@ -46,13 +49,14 @@ public class NettyClient {
      * @param clientRpcHandler rpc处理器
      * @param timeout          超时时间
      */
-    public NettyClient(int timeout, SerializeManager serializeManager, ClientRpcHandler clientRpcHandler) {
+    public NettyClient(int timeout, SerializeManager serializeManager, ClientRpcHandler clientRpcHandler, InetSocketAddress inetSocketAddress) {
         this.timeout = timeout;
         this.serializeManager = serializeManager;
         this.clientRpcHandler = clientRpcHandler;
+        this.inetSocketAddress = inetSocketAddress;
     }
 
-    public void connect(InetSocketAddress socketAddress, CountDownLatch countDownLatch) {
+    public void connect(CountDownLatch countDownLatch) {
         Bootstrap bootstrap = new Bootstrap();
         EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
         try {
@@ -71,15 +75,16 @@ public class NettyClient {
                             pipeline.addLast(clientRpcHandler);
                         }
                     });
-            ChannelFuture channelFuture = bootstrap.connect(socketAddress).sync();
+            ChannelFuture channelFuture = bootstrap.connect(inetSocketAddress).sync();
             this.channel = channelFuture.channel();
             countDownLatch.countDown();
             channel.closeFuture().sync();
-        } catch (Exception e) {
-            log.error("NettyClient.connect()", e);
+        } catch (InterruptedException e) {
+            log.error("fail to connect service ip:{}, port:{}", getHost(), getPort(), e);
         } finally {
             channel = null;
             eventLoopGroup.shutdownGracefully();
+            log.debug("connect closed ip:{}, port:{}", getHost(), getPort());
         }
     }
 
@@ -87,13 +92,21 @@ public class NettyClient {
         return channel != null && channel.isActive();
     }
 
-    public ResponseFuture call(RpcRequest request) {
+    public ResponseFuture call(RpcRequest request) throws ConnectionInActiveException {
         if (isActive()) {
             ResponseFuture future = clientRpcHandler.getFuture(request.getId());
             channel.writeAndFlush(new Message(MessageType.BUSINESS_REQUEST, request));
             return future;
         } else {
-            return null;
+            throw new ConnectionInActiveException(getHost(), getPort());
         }
+    }
+
+    public String getHost() {
+        return inetSocketAddress.getAddress().getHostAddress();
+    }
+
+    public Integer getPort() {
+        return inetSocketAddress.getPort();
     }
 }

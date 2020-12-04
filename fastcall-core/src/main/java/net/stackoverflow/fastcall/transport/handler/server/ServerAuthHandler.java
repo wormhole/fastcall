@@ -4,6 +4,8 @@ import io.netty.channel.*;
 import net.stackoverflow.fastcall.transport.proto.Header;
 import net.stackoverflow.fastcall.transport.proto.Message;
 import net.stackoverflow.fastcall.transport.proto.MessageType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,17 +17,22 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ServerAuthHandler extends ChannelInboundHandlerAdapter {
 
-    private static Map<String, Boolean> nodeCheck = new ConcurrentHashMap<>();
+    private static final Logger log = LoggerFactory.getLogger(ServerAuthHandler.class);
+
+    private static final Map<String, Boolean> nodeCheck = new ConcurrentHashMap<>();
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         nodeCheck.remove(ctx.channel().remoteAddress().toString());
+        ctx.close();
+        log.error("close channel, remote address:{}, local address:{}", ctx.channel().remoteAddress(), ctx.channel().localAddress(), cause);
         super.exceptionCaught(ctx, cause);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         nodeCheck.remove(ctx.channel().remoteAddress().toString());
+        log.error("channel inactive and remove node:{}, remote address:{}, local address:{}", ctx.channel().remoteAddress(), ctx.channel().remoteAddress(), ctx.channel().localAddress());
         super.channelInactive(ctx);
     }
 
@@ -38,15 +45,19 @@ public class ServerAuthHandler extends ChannelInboundHandlerAdapter {
             Message response = null;
             if (nodeCheck.containsKey(nodeIndex)) {
                 response = new Message(MessageType.AUTH_RESPONSE, (byte) -1);
+                ctx.close();
+                log.error("fail to auth and close channel, remote address:{}, local address:{}", ctx.channel().remoteAddress(), ctx.channel().localAddress());
             } else {
                 response = new Message(MessageType.AUTH_RESPONSE, (byte) 0);
                 nodeCheck.put(nodeIndex, true);
+                log.debug("auth success, remote address:{}, local address:{}", ctx.channel().remoteAddress(), ctx.channel().localAddress());
             }
             ctx.writeAndFlush(response);
         } else {
             if (!nodeCheck.containsKey(nodeIndex)) {
                 ctx.writeAndFlush(new Message(MessageType.AUTH_RESPONSE, (byte) -1));
                 ctx.close();
+                log.error("fail to auth and close channel, remote address:{}, local address:{}", ctx.channel().remoteAddress(), ctx.channel().localAddress());
             }
         }
         super.channelRead(ctx, msg);

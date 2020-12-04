@@ -1,6 +1,8 @@
 package net.stackoverflow.fastcall.proxy;
 
 import net.stackoverflow.fastcall.ConnectionManager;
+import net.stackoverflow.fastcall.exception.ConnectionInActiveException;
+import net.stackoverflow.fastcall.exception.ServiceNotFoundException;
 import net.stackoverflow.fastcall.transport.NettyClient;
 import net.stackoverflow.fastcall.transport.proto.RpcRequest;
 import net.stackoverflow.fastcall.register.RegisterManager;
@@ -28,7 +30,7 @@ public class RpcInvocationHandler implements InvocationHandler {
 
     private String group;
 
-    public RpcInvocationHandler(ConnectionManager connectionManager, RegisterManager registerManager,String group) {
+    public RpcInvocationHandler(ConnectionManager connectionManager, RegisterManager registerManager, String group) {
         this.connectionManager = connectionManager;
         this.registerManager = registerManager;
         this.group = group;
@@ -38,16 +40,21 @@ public class RpcInvocationHandler implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) {
         RpcRequest request = new RpcRequest();
         request.setId(UUID.randomUUID().toString());
-        request.setClazz(method.getDeclaringClass());
+        request.setInterfaceType(method.getDeclaringClass());
         request.setMethod(method.getName());
         request.setGroup(group);
         request.setParams(Arrays.asList(args));
         request.setParamsType(Arrays.asList(method.getParameterTypes()));
 
-        InetSocketAddress address = registerManager.getRemoteAddr(request.getGroup(), request.getClazz().getName());
-        NettyClient client = connectionManager.getClient(address);
-        ResponseFuture future = client.call(request);
-        Object response = future.getResponse();
+        Object response = null;
+        try {
+            InetSocketAddress address = registerManager.getServiceAddress(request.getGroup(), request.getInterfaceType().getName());
+            NettyClient client = connectionManager.getClient(address);
+            ResponseFuture future = client.call(request);
+            response = future.getResponse();
+        } catch (ConnectionInActiveException e) {
+            log.error("connection inactive ip:{}, port{}", e.getHost(), e.getPort(), e);
+        }
         return response;
     }
 }

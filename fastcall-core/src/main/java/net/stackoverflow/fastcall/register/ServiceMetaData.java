@@ -65,4 +65,15 @@ public class ServiceMetaData {
     public void setPort(Integer port) {
         this.port = port;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("ServiceMetaData{");
+        sb.append("group='").append(group).append('\'');
+        sb.append(", interfaceName='").append(interfaceName).append('\'');
+        sb.append(", host='").append(host).append('\'');
+        sb.append(", port=").append(port);
+        sb.append('}');
+        return sb.toString();
+    }
 }

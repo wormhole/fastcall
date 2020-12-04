@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -29,11 +30,11 @@ public class ZooKeeperRegisterManager implements RegisterManager {
 
     private ZooKeeper zookeeper;
 
-    private String host;
+    private final String host;
 
-    private Integer port;
+    private final Integer port;
 
-    private Integer sessionTimeout;
+    private final Integer sessionTimeout;
 
     public ZooKeeperRegisterManager(String host, Integer port, Integer sessionTimeout) throws IOException, InterruptedException {
         this.host = host;
@@ -58,6 +59,7 @@ public class ZooKeeperRegisterManager implements RegisterManager {
         });
         connectedSignal.await();
         this.zookeeper = zooKeeper;
+        log.debug("connect zookeeper ip:{}, port:{}", host, port);
     }
 
     @Override
@@ -79,13 +81,14 @@ public class ZooKeeperRegisterManager implements RegisterManager {
                 json = JsonUtils.bean2json(data);
                 zookeeper.setData(path, json.getBytes(), stat.getVersion());
             }
+            log.debug("register service meta data:{}", meta);
         } catch (InterruptedException | KeeperException e) {
-            log.error("ZooKeeperRegisterManager.register()", e);
+            log.error("fail to register service meta data:{}", meta, e);
         }
     }
 
     @Override
-    public InetSocketAddress getServiceAddress(String group, String className) throws ServiceNotFoundException {
+    public InetSocketAddress getServiceAddress(String group, String className) {
         InetSocketAddress inetSocketAddress = null;
         try {
             byte[] bytes = zookeeper.getData(ROOT_PATH + "/" + className, false, new Stat());
@@ -94,15 +97,22 @@ public class ZooKeeperRegisterManager implements RegisterManager {
             Map<String, List<RegistryData.RouteAddress>> map = data.getRoute();
             List<RegistryData.RouteAddress> routeAddresses = map.get(group);
             if (routeAddresses != null) {
-                RegistryData.RouteAddress routeAddress = routeAddresses.get(0);
+                RegistryData.RouteAddress routeAddress = this.randomRouteAddress(routeAddresses);
                 inetSocketAddress = new InetSocketAddress(routeAddress.getHost(), routeAddress.getPort());
+                log.debug("get service address interfaceType:{}, group:{}, ip:{}, port:{}", className, group, routeAddress.getHost(), routeAddress.getHost());
             } else {
-                throw new ServiceNotFoundException();
+                throw new ServiceNotFoundException(className, group, String.format("service not found: interfaceName:{}, group:{}", className, group));
             }
         } catch (InterruptedException | KeeperException e) {
-            log.error("ZooKeeperRegisterManager.getServiceAddress()", e);
+            log.error("fail to get service address interfaceType:{}, group:{}", className, group, e);
         }
         return inetSocketAddress;
+    }
+
+    private RegistryData.RouteAddress randomRouteAddress(List<RegistryData.RouteAddress> addresses) {
+        Random random = new Random();
+        int index = random.nextInt(addresses.size());
+        return addresses.get(index);
     }
 
     /**
@@ -114,7 +124,7 @@ public class ZooKeeperRegisterManager implements RegisterManager {
                 zookeeper.create(ROOT_PATH, "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
             }
         } catch (Exception e) {
-            log.error("ZooKeeperRegisterManager.checkRootNode()", e);
+            log.error("fail to check root node", e);
         }
     }
 }

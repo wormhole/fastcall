@@ -5,13 +5,30 @@ package net.stackoverflow.fastcall.exception;
  *
  * @author wormhole
  */
-public class ServiceNotFoundException extends Exception {
+public class ServiceNotFoundException extends RuntimeException {
 
-    public ServiceNotFoundException() {
+    private final String interfaceName;
+
+    private final String group;
+
+    public ServiceNotFoundException(String interfaceName, String group) {
         super();
+        this.interfaceName = interfaceName;
+        this.group = group;
     }
 
-    public ServiceNotFoundException(String msg) {
+    public ServiceNotFoundException(String interfaceName, String group, String msg) {
         super(msg);
+        this.interfaceName = interfaceName;
+        this.group = group;
     }
+
+    public String getInterfaceName() {
+        return interfaceName;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
 }

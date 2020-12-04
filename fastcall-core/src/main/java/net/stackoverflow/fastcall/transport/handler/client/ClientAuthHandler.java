@@ -5,6 +5,8 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.stackoverflow.fastcall.transport.proto.Message;
 import net.stackoverflow.fastcall.transport.proto.Header;
 import net.stackoverflow.fastcall.transport.proto.MessageType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 客户端认证handler
@@ -13,8 +15,10 @@ import net.stackoverflow.fastcall.transport.proto.MessageType;
  */
 public class ClientAuthHandler extends ChannelInboundHandlerAdapter {
 
+    private static final Logger log = LoggerFactory.getLogger(ClientAuthHandler.class);
+
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    public void channelActive(ChannelHandlerContext ctx) {
         Message request = new Message(MessageType.AUTH_REQUEST);
         ctx.writeAndFlush(request);
     }
@@ -27,6 +31,9 @@ public class ClientAuthHandler extends ChannelInboundHandlerAdapter {
             byte body = (byte) message.getBody();
             if (!isAuthSuccess(body)) {
                 ctx.close();
+                log.error("fail to auth and close channel, remote address:{}, local address:{}", ctx.channel().remoteAddress(), ctx.channel().localAddress());
+            } else {
+                log.debug("auth success, remote address:{}, local address:{}", ctx.channel().remoteAddress(), ctx.channel().localAddress());
             }
         }
         super.channelRead(ctx, msg);

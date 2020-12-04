@@ -5,6 +5,8 @@ import net.stackoverflow.fastcall.register.RegisterManager;
 import net.stackoverflow.fastcall.register.zookeeper.ZooKeeperRegisterManager;
 import net.stackoverflow.fastcall.serialize.JsonSerializeManager;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +23,8 @@ import java.io.IOException;
 @EnableConfigurationProperties(FastcallProperties.class)
 public class FastcallCommonAutoConfiguration {
 
+    private static final Logger log = LoggerFactory.getLogger(FastcallCommonAutoConfiguration.class);
+
     @Autowired
     private FastcallProperties properties;
 
@@ -35,6 +39,7 @@ public class FastcallCommonAutoConfiguration {
         switch (properties.getSerialize()) {
             case "json":
                 manager = new JsonSerializeManager();
+                log.info("instance JsonSerializeManager");
                 break;
             default:
                 break;
@@ -56,6 +61,7 @@ public class FastcallCommonAutoConfiguration {
             case "zookeeper":
                 FastcallProperties.Zookeeper zk = properties.getZookeeper();
                 manager = new ZooKeeperRegisterManager(zk.getHost(), zk.getPort(), zk.getSessionTimeout());
+                log.info("instance ZooKeeperRegisterManager");
                 break;
             default:
                 break;
