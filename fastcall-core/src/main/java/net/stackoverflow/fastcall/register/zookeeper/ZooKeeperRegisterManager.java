@@ -1,5 +1,6 @@
 package net.stackoverflow.fastcall.register.zookeeper;
 
+import net.stackoverflow.fastcall.exception.ServiceNotFoundException;
 import net.stackoverflow.fastcall.register.RegistryData;
 import net.stackoverflow.fastcall.register.RegisterManager;
 import net.stackoverflow.fastcall.register.ServiceMetaData;
@@ -78,13 +79,13 @@ public class ZooKeeperRegisterManager implements RegisterManager {
                 json = JsonUtils.bean2json(data);
                 zookeeper.setData(path, json.getBytes(), stat.getVersion());
             }
-        } catch (Exception e) {
+        } catch (InterruptedException | KeeperException e) {
             log.error("ZooKeeperRegisterManager.register()", e);
         }
     }
 
     @Override
-    public InetSocketAddress getRemoteAddr(String group, String className) {
+    public InetSocketAddress getServiceAddress(String group, String className) throws ServiceNotFoundException {
         InetSocketAddress inetSocketAddress = null;
         try {
             byte[] bytes = zookeeper.getData(ROOT_PATH + "/" + className, false, new Stat());
@@ -95,9 +96,11 @@ public class ZooKeeperRegisterManager implements RegisterManager {
             if (addresses != null) {
                 RegistryData.Address address = addresses.get(0);
                 inetSocketAddress = new InetSocketAddress(address.getHost(), address.getPort());
+            } else {
+                throw new ServiceNotFoundException();
             }
-        } catch (Exception e) {
-            log.error("ZooKeeperRegisterManager.getRemoteAddr()", e);
+        } catch (InterruptedException | KeeperException e) {
+            log.error("ZooKeeperRegisterManager.getServiceAddress()", e);
         }
         return inetSocketAddress;
     }

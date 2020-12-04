@@ -1,5 +1,7 @@
 package net.stackoverflow.fastcall.register;
 
+import net.stackoverflow.fastcall.exception.ServiceNotFoundException;
+
 import java.net.InetSocketAddress;
 
 /**
@@ -22,5 +24,5 @@ public interface RegisterManager {
      * @param className
      * @return
      */
-    InetSocketAddress getRemoteAddr(String group, String className);
+    InetSocketAddress getServiceAddress(String group, String className) throws ServiceNotFoundException;
 }
