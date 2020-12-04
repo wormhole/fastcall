@@ -37,14 +37,14 @@ public class FastcallConsumerAutoConfiguration {
     @Bean
     public ClientRpcHandler clientRpcHandler() {
         ClientRpcHandler clientRpcHandler = new ClientRpcHandler();
-        log.info("instance ClientRpcHandler");
+        log.info("Instance ClientRpcHandler");
         return clientRpcHandler;
     }
 
     @Bean
     public ConnectionManager connectionManager() {
         ConnectionManager connectionManager = new DefaultConnectionManager(serializeManager, clientRpcHandler(), properties.getConsumer().getTimeout());
-        log.info("instance DefaultConnectionManager");
+        log.info("Instance DefaultConnectionManager");
         return connectionManager;
     }
 
@@ -56,7 +56,7 @@ public class FastcallConsumerAutoConfiguration {
     @Bean
     public BeanPostProcessor beanPostProcessor() {
         FastcallBeanPostProcessor fastcallBeanPostProcessor = new FastcallBeanPostProcessor(registerManager, connectionManager());
-        log.info("instance FastcallBeanPostProcessor");
+        log.info("Instance FastcallBeanPostProcessor");
         return fastcallBeanPostProcessor;
     }
 

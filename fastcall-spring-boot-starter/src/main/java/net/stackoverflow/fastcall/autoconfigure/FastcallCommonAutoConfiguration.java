@@ -39,7 +39,7 @@ public class FastcallCommonAutoConfiguration {
         switch (properties.getSerialize()) {
             case "json":
                 manager = new JsonSerializeManager();
-                log.info("instance JsonSerializeManager");
+                log.info("Instance JsonSerializeManager");
                 break;
             default:
                 break;
@@ -61,7 +61,7 @@ public class FastcallCommonAutoConfiguration {
             case "zookeeper":
                 FastcallProperties.Zookeeper zk = properties.getZookeeper();
                 manager = new ZooKeeperRegisterManager(zk.getHost(), zk.getPort(), zk.getSessionTimeout());
-                log.info("instance ZooKeeperRegisterManager");
+                log.info("Instance ZooKeeperRegisterManager");
                 break;
             default:
                 break;

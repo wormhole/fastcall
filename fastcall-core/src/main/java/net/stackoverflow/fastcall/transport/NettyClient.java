@@ -78,13 +78,14 @@ public class NettyClient {
             ChannelFuture channelFuture = bootstrap.connect(inetSocketAddress).sync();
             this.channel = channelFuture.channel();
             countDownLatch.countDown();
+            log.info("[L:{} R:{}] Client connect success", channel.localAddress(), channel.remoteAddress());
             channel.closeFuture().sync();
         } catch (InterruptedException e) {
-            log.error("fail to connect service ip:{}, port:{}", getHost(), getPort(), e);
+            log.error("[R:{}] Client connect fail", getHost() + ":" + getPort(), e);
         } finally {
+            log.info("[L:{} R:{}] Client connection closed", channel.localAddress(), channel.remoteAddress());
             channel = null;
             eventLoopGroup.shutdownGracefully();
-            log.debug("connect closed ip:{}, port:{}", getHost(), getPort());
         }
     }
 

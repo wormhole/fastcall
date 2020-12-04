@@ -24,15 +24,14 @@ public class ServerAuthHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         nodeCheck.remove(ctx.channel().remoteAddress().toString());
-        ctx.close();
-        log.error("close channel, remote address:{}, local address:{}", ctx.channel().remoteAddress(), ctx.channel().localAddress(), cause);
+        log.error("[L:{} R:{}] Server caught exception and remove auth info", ctx.channel().localAddress(), ctx.channel().remoteAddress(), cause);
         super.exceptionCaught(ctx, cause);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         nodeCheck.remove(ctx.channel().remoteAddress().toString());
-        log.error("channel inactive and remove node:{}, remote address:{}, local address:{}", ctx.channel().remoteAddress(), ctx.channel().remoteAddress(), ctx.channel().localAddress());
+        log.error("[L:{} R:{}] Server channel inactive and remove auth info", ctx.channel().localAddress(), ctx.channel().remoteAddress());
         super.channelInactive(ctx);
     }
 
@@ -45,19 +44,17 @@ public class ServerAuthHandler extends ChannelInboundHandlerAdapter {
             Message response = null;
             if (nodeCheck.containsKey(nodeIndex)) {
                 response = new Message(MessageType.AUTH_RESPONSE, (byte) -1);
-                ctx.close();
-                log.error("fail to auth and close channel, remote address:{}, local address:{}", ctx.channel().remoteAddress(), ctx.channel().localAddress());
+                log.error("[L:{} R:{}] Server auth fail", ctx.channel().localAddress(), ctx.channel().remoteAddress());
             } else {
                 response = new Message(MessageType.AUTH_RESPONSE, (byte) 0);
                 nodeCheck.put(nodeIndex, true);
-                log.debug("auth success, remote address:{}, local address:{}", ctx.channel().remoteAddress(), ctx.channel().localAddress());
+                log.debug("[L:{} R:{}] Server auth success", ctx.channel().localAddress(), ctx.channel().remoteAddress());
             }
             ctx.writeAndFlush(response);
         } else {
             if (!nodeCheck.containsKey(nodeIndex)) {
                 ctx.writeAndFlush(new Message(MessageType.AUTH_RESPONSE, (byte) -1));
-                ctx.close();
-                log.error("fail to auth and close channel, remote address:{}, local address:{}", ctx.channel().remoteAddress(), ctx.channel().localAddress());
+                log.error("[L:{} R:{}] Server receive message before auth", ctx.channel().localAddress(), ctx.channel().remoteAddress());
             }
         }
         super.channelRead(ctx, msg);

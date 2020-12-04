@@ -33,6 +33,7 @@ public class ClientRpcHandler extends ChannelInboundHandlerAdapter {
         if (header.getType() == MessageType.BUSINESS_RESPONSE.value()) {
             RpcResponse response = (RpcResponse) message.getBody();
             setResponse(response);
+            log.debug("[L:{} R:{}] Client set response, responseId:{}, responseCode:{}", ctx.channel().localAddress(), ctx.channel().remoteAddress(), response.getId(), response.getCode());
         }
         super.channelRead(ctx, msg);
     }
@@ -41,7 +42,6 @@ public class ClientRpcHandler extends ChannelInboundHandlerAdapter {
         ResponseFuture future = futureMap.get(response.getId());
         future.setResponse(response.getResponse());
         futureMap.remove(response.getId());
-        log.debug("set response, response id:{}, response code:{}", response.getId(), response.getCode());
     }
 
     public synchronized ResponseFuture getFuture(String id) {

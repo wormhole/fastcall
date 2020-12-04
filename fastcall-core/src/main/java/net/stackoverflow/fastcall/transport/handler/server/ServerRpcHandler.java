@@ -9,7 +9,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -35,14 +34,12 @@ public class ServerRpcHandler extends ChannelInboundHandlerAdapter implements Ap
         Header header = message.getHeader();
         if (header.getType() == MessageType.BUSINESS_REQUEST.value()) {
             RpcRequest request = (RpcRequest) message.getBody();
-            RpcResponse response = handlerRequest(request);
-            ctx.writeAndFlush(new Message(MessageType.BUSINESS_RESPONSE, response));
-        } else {
-            ctx.fireChannelRead(msg);
+            handlerRequest(request, ctx);
         }
+        super.channelRead(ctx, msg);
     }
 
-    private RpcResponse handlerRequest(RpcRequest request) {
+    private void handlerRequest(RpcRequest request, ChannelHandlerContext ctx) {
         Object obj = context.getBean(request.getInterfaceType());
         List<Object> params = request.getParams();
         List<Class<?>> paramsType = request.getParamsType();
@@ -52,11 +49,11 @@ public class ServerRpcHandler extends ChannelInboundHandlerAdapter implements Ap
             Method method = obj.getClass().getMethod(request.getMethod(), paramsType.toArray(new Class[0]));
             Object response = method.invoke(obj, params.toArray());
             rpcResponse = new RpcResponse(request.getId(), 0, response, null);
-            log.debug("success execute server rpc handler, request:{}", request);
+            log.debug("[L:{} R:{}] Server execute rpc handler success, requestId:{}", ctx.channel().localAddress(), ctx.channel().remoteAddress(), request.getId());
         } catch (Exception e) {
-            log.error("fail to execute server rpc handler, request:{}", request, e);
+            log.error("[L:{} R:{}] Server execute rpc handler fail, requestId:{}", ctx.channel().localAddress(), ctx.channel().remoteAddress(), request.getId(), e);
             rpcResponse = new RpcResponse(request.getId(), -1, null, e);
         }
-        return rpcResponse;
+        ctx.writeAndFlush(new Message(MessageType.BUSINESS_RESPONSE, rpcResponse));
     }
 }

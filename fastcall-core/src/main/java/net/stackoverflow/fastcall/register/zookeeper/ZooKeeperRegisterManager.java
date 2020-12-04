@@ -59,7 +59,7 @@ public class ZooKeeperRegisterManager implements RegisterManager {
         });
         connectedSignal.await();
         this.zookeeper = zooKeeper;
-        log.debug("connect zookeeper ip:{}, port:{}", host, port);
+        log.info("RegisterManager connected zookeeper");
     }
 
     @Override
@@ -81,9 +81,9 @@ public class ZooKeeperRegisterManager implements RegisterManager {
                 json = JsonUtils.bean2json(data);
                 zookeeper.setData(path, json.getBytes(), stat.getVersion());
             }
-            log.debug("register service meta data:{}", meta);
+            log.info("RegisterManager register service: {}", meta);
         } catch (InterruptedException | KeeperException e) {
-            log.error("fail to register service meta data:{}", meta, e);
+            log.error("RegisterManager fail to register service: {}", meta, e);
         }
     }
 
@@ -99,12 +99,12 @@ public class ZooKeeperRegisterManager implements RegisterManager {
             if (routeAddresses != null) {
                 RegistryData.RouteAddress routeAddress = this.randomRouteAddress(routeAddresses);
                 inetSocketAddress = new InetSocketAddress(routeAddress.getHost(), routeAddress.getPort());
-                log.debug("get service address interfaceType:{}, group:{}, ip:{}, port:{}", className, group, routeAddress.getHost(), routeAddress.getHost());
+                log.info("RegisterManager get service address, interfaceName:{}, group:{}, ip:{}, port:{}", className, group, routeAddress.getHost(), routeAddress.getHost());
             } else {
-                throw new ServiceNotFoundException(className, group, String.format("service not found: interfaceName:{}, group:{}", className, group));
+                throw new ServiceNotFoundException(className, group, String.format("Service not found, interfaceName:{}, group:{}", className, group));
             }
         } catch (InterruptedException | KeeperException e) {
-            log.error("fail to get service address interfaceType:{}, group:{}", className, group, e);
+            log.error("RegisterManager fail to get service address, interfaceName:{}, group:{}", className, group, e);
         }
         return inetSocketAddress;
     }
@@ -124,7 +124,7 @@ public class ZooKeeperRegisterManager implements RegisterManager {
                 zookeeper.create(ROOT_PATH, "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
             }
         } catch (Exception e) {
-            log.error("fail to check root node", e);
+            log.error("RegisterManager fail to check root node", e);
         }
     }
 }

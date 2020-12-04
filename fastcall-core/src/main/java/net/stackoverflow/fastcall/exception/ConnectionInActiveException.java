@@ -1,7 +1,7 @@
 package net.stackoverflow.fastcall.exception;
 
 /**
- * 连接不活跃异常
+ * 连接已断开异常
  *
  * @author wormhole
  */

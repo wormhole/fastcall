@@ -53,7 +53,7 @@ public class RpcInvocationHandler implements InvocationHandler {
             ResponseFuture future = client.call(request);
             response = future.getResponse();
         } catch (ConnectionInActiveException e) {
-            log.error("connection inactive ip:{}, port{}", e.getHost(), e.getPort(), e);
+            log.error("Connection inactive ip:{}, port{}", e.getHost(), e.getPort(), e);
         }
         return response;
     }

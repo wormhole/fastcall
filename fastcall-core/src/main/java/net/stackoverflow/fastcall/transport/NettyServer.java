@@ -88,14 +88,14 @@ public class NettyServer {
                         }
                     });
             ChannelFuture channelFuture = bootstrap.bind(host, port).sync();
-            log.info("server bind success, ip:{}, port:{}", host, port);
+            log.info("[L:{}] Server bind success", host + ":" + port);
             channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
-            log.error("fail to bind server ip:{}, port:{}", host, port, e);
+            log.error("[L:{}] Server bind fail", host + ":" + port, e);
         } finally {
+            log.info("[L:{}] Server stopped", host + ":" + port);
             bossGroup.shutdownGracefully();
             workGroup.shutdownGracefully();
-            log.info("server closed, ip:{}, port:{}", host, port);
         }
     }
 }

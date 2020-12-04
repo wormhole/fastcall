@@ -26,7 +26,7 @@ public class ClientHeatBeatHandler extends ChannelInboundHandlerAdapter {
         if (heartBeatFuture != null) {
             heartBeatFuture.cancel(true);
             ctx.close();
-            log.error("cancel heartbeat and close channel, remote address:{}, local address:{}", ctx.channel().remoteAddress(), ctx.channel().localAddress(), cause);
+            log.error("[L:{} R:{}] Client closed and cancel heartbeat", ctx.channel().localAddress(), ctx.channel().remoteAddress());
         }
         super.exceptionCaught(ctx, cause);
     }
@@ -34,7 +34,6 @@ public class ClientHeatBeatHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (heartBeatFuture == null) {
-            log.debug("start heartbeat task, remote address:{}, local address:{}", ctx.channel().remoteAddress(), ctx.channel().localAddress());
             heartBeatFuture = ctx.executor().scheduleAtFixedRate(() -> {
                 Message ping = new Message(MessageType.HEARTBEAT_PING);
                 ctx.writeAndFlush(ping);

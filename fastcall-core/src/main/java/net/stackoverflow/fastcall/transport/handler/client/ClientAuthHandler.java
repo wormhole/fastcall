@@ -31,9 +31,9 @@ public class ClientAuthHandler extends ChannelInboundHandlerAdapter {
             byte body = (byte) message.getBody();
             if (!isAuthSuccess(body)) {
                 ctx.close();
-                log.error("fail to auth and close channel, remote address:{}, local address:{}", ctx.channel().remoteAddress(), ctx.channel().localAddress());
+                log.error("[L:{} R:{}] Client fail to auth and closed", ctx.channel().localAddress(), ctx.channel().remoteAddress());
             } else {
-                log.debug("auth success, remote address:{}, local address:{}", ctx.channel().remoteAddress(), ctx.channel().localAddress());
+                log.debug("[L:{} R:{}] Client auth success", ctx.channel().localAddress(), ctx.channel().remoteAddress());
             }
         }
         super.channelRead(ctx, msg);

@@ -62,7 +62,6 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
     @Override
     public void afterPropertiesSet() throws Exception {
         this.registerService();
-        log.info("start bind server");
         new Thread(() -> fastcallServer().bind()).start();
     }
 
@@ -77,7 +76,7 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
         NettyServer server = new NettyServer(provider.getBacklog(), provider.getTimeout(), provider.getHost(), provider.getPort(), provider.getThreads());
         server.setSerializeManager(serializeManager);
         server.setRpcHandler(serverRpcHandler());
-        log.info("instance NettyServer");
+        log.info("Instance NettyServer");
         return server;
     }
 
@@ -89,7 +88,7 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
     @Bean
     public ServerRpcHandler serverRpcHandler() {
         ServerRpcHandler serverRpcHandler = new ServerRpcHandler();
-        log.info("instance ServerRpcHandler");
+        log.info("Instance ServerRpcHandler");
         return serverRpcHandler;
     }
 
@@ -126,7 +125,6 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
         for (ServiceMetaData meta : metas) {
             registerManager.register(meta);
         }
-        log.info("end register service meta");
     }
 
     /**

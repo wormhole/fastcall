@@ -51,12 +51,13 @@ public class DefaultConnectionManager implements ConnectionManager {
         String key = host + ":" + port;
         NettyClient client = map.get(key);
         if (client == null) {
+            log.info("[R:{}] ConnectionManager not found client", host + ":" + port);
             client = new NettyClient(timeout, serializeManager, clientRpcHandler, address);
             map.put(key, client);
             initClient(client);
         } else {
             if (!client.isActive()) {
-                log.debug("client inactive ip:{}, port:{}", address.getAddress().getHostAddress(), address.getPort());
+                log.info("[R:{}] ConnectionManager detect client inactive", client.getHost() + ":" + client.getPort());
                 initClient(client);
             }
         }
@@ -64,13 +65,14 @@ public class DefaultConnectionManager implements ConnectionManager {
     }
 
     private void initClient(NettyClient client) {
+        log.info("[R:{}] ConnectionManager init client start", client.getHost() + ":" + client.getPort());
         CountDownLatch countDownLatch = new CountDownLatch(1);
         executorService.execute(() -> client.connect(countDownLatch));
         try {
             countDownLatch.await();
-            log.debug("init client ip:{}, port:{}", client.getHost(), client.getPort());
+            log.info("[R:{}] ConnectionManager init client success", client.getHost() + ":" + client.getPort());
         } catch (InterruptedException e) {
-            log.error("fail to init client ip:{}, port:{}", client.getHost(), client.getPort(), e);
+            log.info("[R:{}] ConnectionManager init client fail", client.getHost() + ":" + client.getPort(), e);
         }
     }
 }
