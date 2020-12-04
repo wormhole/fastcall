@@ -7,33 +7,29 @@ package net.stackoverflow.fastcall.register;
  */
 public class ServiceMetaData {
 
-    /**
-     * 分组
-     */
     private String group;
 
-    /**
-     * 接口全限定名
-     */
-    private String interfaces;
+    private String interfaceName;
 
-    /**
-     * ip
-     */
     private String host;
 
-    /**
-     * 端口
-     */
     private Integer port;
 
     public ServiceMetaData() {
 
     }
 
-    public ServiceMetaData(String group, String interfaces, String host, Integer port) {
+    /**
+     * 构造方法
+     *
+     * @param group         分组
+     * @param interfaceName 接口名称
+     * @param host          服务ip
+     * @param port          服务端口
+     */
+    public ServiceMetaData(String group, String interfaceName, String host, Integer port) {
         this.group = group;
-        this.interfaces = interfaces;
+        this.interfaceName = interfaceName;
         this.host = host;
         this.port = port;
     }
@@ -46,12 +42,12 @@ public class ServiceMetaData {
         this.group = group;
     }
 
-    public String getInterfaces() {
-        return interfaces;
+    public String getInterfaceName() {
+        return interfaceName;
     }
 
-    public void setInterfaces(String interfaces) {
-        this.interfaces = interfaces;
+    public void setInterfaceName(String interfaceName) {
+        this.interfaceName = interfaceName;
     }
 
     public String getHost() {

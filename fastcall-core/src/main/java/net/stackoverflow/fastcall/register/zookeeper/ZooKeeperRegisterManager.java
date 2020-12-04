@@ -63,19 +63,19 @@ public class ZooKeeperRegisterManager implements RegisterManager {
     @Override
     public synchronized void register(ServiceMetaData meta) {
         this.checkRootNode();
-        String path = ROOT_PATH + "/" + meta.getInterfaces();
+        String path = ROOT_PATH + "/" + meta.getInterfaceName();
         try {
             Stat stat = zookeeper.exists(path, false);
             if (stat == null) {
                 RegistryData data = new RegistryData();
-                data.addRoute(meta.getGroup(), meta.getHost(), meta.getPort());
+                data.addRouteAddress(meta.getGroup(), meta.getHost(), meta.getPort());
                 String json = JsonUtils.bean2json(data);
                 zookeeper.create(path, json.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
             } else {
                 byte[] bytes = zookeeper.getData(path, false, new Stat());
                 String json = new String(bytes);
                 RegistryData data = JsonUtils.json2bean(json, RegistryData.class);
-                data.addRoute(meta.getGroup(), meta.getHost(), meta.getPort());
+                data.addRouteAddress(meta.getGroup(), meta.getHost(), meta.getPort());
                 json = JsonUtils.bean2json(data);
                 zookeeper.setData(path, json.getBytes(), stat.getVersion());
             }
@@ -91,11 +91,11 @@ public class ZooKeeperRegisterManager implements RegisterManager {
             byte[] bytes = zookeeper.getData(ROOT_PATH + "/" + className, false, new Stat());
             String json = new String(bytes);
             RegistryData data = JsonUtils.json2bean(json, RegistryData.class);
-            Map<String, List<RegistryData.Address>> map = data.getRoute();
-            List<RegistryData.Address> addresses = map.get(group);
-            if (addresses != null) {
-                RegistryData.Address address = addresses.get(0);
-                inetSocketAddress = new InetSocketAddress(address.getHost(), address.getPort());
+            Map<String, List<RegistryData.RouteAddress>> map = data.getRoute();
+            List<RegistryData.RouteAddress> routeAddresses = map.get(group);
+            if (routeAddresses != null) {
+                RegistryData.RouteAddress routeAddress = routeAddresses.get(0);
+                inetSocketAddress = new InetSocketAddress(routeAddress.getHost(), routeAddress.getPort());
             } else {
                 throw new ServiceNotFoundException();
             }
