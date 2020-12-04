@@ -5,15 +5,12 @@ import net.stackoverflow.fastcall.DefaultConnectionManager;
 import net.stackoverflow.fastcall.properties.FastcallProperties;
 import net.stackoverflow.fastcall.register.RegisterManager;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
-import net.stackoverflow.fastcall.transport.FastcallClient;
 import net.stackoverflow.fastcall.transport.handler.client.ClientRpcHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.Properties;
 
 /**
  * fastcall client自动化配置类
