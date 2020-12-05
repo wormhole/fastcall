@@ -1,7 +1,7 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
-import net.stackoverflow.fastcall.ConnectionManager;
-import net.stackoverflow.fastcall.DefaultConnectionManager;
+import net.stackoverflow.fastcall.transport.ConnectionManager;
+import net.stackoverflow.fastcall.transport.DefaultConnectionManager;
 import net.stackoverflow.fastcall.properties.FastcallProperties;
 import net.stackoverflow.fastcall.register.RegisterManager;
 import net.stackoverflow.fastcall.serialize.SerializeManager;

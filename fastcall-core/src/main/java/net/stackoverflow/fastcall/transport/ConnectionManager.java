@@ -1,6 +1,4 @@
-package net.stackoverflow.fastcall;
-
-import net.stackoverflow.fastcall.transport.NettyClient;
+package net.stackoverflow.fastcall.transport;
 
 import java.net.InetSocketAddress;
 

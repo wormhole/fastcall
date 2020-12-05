@@ -1,8 +1,7 @@
 package net.stackoverflow.fastcall.proxy;
 
-import net.stackoverflow.fastcall.ConnectionManager;
+import net.stackoverflow.fastcall.transport.ConnectionManager;
 import net.stackoverflow.fastcall.exception.ConnectionInActiveException;
-import net.stackoverflow.fastcall.exception.ServiceNotFoundException;
 import net.stackoverflow.fastcall.transport.NettyClient;
 import net.stackoverflow.fastcall.transport.proto.RpcRequest;
 import net.stackoverflow.fastcall.register.RegisterManager;

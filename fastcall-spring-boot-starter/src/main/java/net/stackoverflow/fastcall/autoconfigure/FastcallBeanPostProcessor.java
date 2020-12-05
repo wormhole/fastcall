@@ -1,6 +1,6 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
-import net.stackoverflow.fastcall.ConnectionManager;
+import net.stackoverflow.fastcall.transport.ConnectionManager;
 import net.stackoverflow.fastcall.annotation.FastcallReference;
 import net.stackoverflow.fastcall.proxy.RpcProxyFactory;
 import net.stackoverflow.fastcall.register.RegisterManager;

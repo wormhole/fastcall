@@ -1,6 +1,6 @@
 package net.stackoverflow.fastcall.proxy;
 
-import net.stackoverflow.fastcall.ConnectionManager;
+import net.stackoverflow.fastcall.transport.ConnectionManager;
 import net.stackoverflow.fastcall.register.RegisterManager;
 
 import java.lang.reflect.Proxy;

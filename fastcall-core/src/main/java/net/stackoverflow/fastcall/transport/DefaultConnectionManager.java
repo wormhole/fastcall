@@ -1,7 +1,6 @@
-package net.stackoverflow.fastcall;
+package net.stackoverflow.fastcall.transport;
 
 import net.stackoverflow.fastcall.serialize.SerializeManager;
-import net.stackoverflow.fastcall.transport.NettyClient;
 import net.stackoverflow.fastcall.transport.handler.client.ClientRpcHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -41,6 +41,7 @@ public class ZooKeeperRegisterManager implements RegisterManager {
         this.port = port;
         this.sessionTimeout = sessionTimeout;
         connect();
+        this.createRootNode();
     }
 
     /**
@@ -64,7 +65,6 @@ public class ZooKeeperRegisterManager implements RegisterManager {
 
     @Override
     public synchronized void register(ServiceMetaData meta) {
-        this.checkRootNode();
         String path = ROOT_PATH + "/" + meta.getInterfaceName();
         try {
             Stat stat = zookeeper.exists(path, false);
@@ -99,7 +99,7 @@ public class ZooKeeperRegisterManager implements RegisterManager {
             if (routeAddresses != null) {
                 RegistryData.RouteAddress routeAddress = this.randomRouteAddress(routeAddresses);
                 inetSocketAddress = new InetSocketAddress(routeAddress.getHost(), routeAddress.getPort());
-                log.info("RegisterManager get service address, interfaceName:{}, group:{}, ip:{}, port:{}", className, group, routeAddress.getHost(), routeAddress.getHost());
+                log.debug("RegisterManager get service address, interfaceName:{}, group:{}, ip:{}, port:{}", className, group, routeAddress.getHost(), routeAddress.getHost());
             } else {
                 throw new ServiceNotFoundException(className, group, String.format("Service not found, interfaceName:{}, group:{}", className, group));
             }
@@ -118,10 +118,11 @@ public class ZooKeeperRegisterManager implements RegisterManager {
     /**
      * 检查根节点是否存在，不存在则创建
      */
-    private synchronized void checkRootNode() {
+    private synchronized void createRootNode() {
         try {
             if (zookeeper.exists(ROOT_PATH, false) == null) {
                 zookeeper.create(ROOT_PATH, "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                log.info("RegisterManager create root node");
             }
         } catch (Exception e) {
             log.error("RegisterManager fail to check root node", e);
