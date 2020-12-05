@@ -18,7 +18,7 @@ public class DefaultConnectionManager implements ConnectionManager {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectionManager.class);
 
-    private final Map<String, NettyClient> map;
+    private final Map<String, NettyClient> pool;
 
     private final ExecutorService executorService;
 
@@ -37,7 +37,7 @@ public class DefaultConnectionManager implements ConnectionManager {
      */
     public DefaultConnectionManager(SerializeManager serializeManager, ClientRpcHandler clientRpcHandler, Integer timeout) {
         this.executorService = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1000));
-        this.map = new ConcurrentHashMap<>();
+        this.pool = new ConcurrentHashMap<>();
         this.serializeManager = serializeManager;
         this.clientRpcHandler = clientRpcHandler;
         this.timeout = timeout;
@@ -48,11 +48,11 @@ public class DefaultConnectionManager implements ConnectionManager {
         String host = address.getAddress().getHostAddress();
         Integer port = address.getPort();
         String key = host + ":" + port;
-        NettyClient client = map.get(key);
+        NettyClient client = pool.get(key);
         if (client == null) {
             log.info("[R:{}] ConnectionManager not found client", host + ":" + port);
             client = new NettyClient(timeout, serializeManager, clientRpcHandler, address);
-            map.put(key, client);
+            pool.put(key, client);
             initClient(client);
         } else {
             if (!client.isActive()) {
