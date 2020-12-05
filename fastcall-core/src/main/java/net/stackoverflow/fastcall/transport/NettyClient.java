@@ -38,9 +38,9 @@ public class NettyClient {
 
     private final int timeout;
 
-    private InetSocketAddress inetSocketAddress;
+    private final InetSocketAddress inetSocketAddress;
 
-    private Channel channel;
+    private volatile Channel channel;
 
     /**
      * 构造方法
