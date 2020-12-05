@@ -8,6 +8,7 @@ import net.stackoverflow.fastcall.serialize.SerializeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,16 +35,10 @@ public class FastcallCommonAutoConfiguration {
      * @return
      */
     @Bean
+    @ConditionalOnProperty(prefix = "fastcall", name = "serialize", havingValue = "json")
     public SerializeManager serializeManager() {
-        SerializeManager manager = null;
-        switch (properties.getSerialize()) {
-            case "json":
-                manager = new JsonSerializeManager();
-                log.info("Instance JsonSerializeManager");
-                break;
-            default:
-                break;
-        }
+        SerializeManager manager = new JsonSerializeManager();
+        log.info("Instance JsonSerializeManager");
         return manager;
     }
 
@@ -55,17 +50,11 @@ public class FastcallCommonAutoConfiguration {
      * @throws InterruptedException
      */
     @Bean
+    @ConditionalOnProperty(prefix = "fastcall", name = "register", havingValue = "zookeeper")
     public RegisterManager registerManager() throws IOException, InterruptedException {
-        RegisterManager manager = null;
-        switch (properties.getRegister()) {
-            case "zookeeper":
-                FastcallProperties.Zookeeper zk = properties.getZookeeper();
-                manager = new ZooKeeperRegisterManager(zk.getHost(), zk.getPort(), zk.getSessionTimeout());
-                log.info("Instance ZooKeeperRegisterManager");
-                break;
-            default:
-                break;
-        }
+        FastcallProperties.Zookeeper zk = properties.getZookeeper();
+        RegisterManager manager = new ZooKeeperRegisterManager(zk.getHost(), zk.getPort(), zk.getSessionTimeout());
+        log.info("Instance ZooKeeperRegisterManager");
         return manager;
     }
 }
