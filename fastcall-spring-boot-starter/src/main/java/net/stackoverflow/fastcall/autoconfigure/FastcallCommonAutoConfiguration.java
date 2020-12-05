@@ -1,5 +1,7 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
+import net.stackoverflow.fastcall.DefaultFastcallManager;
+import net.stackoverflow.fastcall.FastcallManager;
 import net.stackoverflow.fastcall.properties.FastcallProperties;
 import net.stackoverflow.fastcall.register.RegisterManager;
 import net.stackoverflow.fastcall.register.zookeeper.ZooKeeperRegisterManager;
@@ -55,6 +57,13 @@ public class FastcallCommonAutoConfiguration {
         FastcallProperties.Zookeeper zk = properties.getZookeeper();
         RegisterManager manager = new ZooKeeperRegisterManager(zk.getHost(), zk.getPort(), zk.getSessionTimeout());
         log.info("Instance ZooKeeperRegisterManager");
+        return manager;
+    }
+
+    @Bean
+    public FastcallManager fastcallManager() throws IOException, InterruptedException {
+        FastcallManager manager = new DefaultFastcallManager(registerManager(),serializeManager());
+        log.info("Instance FastcallManager");
         return manager;
     }
 }

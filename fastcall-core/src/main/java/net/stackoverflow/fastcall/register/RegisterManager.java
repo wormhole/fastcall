@@ -3,6 +3,7 @@ package net.stackoverflow.fastcall.register;
 import net.stackoverflow.fastcall.exception.ServiceNotFoundException;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 
 /**
  * 注册中心管理器
@@ -16,13 +17,13 @@ public interface RegisterManager {
      *
      * @param meta
      */
-    void register(ServiceMetaData meta);
+    void registerService(ServiceMetaData meta);
 
     /**
      * 获取服务
      * @param group
-     * @param className
+     * @param clazz
      * @return
      */
-    InetSocketAddress getServiceAddress(String group, String className) throws ServiceNotFoundException;
+    List<InetSocketAddress> getServiceAddress(String group, Class<?> clazz) throws ServiceNotFoundException;
 }

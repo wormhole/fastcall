@@ -1,5 +1,6 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
+import net.stackoverflow.fastcall.BeanContext;
 import net.stackoverflow.fastcall.annotation.FastcallService;
 import net.stackoverflow.fastcall.properties.FastcallProperties;
 import net.stackoverflow.fastcall.register.RegisterManager;
@@ -23,6 +24,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,8 +63,9 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
      */
     @Override
     public void afterPropertiesSet() throws Exception {
+        this.initBeanContext();
         this.registerService();
-        new Thread(() -> fastcallServer().bind()).start();
+        this.bindServer();
     }
 
     /**
@@ -71,25 +74,46 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
      * @return
      */
     @Bean
-    public NettyServer fastcallServer() {
+    public NettyServer nettyServer() {
         FastcallProperties.Provider provider = properties.getProvider();
-        NettyServer server = new NettyServer(provider.getBacklog(), provider.getTimeout(), provider.getHost(), provider.getPort(), provider.getThreads());
-        server.setSerializeManager(serializeManager);
-        server.setRpcHandler(serverRpcHandler());
+        NettyServer server = new NettyServer(provider.getBacklog(), provider.getTimeout(), provider.getHost(), provider.getPort(), provider.getThreads(), serializeManager);
         log.info("Instance NettyServer");
         return server;
     }
 
     /**
-     * rpc处理器
+     * 向注册中心注册服务信息
      *
-     * @return
+     * @throws UnknownHostException
      */
-    @Bean
-    public ServerRpcHandler serverRpcHandler() {
-        ServerRpcHandler serverRpcHandler = new ServerRpcHandler();
-        log.info("Instance ServerRpcHandler");
-        return serverRpcHandler;
+    private void registerService() throws UnknownHostException {
+        List<ServiceMetaData> metas = getServiceMeta();
+        for (ServiceMetaData meta : metas) {
+            registerManager.registerService(meta);
+        }
+    }
+
+    /**
+     * 初始化bean容器
+     */
+    private void initBeanContext() {
+        Map<String, Object> map = applicationContext.getBeansWithAnnotation(FastcallService.class);
+        Map<String, Object> beanMap = new HashMap<>();
+        for (Object obj : map.values()) {
+            Class<?>[] classes = obj.getClass().getInterfaces();
+            for (Class<?> clazz : classes) {
+                beanMap.put(clazz.getName(), obj);
+            }
+        }
+        BeanContext.setBeans(beanMap);
+        log.info("Init BeanContext");
+    }
+
+    /**
+     * 绑定服务端
+     */
+    private void bindServer() {
+        new Thread(() -> nettyServer().bind()).start();
     }
 
     /**
@@ -113,18 +137,6 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
             }
         }
         return metas;
-    }
-
-    /**
-     * 向注册中心注册服务信息
-     *
-     * @throws UnknownHostException
-     */
-    private void registerService() throws UnknownHostException {
-        List<ServiceMetaData> metas = getServiceMeta();
-        for (ServiceMetaData meta : metas) {
-            registerManager.register(meta);
-        }
     }
 
     /**

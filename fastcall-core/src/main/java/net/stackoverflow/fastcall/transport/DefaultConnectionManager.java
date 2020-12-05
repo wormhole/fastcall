@@ -24,34 +24,30 @@ public class DefaultConnectionManager implements ConnectionManager {
 
     private final SerializeManager serializeManager;
 
-    private final ClientRpcHandler clientRpcHandler;
-
     private final Integer timeout;
 
     /**
      * 构造方法
      *
      * @param serializeManager 序列化管理器
-     * @param clientRpcHandler 客户端rpc handler
-     * @param timeout          客户端连接超时时间
+     * @param timeout          客户端心跳检测超时时间
      */
-    public DefaultConnectionManager(SerializeManager serializeManager, ClientRpcHandler clientRpcHandler, Integer timeout) {
+    public DefaultConnectionManager(SerializeManager serializeManager, Integer timeout) {
         this.executorService = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1000));
         this.pool = new ConcurrentHashMap<>();
         this.serializeManager = serializeManager;
-        this.clientRpcHandler = clientRpcHandler;
         this.timeout = timeout;
     }
 
     @Override
-    public synchronized NettyClient getClient(InetSocketAddress address) {
+    public synchronized NettyClient getConnection(InetSocketAddress address) {
         String host = address.getAddress().getHostAddress();
         Integer port = address.getPort();
         String key = host + ":" + port;
         NettyClient client = pool.get(key);
         if (client == null) {
             log.info("[R:{}] ConnectionManager not found client", host + ":" + port);
-            client = new NettyClient(timeout, serializeManager, clientRpcHandler, address);
+            client = new NettyClient(serializeManager, host, port, timeout);
             pool.put(key, client);
             initClient(client);
         } else {

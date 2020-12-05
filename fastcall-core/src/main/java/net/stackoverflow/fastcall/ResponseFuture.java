@@ -1,4 +1,7 @@
-package net.stackoverflow.fastcall.proxy;
+package net.stackoverflow.fastcall;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 异步调用结果Future对象
@@ -7,7 +10,9 @@ package net.stackoverflow.fastcall.proxy;
  */
 public class ResponseFuture {
 
-    private static final Object lock = new Object();
+    private static final Logger log = LoggerFactory.getLogger(ResponseFuture.class);
+
+    private final Object lock = new Object();
 
     private volatile boolean success = false;
 
@@ -36,7 +41,7 @@ public class ResponseFuture {
                 try {
                     lock.wait();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    log.error("Get response fail", e);
                 }
             }
             return response;

@@ -1,5 +1,7 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
+import net.stackoverflow.fastcall.DefaultFastcallManager;
+import net.stackoverflow.fastcall.FastcallManager;
 import net.stackoverflow.fastcall.transport.ConnectionManager;
 import net.stackoverflow.fastcall.transport.DefaultConnectionManager;
 import net.stackoverflow.fastcall.properties.FastcallProperties;
@@ -29,21 +31,14 @@ public class FastcallConsumerAutoConfiguration {
     private SerializeManager serializeManager;
 
     @Autowired
-    private RegisterManager registerManager;
+    private FastcallManager fastcallManager;
 
     @Autowired
     private FastcallProperties properties;
 
     @Bean
-    public ClientRpcHandler clientRpcHandler() {
-        ClientRpcHandler clientRpcHandler = new ClientRpcHandler();
-        log.info("Instance ClientRpcHandler");
-        return clientRpcHandler;
-    }
-
-    @Bean
     public ConnectionManager connectionManager() {
-        ConnectionManager connectionManager = new DefaultConnectionManager(serializeManager, clientRpcHandler(), properties.getConsumer().getTimeout());
+        ConnectionManager connectionManager = new DefaultConnectionManager(serializeManager, properties.getConsumer().getTimeout());
         log.info("Instance DefaultConnectionManager");
         return connectionManager;
     }
@@ -55,7 +50,8 @@ public class FastcallConsumerAutoConfiguration {
      */
     @Bean
     public BeanPostProcessor beanPostProcessor() {
-        FastcallBeanPostProcessor fastcallBeanPostProcessor = new FastcallBeanPostProcessor(registerManager, connectionManager());
+        ((DefaultFastcallManager) fastcallManager).setConnectionManager(connectionManager());
+        FastcallBeanPostProcessor fastcallBeanPostProcessor = new FastcallBeanPostProcessor(fastcallManager);
         log.info("Instance FastcallBeanPostProcessor");
         return fastcallBeanPostProcessor;
     }

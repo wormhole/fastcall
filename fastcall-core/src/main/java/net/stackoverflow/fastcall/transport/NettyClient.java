@@ -6,8 +6,9 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import net.stackoverflow.fastcall.FastcallManager;
+import net.stackoverflow.fastcall.ResponseFuture;
 import net.stackoverflow.fastcall.exception.ConnectionInActiveException;
-import net.stackoverflow.fastcall.proxy.ResponseFuture;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.codec.MessageDecoder;
 import net.stackoverflow.fastcall.transport.codec.MessageEncoder;
@@ -34,26 +35,27 @@ public class NettyClient {
 
     private final SerializeManager serializeManager;
 
-    private final ClientRpcHandler clientRpcHandler;
+    private final String host;
+
+    private final Integer port;
 
     private final int timeout;
-
-    private final InetSocketAddress inetSocketAddress;
 
     private volatile Channel channel;
 
     /**
      * 构造方法
      *
-     * @param serializeManager 序列化器
-     * @param clientRpcHandler rpc处理器
-     * @param timeout          超时时间
+     * @param serializeManager 序列化管理器
+     * @param host             远程ip地址
+     * @param port             远程端口
+     * @param timeout          心跳检测超时时间
      */
-    public NettyClient(int timeout, SerializeManager serializeManager, ClientRpcHandler clientRpcHandler, InetSocketAddress inetSocketAddress) {
-        this.timeout = timeout;
+    public NettyClient(SerializeManager serializeManager, String host, Integer port, Integer timeout) {
         this.serializeManager = serializeManager;
-        this.clientRpcHandler = clientRpcHandler;
-        this.inetSocketAddress = inetSocketAddress;
+        this.host = host;
+        this.port = port;
+        this.timeout = timeout;
     }
 
     public void connect(CountDownLatch countDownLatch) {
@@ -72,10 +74,10 @@ public class NettyClient {
                             pipeline.addLast(new ReadTimeoutHandler(timeout));
                             pipeline.addLast(new ClientAuthHandler());
                             pipeline.addLast(new ClientHeatBeatHandler());
-                            pipeline.addLast(clientRpcHandler);
+                            pipeline.addLast(new ClientRpcHandler());
                         }
                     });
-            ChannelFuture channelFuture = bootstrap.connect(inetSocketAddress).sync();
+            ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
             this.channel = channelFuture.channel();
             countDownLatch.countDown();
             log.info("[L:{} R:{}] Client connect success", channel.localAddress(), channel.remoteAddress());
@@ -92,21 +94,19 @@ public class NettyClient {
         return channel != null && channel.isActive();
     }
 
-    public ResponseFuture call(RpcRequest request) throws ConnectionInActiveException {
+    public void send(Message message) throws ConnectionInActiveException {
         if (isActive()) {
-            ResponseFuture future = clientRpcHandler.getFuture(request.getId());
-            channel.writeAndFlush(new Message(MessageType.BUSINESS_REQUEST, request));
-            return future;
+            channel.writeAndFlush(message);
         } else {
             throw new ConnectionInActiveException(getHost(), getPort());
         }
     }
 
     public String getHost() {
-        return inetSocketAddress.getAddress().getHostAddress();
+        return host;
     }
 
     public Integer getPort() {
-        return inetSocketAddress.getPort();
+        return port;
     }
 }

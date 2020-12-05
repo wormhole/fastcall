@@ -2,12 +2,10 @@ package net.stackoverflow.fastcall.transport.handler.server;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import net.stackoverflow.fastcall.BeanContext;
 import net.stackoverflow.fastcall.transport.proto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -17,16 +15,9 @@ import java.util.List;
  *
  * @author wormhole
  */
-public class ServerRpcHandler extends ChannelInboundHandlerAdapter implements ApplicationContextAware {
+public class ServerRpcHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(ServerRpcHandler.class);
-
-    private ApplicationContext context;
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.context = applicationContext;
-    }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -40,12 +31,11 @@ public class ServerRpcHandler extends ChannelInboundHandlerAdapter implements Ap
     }
 
     private void handlerRequest(RpcRequest request, ChannelHandlerContext ctx) {
-        Object obj = context.getBean(request.getInterfaceType());
-        List<Object> params = request.getParams();
-        List<Class<?>> paramsType = request.getParamsType();
-
         RpcResponse rpcResponse = null;
         try {
+            Object obj = BeanContext.getBean(request.getInterfaceType());
+            List<Object> params = request.getParams();
+            List<Class<?>> paramsType = request.getParamsType();
             Method method = obj.getClass().getMethod(request.getMethod(), paramsType.toArray(new Class[0]));
             Object response = method.invoke(obj, params == null ? null : params.toArray());
             rpcResponse = new RpcResponse(request.getId(), 0, response, null);

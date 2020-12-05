@@ -4,7 +4,7 @@ import net.stackoverflow.fastcall.exception.ServiceNotFoundException;
 import net.stackoverflow.fastcall.register.RegistryData;
 import net.stackoverflow.fastcall.register.RegisterManager;
 import net.stackoverflow.fastcall.register.ServiceMetaData;
-import net.stackoverflow.fastcall.util.JsonUtils;
+import net.stackoverflow.fastcall.register.JsonUtils;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -64,7 +64,7 @@ public class ZooKeeperRegisterManager implements RegisterManager {
     }
 
     @Override
-    public synchronized void register(ServiceMetaData meta) {
+    public synchronized void registerService(ServiceMetaData meta) {
         String path = ROOT_PATH + "/" + meta.getInterfaceName();
         try {
             Stat stat = zookeeper.exists(path, false);
@@ -88,31 +88,31 @@ public class ZooKeeperRegisterManager implements RegisterManager {
     }
 
     @Override
-    public InetSocketAddress getServiceAddress(String group, String className) {
-        InetSocketAddress inetSocketAddress = null;
+    public List<InetSocketAddress> getServiceAddress(String group, Class<?> clazz) {
+        List<InetSocketAddress> socketAddresses = new ArrayList<>();
         try {
-            byte[] bytes = zookeeper.getData(ROOT_PATH + "/" + className, false, new Stat());
+            byte[] bytes = zookeeper.getData(ROOT_PATH + "/" + clazz.getName(), false, new Stat());
             String json = new String(bytes);
             RegistryData data = JsonUtils.json2bean(json, RegistryData.class);
             Map<String, List<RegistryData.RouteAddress>> map = data.getRoute();
             List<RegistryData.RouteAddress> routeAddresses = map.get(group);
             if (routeAddresses != null) {
-                RegistryData.RouteAddress routeAddress = this.randomRouteAddress(routeAddresses);
-                inetSocketAddress = new InetSocketAddress(routeAddress.getHost(), routeAddress.getPort());
-                log.debug("RegisterManager get service address, interfaceName:{}, group:{}, ip:{}, port:{}", className, group, routeAddress.getHost(), routeAddress.getPort());
+                socketAddresses = this.toSocketAddress(routeAddresses);
             } else {
-                throw new ServiceNotFoundException(className, group, String.format("Service not found, interfaceName:{}, group:{}", className, group));
+                throw new ServiceNotFoundException(clazz.getName(), group, String.format("Service not found, interfaceName:{}, group:{}", clazz.getName(), group));
             }
         } catch (InterruptedException | KeeperException e) {
-            log.error("RegisterManager fail to get service address, interfaceName:{}, group:{}", className, group, e);
+            log.error("RegisterManager fail to get service address, interfaceName:{}, group:{}", clazz.getName(), group, e);
         }
-        return inetSocketAddress;
+        return socketAddresses;
     }
 
-    private RegistryData.RouteAddress randomRouteAddress(List<RegistryData.RouteAddress> addresses) {
-        Random random = new Random();
-        int index = random.nextInt(addresses.size());
-        return addresses.get(index);
+    private List<InetSocketAddress> toSocketAddress(List<RegistryData.RouteAddress> addresses) {
+        List<InetSocketAddress> socketAddresses = new ArrayList<>();
+        for (RegistryData.RouteAddress address : addresses) {
+            socketAddresses.add(new InetSocketAddress(address.getHost(),address.getPort()));
+        }
+        return socketAddresses;
     }
 
     /**

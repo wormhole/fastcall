@@ -15,5 +15,5 @@ public interface ConnectionManager {
      * @param address 地址
      * @return
      */
-    NettyClient getClient(InetSocketAddress address);
+    NettyClient getConnection(InetSocketAddress address);
 }

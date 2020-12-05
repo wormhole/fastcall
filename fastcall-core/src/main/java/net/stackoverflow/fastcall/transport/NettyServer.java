@@ -36,33 +36,25 @@ public class NettyServer {
 
     private final Integer threads;
 
-    private SerializeManager serializeManager;
-
-    private ServerRpcHandler serverRpcHandler;
+    private final SerializeManager serializeManager;
 
     /**
      * 构造方法
      *
-     * @param backlog 监听队列
-     * @param timeout 心跳检测超时时间
-     * @param host    监听地址
-     * @param port    监听端口
-     * @param threads 业务线程池大小
+     * @param backlog          监听队列
+     * @param timeout          心跳检测超时时间
+     * @param host             监听地址
+     * @param port             监听端口
+     * @param threads          业务线程池大小
+     * @param serializeManager 序列化管理器
      */
-    public NettyServer(Integer backlog, Integer timeout, String host, Integer port, Integer threads) {
+    public NettyServer(Integer backlog, Integer timeout, String host, Integer port, Integer threads, SerializeManager serializeManager) {
         this.backlog = backlog;
         this.timeout = timeout;
         this.host = host;
         this.port = port;
         this.threads = threads;
-    }
-
-    public void setSerializeManager(SerializeManager serializeManager) {
         this.serializeManager = serializeManager;
-    }
-
-    public void setRpcHandler(ServerRpcHandler serverRpcHandler) {
-        this.serverRpcHandler = serverRpcHandler;
     }
 
     public void bind() {
@@ -84,7 +76,7 @@ public class NettyServer {
                             pipeline.addLast(new ReadTimeoutHandler(timeout));
                             pipeline.addLast(new ServerAuthHandler());
                             pipeline.addLast(new ServerHeatBeatHandler());
-                            pipeline.addLast(businessGroup, serverRpcHandler);
+                            pipeline.addLast(businessGroup, new ServerRpcHandler());
                         }
                     });
             ChannelFuture channelFuture = bootstrap.bind(host, port).sync();

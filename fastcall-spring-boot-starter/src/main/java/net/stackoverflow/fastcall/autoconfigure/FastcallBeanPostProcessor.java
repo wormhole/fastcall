@@ -1,5 +1,6 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
+import net.stackoverflow.fastcall.FastcallManager;
 import net.stackoverflow.fastcall.transport.ConnectionManager;
 import net.stackoverflow.fastcall.annotation.FastcallReference;
 import net.stackoverflow.fastcall.proxy.RpcProxyFactory;
@@ -21,13 +22,10 @@ public class FastcallBeanPostProcessor implements BeanPostProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(FastcallBeanPostProcessor.class);
 
-    private final RegisterManager registerManager;
+    private final FastcallManager fastcallManager;
 
-    private final ConnectionManager connectionManager;
-
-    public FastcallBeanPostProcessor(RegisterManager registerManager, ConnectionManager connectionManager) {
-        this.registerManager = registerManager;
-        this.connectionManager = connectionManager;
+    public FastcallBeanPostProcessor(FastcallManager fastcallManager) {
+        this.fastcallManager = fastcallManager;
     }
 
     @Override
@@ -44,7 +42,7 @@ public class FastcallBeanPostProcessor implements BeanPostProcessor {
             if (reference != null) {
                 try {
                     field.setAccessible(true);
-                    field.set(bean, RpcProxyFactory.create(field.getType(), connectionManager, registerManager, reference.group()));
+                    field.set(bean, RpcProxyFactory.create(field.getType(), fastcallManager, reference.group()));
                 } catch (IllegalAccessException e) {
                     log.error("BeanPostProcessor set field fail", e);
                 }
