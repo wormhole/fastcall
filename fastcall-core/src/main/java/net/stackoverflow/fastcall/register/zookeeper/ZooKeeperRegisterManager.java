@@ -99,7 +99,7 @@ public class ZooKeeperRegisterManager implements RegisterManager {
             if (routeAddresses != null) {
                 RegistryData.RouteAddress routeAddress = this.randomRouteAddress(routeAddresses);
                 inetSocketAddress = new InetSocketAddress(routeAddress.getHost(), routeAddress.getPort());
-                log.debug("RegisterManager get service address, interfaceName:{}, group:{}, ip:{}, port:{}", className, group, routeAddress.getHost(), routeAddress.getHost());
+                log.debug("RegisterManager get service address, interfaceName:{}, group:{}, ip:{}, port:{}", className, group, routeAddress.getHost(), routeAddress.getPort());
             } else {
                 throw new ServiceNotFoundException(className, group, String.format("Service not found, interfaceName:{}, group:{}", className, group));
             }
