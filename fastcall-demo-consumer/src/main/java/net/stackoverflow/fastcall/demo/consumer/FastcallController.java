@@ -12,8 +12,19 @@ public class FastcallController {
     @FastcallReference(group = "group-1")
     private SayService sayService;
 
-    @GetMapping("/say")
+    @GetMapping("/say1")
     public String say(@RequestParam("content") String content) {
         return sayService.say(content);
+    }
+
+    @GetMapping("/say2")
+    public String say(@RequestParam("num") Integer num) {
+        sayService.say(num);
+        return "success";
+    }
+
+    @GetMapping("/say3")
+    public String say() {
+        return sayService.say();
     }
 }

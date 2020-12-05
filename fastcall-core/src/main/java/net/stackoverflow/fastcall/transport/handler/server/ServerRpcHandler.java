@@ -47,7 +47,7 @@ public class ServerRpcHandler extends ChannelInboundHandlerAdapter implements Ap
         RpcResponse rpcResponse = null;
         try {
             Method method = obj.getClass().getMethod(request.getMethod(), paramsType.toArray(new Class[0]));
-            Object response = method.invoke(obj, params.toArray());
+            Object response = method.invoke(obj, params == null ? null : params.toArray());
             rpcResponse = new RpcResponse(request.getId(), 0, response, null);
             log.debug("[L:{} R:{}] Server execute rpc handler success, requestId:{}", ctx.channel().localAddress(), ctx.channel().remoteAddress(), request.getId());
         } catch (Exception e) {

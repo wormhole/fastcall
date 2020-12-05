@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -42,7 +43,7 @@ public class RpcInvocationHandler implements InvocationHandler {
         request.setInterfaceType(method.getDeclaringClass());
         request.setMethod(method.getName());
         request.setGroup(group);
-        request.setParams(Arrays.asList(args));
+        request.setParams(args == null ? null : Arrays.asList(args));
         request.setParamsType(Arrays.asList(method.getParameterTypes()));
 
         Object response = null;
