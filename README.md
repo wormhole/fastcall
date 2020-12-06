@@ -51,8 +51,7 @@ $ cd ../fastcall-spring-boot-starter
 </dependencies>
 ```
 
-* `application.properties`定义配置
->对于服务提供者，`fastcall.provider.enabled`必须指定为`true`，其他除了`fastcall.registry.zookeeper.host`、`fastcall.registry.zookeeper.port`，都可以不配置，使用默认值
+* `application.properties`定义配置，对于服务提供者，`fastcall.provider.enabled`必须指定为`true`，其他除了`fastcall.registry.zookeeper.host`、`fastcall.registry.zookeeper.port`，都可以不配置，使用默认值
 ```
 #序列化方式
 fastcall.serialize=json
