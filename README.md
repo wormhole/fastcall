@@ -176,13 +176,28 @@ public class FastcallController {
 |fastcall-demo-provider|样例工程，服务提供者|
 |fastcall-demo-consumer|样例工程，服务消费者|
 
-## 五、支持情况
+## 五、关于FASTCALL协议
+|字段|说明|大小|
+|----|----|----|
+|magic|魔术字，固定为fastcall|8字节|
+|version|协议版本，当前版本为0.1|2字节|
+|length|除去magic,version,length三个字段的报文长度|4字节|
+|type|消息类型|1字节|
+|attachment_size|头部附加信息个数|4字节|
+|key_size|头部附加信息key长度|4字节|
+|key|头部附加信息key|变长|
+|value_size|头部附加信息value长度|4字节|
+|value|头部附加信息value|变长|
+|~|~|~|
+|body_size|消息体长度|4字节|
+|body|消息体|变长|
+
+## 六、支持情况
 >未勾选的为待支持的类型
 
-* 序列化方式
-- [x] json
-- [ ] protobuf
-- [ ] msgpack 
+|序列化类型|json|protobuf|msgpack|
+|----|----|----|----|
+|是否支持|✔|❌|❌|
 
 * 注册中心
 - [x] zookeeper
