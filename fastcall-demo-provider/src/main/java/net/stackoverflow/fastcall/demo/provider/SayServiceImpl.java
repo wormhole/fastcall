@@ -12,31 +12,16 @@ public class SayServiceImpl implements SayService {
 
     @Override
     public String say(String content) {
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         return "hello " + content;
     }
 
     @Override
-    public void say(Integer num) {
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        log.info("hello " + num);
+    public void say(Integer content) {
+        log.info("hello " + content);
     }
 
     @Override
     public String say() {
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         return "hello";
     }
 }

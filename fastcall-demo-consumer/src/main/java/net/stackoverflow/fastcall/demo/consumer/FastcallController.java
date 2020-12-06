@@ -18,8 +18,8 @@ public class FastcallController {
     }
 
     @GetMapping("/say2")
-    public String say(@RequestParam("num") Integer num) {
-        sayService.say(num);
+    public String say(@RequestParam("content") Integer content) {
+        sayService.say(content);
         return "success";
     }
 
