@@ -1,4 +1,4 @@
-<div align=center/>![logo](logo.png)
+![logo](logo.png)
 
 [![downloads](https://img.shields.io/github/downloads/wormhole/fastcall/total)](https://github.com/wormhole/fastcall/releases)
 [![forks](https://img.shields.io/github/forks/wormhole/fastcall)](https://github.com/wormhole/fastcall/network/members)
