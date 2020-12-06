@@ -165,7 +165,18 @@ public class FastcallController {
 }
 ```
 
-## 四、支持情况
+## 四、模块划分
+|模块名|说明|
+|----|----|
+|fastcall-parent|对依赖版本进行统一管理|
+|fastcall-core|核心模块，包括序列化管理，注册中心管理，连接管理，应用层协议等|
+|fastcall-spring-boot-autoconfigure|spring boot自动化配置模块，用于spring boot项目|
+|fastcall-spring-boot-starter|spring boot starter模块，对自动化配置模块及相关依赖进行统一管理|
+|fastcall-demo-api|样例工程，公共接口|
+|fastcall-demo-provider|样例工程，服务提供者|
+|fastcall-demo-consumer|样例工程，服务消费者|
+
+## 五、支持情况
 >未勾选的为待支持的类型
 
 * 序列化方式
@@ -184,6 +195,6 @@ public class FastcallController {
 - [ ] http
 - [ ] hessian
 
-## 五、LICENSE
+## 六、LICENSE
 [MIT](LICENSE) © wormhole
 
