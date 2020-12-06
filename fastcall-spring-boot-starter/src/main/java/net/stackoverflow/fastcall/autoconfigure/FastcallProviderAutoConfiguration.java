@@ -1,13 +1,17 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
 import net.stackoverflow.fastcall.BeanContext;
+import net.stackoverflow.fastcall.DefaultProviderManager;
+import net.stackoverflow.fastcall.FastcallManager;
+import net.stackoverflow.fastcall.ProviderManager;
 import net.stackoverflow.fastcall.annotation.FastcallService;
+import net.stackoverflow.fastcall.config.FastcallConfig;
+import net.stackoverflow.fastcall.config.ProviderConfig;
 import net.stackoverflow.fastcall.properties.FastcallProperties;
-import net.stackoverflow.fastcall.register.RegisterManager;
+import net.stackoverflow.fastcall.register.RegistryManager;
 import net.stackoverflow.fastcall.register.ServiceMetaData;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.NettyServer;
-import net.stackoverflow.fastcall.transport.handler.server.ServerRpcHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -41,13 +45,16 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
     private static final Logger log = LoggerFactory.getLogger(FastcallProviderAutoConfiguration.class);
 
     @Autowired
-    private FastcallProperties properties;
+    private FastcallConfig fastcallConfig;
 
     @Autowired
     private SerializeManager serializeManager;
 
     @Autowired
-    private RegisterManager registerManager;
+    private RegistryManager registryManager;
+
+    @Autowired
+    private FastcallManager fastcallManager;
 
     private ApplicationContext applicationContext;
 
@@ -58,74 +65,32 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
 
     /**
      * 向注册中心注册服务信息，并启动netty服务
-     *
-     * @throws Exception
      */
     @Override
-    public void afterPropertiesSet() throws Exception {
-        this.initBeanContext();
+    public void afterPropertiesSet() {
+        fastcallManager.setProviderManager(providerManager());
         this.registerService();
-        this.bindServer();
+        this.start();
     }
 
     /**
-     * netty服务端
+     * 初始化ProviderManager
      *
      * @return
      */
     @Bean
-    public NettyServer nettyServer() {
-        FastcallProperties.Provider provider = properties.getProvider();
-        NettyServer server = new NettyServer(provider.getBacklog(), provider.getTimeout(), provider.getHost(), provider.getPort(), provider.getThreads(), serializeManager);
-        log.info("Instance NettyServer");
-        return server;
+    public ProviderManager providerManager() {
+        ProviderConfig config = fastcallConfig.getProvider();
+        ProviderManager providerManager = new DefaultProviderManager(config, serializeManager, registryManager);
+        log.info("Instance DefaultProviderManager");
+        return providerManager;
     }
 
     /**
      * 向注册中心注册服务信息
-     *
-     * @throws UnknownHostException
      */
-    private void registerService() throws UnknownHostException {
-        List<ServiceMetaData> metas = getServiceMeta();
-        for (ServiceMetaData meta : metas) {
-            registerManager.registerService(meta);
-        }
-    }
-
-    /**
-     * 初始化bean容器
-     */
-    private void initBeanContext() {
+    private void registerService() {
         Map<String, Object> map = applicationContext.getBeansWithAnnotation(FastcallService.class);
-        Map<String, Object> beanMap = new HashMap<>();
-        for (Object obj : map.values()) {
-            Class<?>[] classes = obj.getClass().getInterfaces();
-            for (Class<?> clazz : classes) {
-                beanMap.put(clazz.getName(), obj);
-            }
-        }
-        BeanContext.setBeans(beanMap);
-        log.info("Init BeanContext");
-    }
-
-    /**
-     * 绑定服务端
-     */
-    private void bindServer() {
-        new Thread(() -> nettyServer().bind()).start();
-    }
-
-    /**
-     * 获取服务元数据
-     *
-     * @return
-     * @throws UnknownHostException
-     */
-    private List<ServiceMetaData> getServiceMeta() throws UnknownHostException {
-        Map<String, Object> map = applicationContext.getBeansWithAnnotation(FastcallService.class);
-        List<ServiceMetaData> metas = new ArrayList<>();
-        String host = getIp();
 
         for (Object obj : map.values()) {
             Class<?> clazz = obj.getClass();
@@ -133,24 +98,15 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
             String group = fastcallService.group();
             Class<?>[] interfaces = clazz.getInterfaces();
             for (Class<?> itf : interfaces) {
-                metas.add(new ServiceMetaData(group, itf.getName(), host, properties.getProvider().getPort()));
+                fastcallManager.registerService(itf, obj, group);
             }
         }
-        return metas;
     }
 
     /**
-     * 获取服务ip
-     *
-     * @return
-     * @throws UnknownHostException
+     * 绑定服务端
      */
-    private String getIp() throws UnknownHostException {
-        if (properties.getProvider().getHost().equals("0.0.0.0")) {
-            InetAddress ip4 = Inet4Address.getLocalHost();
-            return ip4.getHostAddress();
-        } else {
-            return properties.getProvider().getHost();
-        }
+    private void start() {
+        fastcallManager.start();
     }
 }

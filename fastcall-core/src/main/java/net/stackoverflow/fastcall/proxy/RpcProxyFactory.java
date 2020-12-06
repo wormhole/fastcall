@@ -1,8 +1,6 @@
 package net.stackoverflow.fastcall.proxy;
 
 import net.stackoverflow.fastcall.FastcallManager;
-import net.stackoverflow.fastcall.transport.ConnectionManager;
-import net.stackoverflow.fastcall.register.RegisterManager;
 
 import java.lang.reflect.Proxy;
 
@@ -22,7 +20,7 @@ public class RpcProxyFactory {
      * @param <T>             泛型
      * @return
      */
-    public static <T> T create(Class<T> clazz, FastcallManager fastcallManager, String group) {
+    public static <T> T create(Class<T> clazz, String group, FastcallManager fastcallManager) {
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, new RpcInvocationHandler(fastcallManager, group));
     }
 }

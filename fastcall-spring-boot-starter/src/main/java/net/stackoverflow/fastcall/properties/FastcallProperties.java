@@ -12,13 +12,11 @@ public class FastcallProperties {
 
     private String serialize = "json";
 
-    private String register = "zookeeper";
-
     private Provider provider = new Provider();
 
     private Consumer consumer = new Consumer();
 
-    private Zookeeper zookeeper = new Zookeeper();
+    private Registry registry = new Registry();
 
     public static class Provider {
         private Boolean enabled = false;
@@ -85,12 +83,44 @@ public class FastcallProperties {
     public static class Consumer {
         private Integer timeout = 60;
 
+        private Integer threads = 512;
+
         public Integer getTimeout() {
             return timeout;
         }
 
         public void setTimeout(Integer timeout) {
             this.timeout = timeout;
+        }
+
+        public Integer getThreads() {
+            return threads;
+        }
+
+        public void setThreads(Integer threads) {
+            this.threads = threads;
+        }
+    }
+
+    public static class Registry{
+        private String type = "zookeeper";
+
+        private Zookeeper zookeeper = new Zookeeper();
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public Zookeeper getZookeeper() {
+            return zookeeper;
+        }
+
+        public void setZookeeper(Zookeeper zookeeper) {
+            this.zookeeper = zookeeper;
         }
     }
 
@@ -134,14 +164,6 @@ public class FastcallProperties {
         this.serialize = serialize;
     }
 
-    public String getRegister() {
-        return register;
-    }
-
-    public void setRegister(String register) {
-        this.register = register;
-    }
-
     public Provider getProvider() {
         return provider;
     }
@@ -158,11 +180,11 @@ public class FastcallProperties {
         this.consumer = consumer;
     }
 
-    public Zookeeper getZookeeper() {
-        return zookeeper;
+    public Registry getRegistry() {
+        return registry;
     }
 
-    public void setZookeeper(Zookeeper zookeeper) {
-        this.zookeeper = zookeeper;
+    public void setRegistry(Registry registry) {
+        this.registry = registry;
     }
 }

@@ -6,19 +6,43 @@
       "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties"
     },
     {
+      "name": "fastcall.consumer",
+      "type": "net.stackoverflow.fastcall.properties.FastcallProperties$Consumer",
+      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties",
+      "sourceMethod": "getConsumer()"
+    },
+    {
       "name": "fastcall.provider",
       "type": "net.stackoverflow.fastcall.properties.FastcallProperties$Provider",
       "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties",
       "sourceMethod": "getProvider()"
     },
     {
-      "name": "fastcall.zookeeper",
-      "type": "net.stackoverflow.fastcall.properties.FastcallProperties$Zookeeper",
+      "name": "fastcall.registry",
+      "type": "net.stackoverflow.fastcall.properties.FastcallProperties$Registry",
       "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties",
+      "sourceMethod": "getRegistry()"
+    },
+    {
+      "name": "fastcall.registry.zookeeper",
+      "type": "net.stackoverflow.fastcall.properties.FastcallProperties$Zookeeper",
+      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties$Registry",
       "sourceMethod": "getZookeeper()"
     }
   ],
   "properties": [
+    {
+      "name": "fastcall.consumer.threads",
+      "type": "java.lang.Integer",
+      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties$Consumer",
+      "defaultValue": 512
+    },
+    {
+      "name": "fastcall.consumer.timeout",
+      "type": "java.lang.Integer",
+      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties$Consumer",
+      "defaultValue": 60
+    },
     {
       "name": "fastcall.provider.backlog",
       "type": "java.lang.Integer",
@@ -56,34 +80,34 @@
       "defaultValue": 60
     },
     {
-      "name": "fastcall.register",
+      "name": "fastcall.registry.type",
       "type": "java.lang.String",
-      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties",
+      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties$Registry",
       "defaultValue": "zookeeper"
+    },
+    {
+      "name": "fastcall.registry.zookeeper.host",
+      "type": "java.lang.String",
+      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties$Zookeeper",
+      "defaultValue": "127.0.0.1"
+    },
+    {
+      "name": "fastcall.registry.zookeeper.port",
+      "type": "java.lang.Integer",
+      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties$Zookeeper",
+      "defaultValue": 2181
+    },
+    {
+      "name": "fastcall.registry.zookeeper.session-timeout",
+      "type": "java.lang.Integer",
+      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties$Zookeeper",
+      "defaultValue": 5000
     },
     {
       "name": "fastcall.serialize",
       "type": "java.lang.String",
       "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties",
       "defaultValue": "json"
-    },
-    {
-      "name": "fastcall.zookeeper.host",
-      "type": "java.lang.String",
-      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties$Zookeeper",
-      "defaultValue": "127.0.0.1"
-    },
-    {
-      "name": "fastcall.zookeeper.port",
-      "type": "java.lang.Integer",
-      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties$Zookeeper",
-      "defaultValue": 2181
-    },
-    {
-      "name": "fastcall.zookeeper.session-timeout",
-      "type": "java.lang.Integer",
-      "sourceType": "net.stackoverflow.fastcall.properties.FastcallProperties$Zookeeper",
-      "defaultValue": 5000
     }
   ],
   "hints": []

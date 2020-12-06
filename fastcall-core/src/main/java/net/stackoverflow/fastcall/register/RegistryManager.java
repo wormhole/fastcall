@@ -10,20 +10,21 @@ import java.util.List;
  *
  * @author wormhole
  */
-public interface RegisterManager {
+public interface RegistryManager {
 
     /**
      * 注册服务元数据
      *
-     * @param meta
+     * @param meta 服务元数据
      */
     void registerService(ServiceMetaData meta);
 
     /**
      * 获取服务
-     * @param group
-     * @param clazz
+     *
+     * @param clazz 接口Class对象
+     * @param group 所属分组
      * @return
      */
-    List<InetSocketAddress> getServiceAddress(String group, Class<?> clazz) throws ServiceNotFoundException;
+    List<InetSocketAddress> getServiceAddress(Class<?> clazz, String group) throws ServiceNotFoundException;
 }

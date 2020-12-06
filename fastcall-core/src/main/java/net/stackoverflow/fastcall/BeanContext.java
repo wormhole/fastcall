@@ -14,8 +14,12 @@ public class BeanContext {
 
     private static Map<String, Object> beans = new HashMap<>();
 
-    public static void setBeans(Map<String, Object> beans) {
-        BeanContext.beans = beans;
+    public static void setBean(String name, Object bean) {
+        BeanContext.beans.put(name, bean);
+    }
+
+    public static void setBean(Class<?> clazz, Object bean) {
+        BeanContext.setBean(clazz.getName(), bean);
     }
 
     public static Object getBean(String name) throws BeanNotFoundException {

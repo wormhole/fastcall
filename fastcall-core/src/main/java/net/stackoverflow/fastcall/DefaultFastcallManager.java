@@ -1,18 +1,13 @@
 package net.stackoverflow.fastcall;
 
-import net.stackoverflow.fastcall.exception.ConnectionInActiveException;
-import net.stackoverflow.fastcall.register.RegisterManager;
-import net.stackoverflow.fastcall.serialize.SerializeManager;
-import net.stackoverflow.fastcall.transport.ConnectionManager;
-import net.stackoverflow.fastcall.transport.NettyClient;
-import net.stackoverflow.fastcall.transport.proto.Message;
-import net.stackoverflow.fastcall.transport.proto.MessageType;
-import net.stackoverflow.fastcall.transport.proto.RpcRequest;
+import net.stackoverflow.fastcall.annotation.FastcallService;
+import net.stackoverflow.fastcall.config.FastcallConfig;
+import net.stackoverflow.fastcall.proxy.RpcProxyFactory;
+import net.stackoverflow.fastcall.register.RegistryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
-import java.util.List;
+import java.lang.reflect.Method;
 
 /**
  * FastcallManager默认实现
@@ -23,42 +18,64 @@ public class DefaultFastcallManager implements FastcallManager {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultFastcallManager.class);
 
-    private final RegisterManager registerManager;
+    private final RegistryManager registryManager;
 
-    private final SerializeManager serializeManager;
+    private ProviderManager providerManager;
 
-    private ConnectionManager connectionManager;
+    private final ConsumerManager consumerManager;
 
-    public DefaultFastcallManager(RegisterManager registerManager, SerializeManager serializeManager) {
-        this.registerManager = registerManager;
-        this.serializeManager = serializeManager;
-    }
+    private final FastcallConfig config;
 
-    public DefaultFastcallManager(RegisterManager registerManager, SerializeManager serializeManager, ConnectionManager connectionManager) {
-        this.registerManager = registerManager;
-        this.serializeManager = serializeManager;
-        this.connectionManager = connectionManager;
-    }
-
-    public void setConnectionManager(ConnectionManager connectionManager) {
-        this.connectionManager = connectionManager;
+    public DefaultFastcallManager(FastcallConfig config, RegistryManager registryManager, ProviderManager providerManager, ConsumerManager consumerManager) {
+        this.config = config;
+        this.registryManager = registryManager;
+        this.providerManager = providerManager;
+        this.consumerManager = consumerManager;
     }
 
     @Override
-    public ResponseFuture call(RpcRequest request) {
-        List<InetSocketAddress> addresses = registerManager.getServiceAddress(request.getGroup(), request.getInterfaceType());
-        ResponseFuture future = null;
-        for (InetSocketAddress address : addresses) {
-            try {
-                NettyClient client = connectionManager.getConnection(address);
-                future = ResponseFutureContext.createFuture(request.getId());
-                client.send(new Message(MessageType.BUSINESS_REQUEST, request));
-                break;
-            } catch (ConnectionInActiveException e) {
-                ResponseFutureContext.removeFuture(request.getId());
-                log.error("[R:{}] Connection is inactive", e.getHost() + ":" + e.getPort());
-            }
-        }
-        return future;
+    public void setProviderManager(ProviderManager providerManager) {
+        this.providerManager = providerManager;
     }
+
+    @Override
+    public FastcallConfig getConfig() {
+        return config;
+    }
+
+    @Override
+    public <T> T createProxy(Class<T> clazz, String group) {
+        return RpcProxyFactory.create(clazz, group, this);
+    }
+
+    @Override
+    public void registerService(Class<?> clazz, Object bean) {
+        FastcallService fastcallService = clazz.getAnnotation(FastcallService.class);
+        if (fastcallService != null) {
+            String group = fastcallService.group();
+            providerManager.registerService(clazz, bean, group);
+        }
+    }
+
+    @Override
+    public void registerService(Class<?> clazz, Object bean, String group) {
+        providerManager.registerService(clazz, bean, group);
+    }
+
+    @Override
+    public Object call(Method method, Object[] args, String group) {
+        return consumerManager.call(method, args, group);
+    }
+
+    @Override
+    public void start() {
+        providerManager.start();
+    }
+
+    @Override
+    public void stop() {
+        providerManager.stop();
+    }
+
+
 }

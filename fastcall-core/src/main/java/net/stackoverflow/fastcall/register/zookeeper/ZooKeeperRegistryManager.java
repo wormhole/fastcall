@@ -1,8 +1,9 @@
 package net.stackoverflow.fastcall.register.zookeeper;
 
+import net.stackoverflow.fastcall.BeanContext;
 import net.stackoverflow.fastcall.exception.ServiceNotFoundException;
 import net.stackoverflow.fastcall.register.RegistryData;
-import net.stackoverflow.fastcall.register.RegisterManager;
+import net.stackoverflow.fastcall.register.RegistryManager;
 import net.stackoverflow.fastcall.register.ServiceMetaData;
 import net.stackoverflow.fastcall.register.JsonUtils;
 import org.apache.zookeeper.*;
@@ -22,9 +23,9 @@ import java.util.concurrent.CountDownLatch;
  *
  * @author wormhole
  */
-public class ZooKeeperRegisterManager implements RegisterManager {
+public class ZooKeeperRegistryManager implements RegistryManager {
 
-    private static final Logger log = LoggerFactory.getLogger(ZooKeeperRegisterManager.class);
+    private static final Logger log = LoggerFactory.getLogger(ZooKeeperRegistryManager.class);
 
     private static final String ROOT_PATH = "/fastcall";
 
@@ -36,7 +37,7 @@ public class ZooKeeperRegisterManager implements RegisterManager {
 
     private final Integer sessionTimeout;
 
-    public ZooKeeperRegisterManager(String host, Integer port, Integer sessionTimeout) throws IOException, InterruptedException {
+    public ZooKeeperRegistryManager(String host, Integer port, Integer sessionTimeout) throws IOException, InterruptedException {
         this.host = host;
         this.port = port;
         this.sessionTimeout = sessionTimeout;
@@ -60,7 +61,7 @@ public class ZooKeeperRegisterManager implements RegisterManager {
         });
         connectedSignal.await();
         this.zookeeper = zooKeeper;
-        log.info("RegisterManager connected zookeeper");
+        log.info("RegistryManager connected zookeeper");
     }
 
     @Override
@@ -81,14 +82,14 @@ public class ZooKeeperRegisterManager implements RegisterManager {
                 json = JsonUtils.bean2json(data);
                 zookeeper.setData(path, json.getBytes(), stat.getVersion());
             }
-            log.info("RegisterManager register service: {}", meta);
+            log.info("RegistryManager register service: {}", meta);
         } catch (InterruptedException | KeeperException e) {
-            log.error("RegisterManager fail to register service: {}", meta, e);
+            log.error("RegistryManager fail to register service: {}", meta, e);
         }
     }
 
     @Override
-    public List<InetSocketAddress> getServiceAddress(String group, Class<?> clazz) {
+    public List<InetSocketAddress> getServiceAddress(Class<?> clazz,String group) {
         List<InetSocketAddress> socketAddresses = new ArrayList<>();
         try {
             byte[] bytes = zookeeper.getData(ROOT_PATH + "/" + clazz.getName(), false, new Stat());
@@ -102,7 +103,7 @@ public class ZooKeeperRegisterManager implements RegisterManager {
                 throw new ServiceNotFoundException(clazz.getName(), group, String.format("Service not found, interfaceName:{}, group:{}", clazz.getName(), group));
             }
         } catch (InterruptedException | KeeperException e) {
-            log.error("RegisterManager fail to get service address, interfaceName:{}, group:{}", clazz.getName(), group, e);
+            log.error("RegistryManager fail to get service address, interfaceName:{}, group:{}", clazz.getName(), group, e);
         }
         return socketAddresses;
     }
@@ -122,10 +123,10 @@ public class ZooKeeperRegisterManager implements RegisterManager {
         try {
             if (zookeeper.exists(ROOT_PATH, false) == null) {
                 zookeeper.create(ROOT_PATH, "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-                log.info("RegisterManager create root node");
+                log.info("RegistryManager create root node");
             }
         } catch (Exception e) {
-            log.error("RegisterManager fail to check root node", e);
+            log.error("RegistryManager fail to check root node", e);
         }
     }
 }
