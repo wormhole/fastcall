@@ -1,10 +1,10 @@
 package net.stackoverflow.fastcall.registry.zookeeper;
 
 import net.stackoverflow.fastcall.exception.ServiceNotFoundException;
+import net.stackoverflow.fastcall.registry.JsonUtils;
 import net.stackoverflow.fastcall.registry.RegistryData;
 import net.stackoverflow.fastcall.registry.RegistryManager;
 import net.stackoverflow.fastcall.registry.ServiceMetaData;
-import net.stackoverflow.fastcall.registry.JsonUtils;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -41,7 +40,7 @@ public class ZooKeeperRegistryManager implements RegistryManager {
         this.port = port;
         this.sessionTimeout = sessionTimeout;
         connect();
-        this.createRootNode();
+        this.checkPathAndCreate(ROOT_PATH);
     }
 
     /**
@@ -66,21 +65,12 @@ public class ZooKeeperRegistryManager implements RegistryManager {
     @Override
     public synchronized void registerService(ServiceMetaData meta) {
         String path = ROOT_PATH + "/" + meta.getInterfaceName();
+        this.checkPathAndCreate(path);
+        String groupPath = path + "/" + meta.getGroup();
+        this.checkPathAndCreate(groupPath);
         try {
-            Stat stat = zookeeper.exists(path, false);
-            if (stat == null) {
-                RegistryData data = new RegistryData();
-                data.addRouteAddress(meta.getGroup(), meta.getHost(), meta.getPort());
-                String json = JsonUtils.bean2json(data);
-                zookeeper.create(path, json.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-            } else {
-                byte[] bytes = zookeeper.getData(path, false, new Stat());
-                String json = new String(bytes);
-                RegistryData data = JsonUtils.json2bean(json, RegistryData.class);
-                data.addRouteAddress(meta.getGroup(), meta.getHost(), meta.getPort());
-                json = JsonUtils.bean2json(data);
-                zookeeper.setData(path, json.getBytes(), stat.getVersion());
-            }
+            String json = JsonUtils.bean2json(meta);
+            zookeeper.create(groupPath + "/service_", json.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
             log.info("RegistryManager register service: {}", meta);
         } catch (InterruptedException | KeeperException e) {
             log.error("RegistryManager fail to register service: {}", meta, e);
@@ -88,16 +78,18 @@ public class ZooKeeperRegistryManager implements RegistryManager {
     }
 
     @Override
-    public List<InetSocketAddress> getServiceAddress(Class<?> clazz,String group) {
+    public List<InetSocketAddress> getServiceAddress(Class<?> clazz, String group) {
         List<InetSocketAddress> socketAddresses = new ArrayList<>();
         try {
-            byte[] bytes = zookeeper.getData(ROOT_PATH + "/" + clazz.getName(), false, new Stat());
-            String json = new String(bytes);
-            RegistryData data = JsonUtils.json2bean(json, RegistryData.class);
-            Map<String, List<RegistryData.RouteAddress>> map = data.getRoute();
-            List<RegistryData.RouteAddress> routeAddresses = map.get(group);
-            if (routeAddresses != null) {
-                socketAddresses = this.toSocketAddress(routeAddresses);
+            String path = ROOT_PATH + "/" + clazz.getName() + "/" + group;
+            List<String> childPath = zookeeper.getChildren(path, null);
+            if (childPath != null && childPath.size() > 0) {
+                for (String cp : childPath) {
+                    byte[] bytes = zookeeper.getData(path + "/" + cp, false, new Stat());
+                    String json = new String(bytes);
+                    ServiceMetaData meta = JsonUtils.json2bean(json, ServiceMetaData.class);
+                    socketAddresses.add(new InetSocketAddress(meta.getHost(), meta.getPort()));
+                }
             } else {
                 throw new ServiceNotFoundException(clazz.getName(), group, String.format("Service not found, interfaceName:{}, group:{}", clazz.getName(), group));
             }
@@ -110,22 +102,22 @@ public class ZooKeeperRegistryManager implements RegistryManager {
     private List<InetSocketAddress> toSocketAddress(List<RegistryData.RouteAddress> addresses) {
         List<InetSocketAddress> socketAddresses = new ArrayList<>();
         for (RegistryData.RouteAddress address : addresses) {
-            socketAddresses.add(new InetSocketAddress(address.getHost(),address.getPort()));
+            socketAddresses.add(new InetSocketAddress(address.getHost(), address.getPort()));
         }
         return socketAddresses;
     }
 
     /**
-     * 检查根节点是否存在，不存在则创建
+     * 检查节点是否存在，不存在则创建
      */
-    private synchronized void createRootNode() {
+    private synchronized void checkPathAndCreate(String path) {
         try {
-            if (zookeeper.exists(ROOT_PATH, false) == null) {
-                zookeeper.create(ROOT_PATH, "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-                log.info("RegistryManager create root node");
+            if (zookeeper.exists(path, false) == null) {
+                zookeeper.create(path, "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                log.info("RegistryManager create path {}", path);
             }
         } catch (Exception e) {
-            log.error("RegistryManager fail to check root node", e);
+            log.error("RegistryManager fail to check path {}", path, e);
         }
     }
 }
