@@ -40,6 +40,7 @@ $ cd ../fastcall-spring-boot-starter
     <dependency>
         <groupId>net.stackoverflow.fastcall</groupId>
         <artifactId>fastcall-spring-boot-starter</artifactId>
+        <type>pom</type>
         <version>1.0</version>
     </dependency>
 
@@ -110,6 +111,7 @@ public class SayServiceImpl implements SayService {
     <dependency>
         <groupId>net.stackoverflow.fastcall</groupId>
         <artifactId>fastcall-spring-boot-starter</artifactId>
+        <type>pom</type>
         <version>1.0</version>
     </dependency>
 
