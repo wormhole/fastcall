@@ -2,7 +2,7 @@ package net.stackoverflow.fastcall;
 
 import net.stackoverflow.fastcall.config.ConsumerConfig;
 import net.stackoverflow.fastcall.exception.ConnectionInActiveException;
-import net.stackoverflow.fastcall.register.RegistryManager;
+import net.stackoverflow.fastcall.registry.RegistryManager;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.NettyClient;
 import net.stackoverflow.fastcall.transport.proto.Message;

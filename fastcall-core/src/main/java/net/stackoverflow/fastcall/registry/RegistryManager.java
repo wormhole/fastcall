@@ -1,4 +1,4 @@
-package net.stackoverflow.fastcall.register;
+package net.stackoverflow.fastcall.registry;
 
 import net.stackoverflow.fastcall.exception.ServiceNotFoundException;
 

@@ -1,4 +1,4 @@
-package net.stackoverflow.fastcall.register;
+package net.stackoverflow.fastcall.registry;
 
 /**
  * 服务类元数据

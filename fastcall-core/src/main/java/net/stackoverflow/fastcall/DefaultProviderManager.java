@@ -1,8 +1,8 @@
 package net.stackoverflow.fastcall;
 
 import net.stackoverflow.fastcall.config.ProviderConfig;
-import net.stackoverflow.fastcall.register.RegistryManager;
-import net.stackoverflow.fastcall.register.ServiceMetaData;
+import net.stackoverflow.fastcall.registry.RegistryManager;
+import net.stackoverflow.fastcall.registry.ServiceMetaData;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.NettyServer;
 import org.slf4j.Logger;

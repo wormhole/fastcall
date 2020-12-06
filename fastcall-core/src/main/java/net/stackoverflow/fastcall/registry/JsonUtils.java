@@ -1,4 +1,4 @@
-package net.stackoverflow.fastcall.register;
+package net.stackoverflow.fastcall.registry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

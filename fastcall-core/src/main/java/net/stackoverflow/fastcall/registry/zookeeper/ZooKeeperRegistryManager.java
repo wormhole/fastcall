@@ -1,11 +1,10 @@
-package net.stackoverflow.fastcall.register.zookeeper;
+package net.stackoverflow.fastcall.registry.zookeeper;
 
-import net.stackoverflow.fastcall.BeanContext;
 import net.stackoverflow.fastcall.exception.ServiceNotFoundException;
-import net.stackoverflow.fastcall.register.RegistryData;
-import net.stackoverflow.fastcall.register.RegistryManager;
-import net.stackoverflow.fastcall.register.ServiceMetaData;
-import net.stackoverflow.fastcall.register.JsonUtils;
+import net.stackoverflow.fastcall.registry.RegistryData;
+import net.stackoverflow.fastcall.registry.RegistryManager;
+import net.stackoverflow.fastcall.registry.ServiceMetaData;
+import net.stackoverflow.fastcall.registry.JsonUtils;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;

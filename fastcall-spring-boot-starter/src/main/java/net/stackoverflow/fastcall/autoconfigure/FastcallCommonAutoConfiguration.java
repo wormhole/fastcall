@@ -7,9 +7,9 @@ import net.stackoverflow.fastcall.FastcallManager;
 import net.stackoverflow.fastcall.config.FastcallConfig;
 import net.stackoverflow.fastcall.config.FastcallConfigBuilder;
 import net.stackoverflow.fastcall.properties.FastcallProperties;
-import net.stackoverflow.fastcall.register.JsonUtils;
-import net.stackoverflow.fastcall.register.RegistryManager;
-import net.stackoverflow.fastcall.register.zookeeper.ZooKeeperRegistryManager;
+import net.stackoverflow.fastcall.registry.JsonUtils;
+import net.stackoverflow.fastcall.registry.RegistryManager;
+import net.stackoverflow.fastcall.registry.zookeeper.ZooKeeperRegistryManager;
 import net.stackoverflow.fastcall.serialize.JsonSerializeManager;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import org.slf4j.Logger;
@@ -20,7 +20,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 
 import java.io.IOException;
 

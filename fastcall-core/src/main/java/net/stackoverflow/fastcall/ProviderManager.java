@@ -1,8 +1,6 @@
 package net.stackoverflow.fastcall;
 
 import net.stackoverflow.fastcall.config.ProviderConfig;
-import net.stackoverflow.fastcall.register.RegistryManager;
-import net.stackoverflow.fastcall.serialize.SerializeManager;
 
 /**
  * 服务提供者管理
