@@ -199,17 +199,14 @@ public class FastcallController {
 |----|----|----|----|
 |是否支持|✔|❌|❌|
 
-* 注册中心
-- [x] zookeeper
-- [ ] redis
-- [ ] multicast
+|注册中心|zookeeper|redis|multicast|
+|----|----|----|----|
+|是否支持|✔|❌|❌|
 
-* 协议
-- [x] fastcall
-- [ ] rmi
-- [ ] http
-- [ ] hessian
+|协议|fastcall|rmi|http|hessian|
+|----|----|----|----|----|
+|是否支持|✔|❌|❌|❌|
 
-## 六、LICENSE
+## 七、LICENSE
 [MIT](LICENSE) © wormhole
 
