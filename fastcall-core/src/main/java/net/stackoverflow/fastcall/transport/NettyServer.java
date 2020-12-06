@@ -66,7 +66,6 @@ public class NettyServer {
             bootstrap.group(bossGroup, workGroup)
                     .option(ChannelOption.SO_BACKLOG, backlog)
                     .channel(NioServerSocketChannel.class)
-                    .handler(new LoggingHandler(LogLevel.INFO))
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) {
