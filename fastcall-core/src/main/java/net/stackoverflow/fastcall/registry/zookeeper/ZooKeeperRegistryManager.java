@@ -2,7 +2,6 @@ package net.stackoverflow.fastcall.registry.zookeeper;
 
 import net.stackoverflow.fastcall.exception.ServiceNotFoundException;
 import net.stackoverflow.fastcall.registry.JsonUtils;
-import net.stackoverflow.fastcall.registry.RegistryData;
 import net.stackoverflow.fastcall.registry.RegistryManager;
 import net.stackoverflow.fastcall.registry.ServiceMetaData;
 import org.apache.zookeeper.*;
@@ -95,14 +94,6 @@ public class ZooKeeperRegistryManager implements RegistryManager {
             }
         } catch (InterruptedException | KeeperException e) {
             log.error("RegistryManager fail to get service address, interfaceName:{}, group:{}", clazz.getName(), group, e);
-        }
-        return socketAddresses;
-    }
-
-    private List<InetSocketAddress> toSocketAddress(List<RegistryData.RouteAddress> addresses) {
-        List<InetSocketAddress> socketAddresses = new ArrayList<>();
-        for (RegistryData.RouteAddress address : addresses) {
-            socketAddresses.add(new InetSocketAddress(address.getHost(), address.getPort()));
         }
         return socketAddresses;
     }
