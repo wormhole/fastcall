@@ -6,7 +6,6 @@ import net.stackoverflow.fastcall.DefaultFastcallManager;
 import net.stackoverflow.fastcall.FastcallManager;
 import net.stackoverflow.fastcall.config.FastcallConfig;
 import net.stackoverflow.fastcall.config.FastcallConfigBuilder;
-import net.stackoverflow.fastcall.properties.FastcallProperties;
 import net.stackoverflow.fastcall.registry.JsonUtils;
 import net.stackoverflow.fastcall.registry.RegistryManager;
 import net.stackoverflow.fastcall.registry.zookeeper.ZooKeeperRegistryManager;

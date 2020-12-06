@@ -1,4 +1,4 @@
-package net.stackoverflow.fastcall.properties;
+package net.stackoverflow.fastcall.autoconfigure;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
