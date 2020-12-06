@@ -13,17 +13,17 @@
 ## 二、支持情况
 >未勾选的为待支持的类型
 
-### 2.1 序列化方式
+* 序列化方式
 - [x] json
 - [ ] protobuf
 - [ ] msgpack 
 
-### 2.2 注册中心
+* 注册中心
 - [x] zookeeper
 - [ ] redis
 - [ ] multicast
 
-### 2.3 协议
+* 协议
 - [x] fastcall
 - [ ] rmi
 - [ ] http
@@ -31,13 +31,13 @@
 
 ## 三、安装
 ```
-git clone https://github.com/wormhole/fastcall
-cd fastcall-parent
-mvn install
-cd ../fastcall-core
-mvn install
-cd ../fastcall-spring-boot-autoconfigure
-mvn install
-cd ../fastcall-spring-boot-starter
+$ git clone https://github.com/wormhole/fastcall
+$ cd fastcall-parent
+$ mvn install
+$ cd ../fastcall-core
+$ mvn install
+$ cd ../fastcall-spring-boot-autoconfigure
+$ mvn install
+$ cd ../fastcall-spring-boot-starter
 ```
 
