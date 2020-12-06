@@ -130,6 +130,7 @@ fastcall.registry.type=zookeeper
 fastcall.registry.zookeeper.host=127.0.0.1
 fastcall.registry.zookeeper.port=2181
 fastcall.registry.zookeeper.session-timeout=5000
+#Consumer配置
 fastcall.consumer.timeout=60
 fastcall.consumer.threads=512
 #日志配置
