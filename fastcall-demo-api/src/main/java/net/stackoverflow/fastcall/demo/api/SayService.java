@@ -4,7 +4,7 @@ public interface SayService {
 
     String say(String content);
 
-    void say(Integer content);
+    int say(int content);
 
     String say();
 

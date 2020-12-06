@@ -16,8 +16,8 @@ public class SayServiceImpl implements SayService {
     }
 
     @Override
-    public void say(Integer content) {
-        log.info("hello " + content);
+    public int say(int content) {
+        return ++content;
     }
 
     @Override
