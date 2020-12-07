@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>net.stackoverflow.fastcall</groupId>
 	<artifactId>fastcall-demo-consumer</artifactId>
-	<version>1.0</version>
+	<version>1.0.0</version>
 	<name>fastcall-demo-consumer</name>
 	<description>Demo project for Spring Boot</description>
 
@@ -27,13 +27,13 @@
 		<dependency>
 			<groupId>net.stackoverflow.fastcall</groupId>
 			<artifactId>fastcall-spring-boot-starter</artifactId>
-			<version>1.0</version>
+			<version>1.0.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>net.stackoverflow.fastcall</groupId>
 			<artifactId>fastcall-demo-api</artifactId>
-			<version>1.0</version>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 
