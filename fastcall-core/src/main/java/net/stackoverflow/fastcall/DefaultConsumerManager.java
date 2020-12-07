@@ -8,6 +8,7 @@ import net.stackoverflow.fastcall.transport.NettyClient;
 import net.stackoverflow.fastcall.transport.proto.Message;
 import net.stackoverflow.fastcall.transport.proto.MessageType;
 import net.stackoverflow.fastcall.transport.proto.RpcRequest;
+import net.stackoverflow.fastcall.transport.proto.RpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +53,7 @@ public class DefaultConsumerManager implements ConsumerManager {
     }
 
     @Override
-    public Object call(Method method, Object[] args, String group) {
+    public ResponseFuture call(Method method, Object[] args, String group) {
         RpcRequest request = new RpcRequest();
         request.setId(UUID.randomUUID().toString());
         request.setInterfaceType(method.getDeclaringClass());
@@ -74,7 +75,7 @@ public class DefaultConsumerManager implements ConsumerManager {
                 log.error("[R:{}] Connection is inactive", e.getHost() + ":" + e.getPort());
             }
         }
-        return future.getResponse();
+        return future;
     }
 
     public synchronized NettyClient getClient(InetSocketAddress address) {

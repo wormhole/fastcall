@@ -37,7 +37,7 @@ public class ResponseFutureContext {
      */
     public static void setResponse(RpcResponse response) {
         ResponseFuture future = futurePool.get(response.getId());
-        future.setResponse(response.getResponse());
+        future.setResponse(response);
         futurePool.remove(response.getId());
     }
 

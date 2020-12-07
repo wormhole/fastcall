@@ -12,18 +12,18 @@ public class FastcallController {
     @FastcallReference(group = "group-1")
     private SayService sayService;
 
-    @GetMapping("/say1")
+    @GetMapping("/say")
     public String say(@RequestParam("content") String content) {
         return sayService.say(content);
     }
 
-    @GetMapping("/say2")
-    public int say(@RequestParam("content") Integer content) {
-        return sayService.say(content);
+    @GetMapping("/say_with_check_exception")
+    public String sayWithCheckException(@RequestParam("content") String content) throws Exception {
+        return sayService.sayWithCheckException(content);
     }
 
-    @GetMapping("/say3")
-    public String say() {
-        return sayService.say();
+    @GetMapping("/say_with_uncheck_exception")
+    public String sayWithUncheckException(@RequestParam("content") String content) {
+        return sayService.sayWithUncheckException(content);
     }
 }

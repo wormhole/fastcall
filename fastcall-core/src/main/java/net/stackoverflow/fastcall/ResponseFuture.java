@@ -1,5 +1,6 @@
 package net.stackoverflow.fastcall;
 
+import net.stackoverflow.fastcall.transport.proto.RpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,7 @@ public class ResponseFuture {
 
     private volatile boolean success = false;
 
-    private volatile Object response;
+    private volatile RpcResponse response;
 
     public boolean isSuccess() {
         synchronized (lock) {
@@ -24,7 +25,7 @@ public class ResponseFuture {
         }
     }
 
-    public void setResponse(Object response) {
+    public void setResponse(RpcResponse response) {
         synchronized (lock) {
             if (this.response != null) {
                 return;
@@ -35,7 +36,7 @@ public class ResponseFuture {
         }
     }
 
-    public Object getResponse() {
+    public RpcResponse getResponse() {
         synchronized (lock) {
             while (!success) {
                 try {

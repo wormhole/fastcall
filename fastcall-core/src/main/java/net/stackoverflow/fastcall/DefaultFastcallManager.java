@@ -63,7 +63,7 @@ public class DefaultFastcallManager implements FastcallManager {
     }
 
     @Override
-    public Object call(Method method, Object[] args, String group) {
+    public ResponseFuture call(Method method, Object[] args, String group) {
         return consumerManager.call(method, args, group);
     }
 

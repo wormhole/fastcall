@@ -3,6 +3,7 @@ package net.stackoverflow.fastcall;
 import net.stackoverflow.fastcall.config.ConsumerConfig;
 import net.stackoverflow.fastcall.transport.NettyClient;
 import net.stackoverflow.fastcall.transport.proto.RpcRequest;
+import net.stackoverflow.fastcall.transport.proto.RpcResponse;
 
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
@@ -24,5 +25,5 @@ public interface ConsumerManager {
      * @param group  所属分组
      * @return
      */
-    Object call(Method method, Object[] args, String group);
+    ResponseFuture call(Method method, Object[] args, String group);
 }

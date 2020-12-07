@@ -7,6 +7,7 @@ import net.stackoverflow.fastcall.transport.proto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -40,8 +41,11 @@ public class ServerRpcHandler extends ChannelInboundHandlerAdapter {
             Object response = method.invoke(obj, params == null ? null : params.toArray());
             rpcResponse = new RpcResponse(request.getId(), 0, response, null);
             log.debug("[L:{} R:{}] Server execute rpc handler success, requestId:{}", ctx.channel().localAddress(), ctx.channel().remoteAddress(), request.getId());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error("[L:{} R:{}] Server execute rpc handler fail, requestId:{}", ctx.channel().localAddress(), ctx.channel().remoteAddress(), request.getId(), e);
+            if (e instanceof InvocationTargetException) {
+                e = ((InvocationTargetException) e).getTargetException();
+            }
             rpcResponse = new RpcResponse(request.getId(), -1, null, e);
         }
         ctx.writeAndFlush(new Message(MessageType.BUSINESS_RESPONSE, rpcResponse));

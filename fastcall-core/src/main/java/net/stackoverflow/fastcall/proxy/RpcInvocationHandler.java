@@ -1,6 +1,8 @@
 package net.stackoverflow.fastcall.proxy;
 
 import net.stackoverflow.fastcall.FastcallManager;
+import net.stackoverflow.fastcall.ResponseFuture;
+import net.stackoverflow.fastcall.transport.proto.RpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +28,13 @@ public class RpcInvocationHandler implements InvocationHandler {
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) {
-        return fastcallManager.call(method, args, group);
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        ResponseFuture future = fastcallManager.call(method, args, group);
+        RpcResponse response = future.getResponse();
+        if (response.getCode() == 0) {
+            return response.getResponse();
+        } else {
+            throw response.getThrowable();
+        }
     }
 }

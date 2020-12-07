@@ -5,6 +5,8 @@ import net.stackoverflow.fastcall.demo.api.SayService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 @FastcallService(group = "group-1")
 public class SayServiceImpl implements SayService {
 
@@ -16,12 +18,12 @@ public class SayServiceImpl implements SayService {
     }
 
     @Override
-    public int say(int content) {
-        return ++content;
+    public String sayWithCheckException(String content) throws Exception {
+        throw new IOException("check exception");
     }
 
     @Override
-    public String say() {
-        return "hello";
+    public String sayWithUncheckException(String content) {
+        throw new RuntimeException("uncheck exception");
     }
 }
