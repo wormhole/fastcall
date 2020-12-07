@@ -218,5 +218,5 @@ public class FastcallController {
 |是否支持|✔|❌|❌|❌|
 
 ## 七、LICENSE
-[MIT](LICENSE) © wormhole
+Fastcall software is licenced under the [MIT](LICENSE) License
 
