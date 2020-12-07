@@ -97,6 +97,19 @@ public class SayServiceImpl implements SayService {
 }
 ```
 
+* 在启动类上添加注解`@EnableFastcall`指定需要扫描注解的包的位置
+```
+@SpringBootApplication
+@EnableFastcall(basePackages = {"net.stackoverflow.fastcall.demo.provider"})
+public class FastcallDemoProviderApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(FastcallDemoProviderApplication.class, args);
+    }
+
+}
+```
+
 ### 3.3 服务消费者`Consumer`工程
 [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-consumer) 
 
