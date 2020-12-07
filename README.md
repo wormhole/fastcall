@@ -20,6 +20,7 @@ $ mvn install
 $ cd ../fastcall-spring-boot-autoconfigure
 $ mvn install
 $ cd ../fastcall-spring-boot-starter
+$ mvn install
 ```
 
 ## 三、使用
