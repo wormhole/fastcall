@@ -27,8 +27,7 @@ $ mvn install
 ### 3.1 启动服务注册中心
 目前仅支持`ZooKeeper`，安装与启动过程略。
 
-### 3.2 服务提供者`Provider`工程
-[【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-provider)
+### 3.2 服务提供者`Provider`工程 [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-provider)
 
 * 新建`Spring boot`项目，并添加依赖
 ```
@@ -41,13 +40,13 @@ $ mvn install
     <dependency>
         <groupId>net.stackoverflow.fastcall</groupId>
         <artifactId>fastcall-spring-boot-starter</artifactId>
-        <version>1.0</version>
+        <version>1.0.0</version>
     </dependency>
 
     <dependency>
         <groupId>net.stackoverflow.fastcall</groupId>
         <artifactId>fastcall-demo-api</artifactId>
-        <version>1.0</version>
+        <version>1.0.0</version>
     </dependency>
 </dependencies>
 ```
@@ -86,18 +85,18 @@ public class SayServiceImpl implements SayService {
     }
 
     @Override
-    public int say(int content) {
-        return ++content;
+    public String sayWithCheckException(String content) throws Exception {
+        throw new IOException("check exception");
     }
 
     @Override
-    public String say() {
-        return "hello";
+    public String sayWithUncheckException(String content) {
+        throw new RuntimeException("uncheck exception");
     }
 }
 ```
 
-* 在启动类上添加注解`@EnableFastcall`指定需要扫描注解的包的位置
+* 在启动类上添加注解`@EnableFastcall`（必加）指定需要扫描注解的包的位置，如果没有指定`basePackages`或者`basePackageClasses`，则从启动类的包路径包括子包，作为扫描路径
 ```
 @SpringBootApplication
 @EnableFastcall(basePackages = {"net.stackoverflow.fastcall.demo.provider"})
@@ -110,8 +109,7 @@ public class FastcallDemoProviderApplication {
 }
 ```
 
-### 3.3 服务消费者`Consumer`工程
-[【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-consumer) 
+### 3.3 服务消费者`Consumer`工程 [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-consumer) 
 
 * 新建`Spring boot`项目，并添加依赖
 ```
@@ -124,13 +122,13 @@ public class FastcallDemoProviderApplication {
     <dependency>
         <groupId>net.stackoverflow.fastcall</groupId>
         <artifactId>fastcall-spring-boot-starter</artifactId>
-        <version>1.0</version>
+        <version>1.0.0</version>
     </dependency>
 
     <dependency>
         <groupId>net.stackoverflow.fastcall</groupId>
         <artifactId>fastcall-demo-api</artifactId>
-        <version>1.0</version>
+        <version>1.0.0</version>
     </dependency>
 </dependencies>
 ```
@@ -160,19 +158,19 @@ public class FastcallController {
     @FastcallReference(group = "group-1")
     private SayService sayService;
 
-    @GetMapping("/say1")
+    @GetMapping("/say")
     public String say(@RequestParam("content") String content) {
         return sayService.say(content);
     }
 
-    @GetMapping("/say2")
-    public int say(@RequestParam("content") Integer content) {
-        return sayService.say(content);
+    @GetMapping("/say_with_check_exception")
+    public String sayWithCheckException(@RequestParam("content") String content) throws Exception {
+        return sayService.sayWithCheckException(content);
     }
 
-    @GetMapping("/say3")
-    public String say() {
-        return sayService.say();
+    @GetMapping("/say_with_uncheck_exception")
+    public String sayWithUncheckException(@RequestParam("content") String content) {
+        return sayService.sayWithUncheckException(content);
     }
 }
 ```
