@@ -186,7 +186,23 @@ public class FastcallController {
 |fastcall-demo-provider|样例工程，服务提供者|
 |fastcall-demo-consumer|样例工程，服务消费者|
 
-## 五、关于FASTCALL协议
+## 五、支持情况
+>未勾选的为待支持的类型
+
+|序列化类型|json|protobuf|msgpack|
+|----|----|----|----|
+|是否支持|✔|❌|❌|
+
+|注册中心|zookeeper|redis|multicast|
+|----|----|----|----|
+|是否支持|✔|❌|❌|
+
+|协议|fastcall|rmi|http|hessian|
+|----|----|----|----|----|
+|是否支持|✔|❌|❌|❌|
+
+## 六、附录
+### 6.1 关于`Fastcall`协议
 |字段|说明|大小|
 |----|----|----|
 |magic|魔术字，固定为fastcall|8字节|
@@ -201,21 +217,6 @@ public class FastcallController {
 |~|~|~|
 |body_size|消息体长度|4字节|
 |body|消息体|变长|
-
-## 六、支持情况
->未勾选的为待支持的类型
-
-|序列化类型|json|protobuf|msgpack|
-|----|----|----|----|
-|是否支持|✔|❌|❌|
-
-|注册中心|zookeeper|redis|multicast|
-|----|----|----|----|
-|是否支持|✔|❌|❌|
-
-|协议|fastcall|rmi|http|hessian|
-|----|----|----|----|----|
-|是否支持|✔|❌|❌|❌|
 
 ## 七、LICENSE
 Fastcall software is licenced under the [MIT](LICENSE) License
