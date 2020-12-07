@@ -121,7 +121,7 @@ public class SayServiceImpl implements SayService {
 </dependencies>
 ```
 
-* `application.properties`定义注解
+* `application.properties`定义配置
 ```
 #序列化方式
 fastcall.serialize=json
@@ -138,7 +138,7 @@ logging.level.root=INFO
 logging.level.net.stackoverflow.fastcall=DEBUG
 ```
 
-* 在接口引用上，添加注解`@FastcallReference`，添加该注解后，`fastcall-spring-boot-starter`会自动生成动态代理对象
+* 在接口引用上，添加注解`@FastcallReference`，添加该注解后，`fastcall-spring-boot-starter`会自动生成动态代理对象，之后可以像调用本地方法一样调用接口
 ```
 @RestController
 public class FastcallController {
