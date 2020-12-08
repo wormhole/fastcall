@@ -44,7 +44,8 @@ public class ChildPathWatcher implements Watcher {
     public void process(WatchedEvent watchedEvent) {
         if (watchedEvent.getState() == Watcher.Event.KeeperState.SyncConnected) {
             countDownLatch.countDown();
-        } else if (watchedEvent.getType() == Event.EventType.NodeChildrenChanged) {
+        }
+        if (watchedEvent.getType() == Event.EventType.NodeChildrenChanged) {
             try {
                 Map<String, Map<String, Set<ServiceMetaData>>> latestCache = new HashMap<>();
 

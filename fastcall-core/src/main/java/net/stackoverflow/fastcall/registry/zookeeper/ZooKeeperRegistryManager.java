@@ -86,7 +86,7 @@ public class ZooKeeperRegistryManager implements RegistryManager {
                 socketAddresses.add(new InetSocketAddress(meta.getHost(), meta.getPort()));
             }
         } else {
-            throw new ServiceNotFoundException(clazz.getName(), group, String.format("Service not found, interfaceName:{}, group:{}", clazz.getName(), group));
+            throw new ServiceNotFoundException(clazz.getName(), group, String.format("Service not found, interfaceName:%s, group:%s", clazz.getName(), group));
         }
         return socketAddresses;
     }
