@@ -26,6 +26,8 @@ public class ZooKeeperRegistryManager implements RegistryManager {
 
     private static final Logger log = LoggerFactory.getLogger(ZooKeeperRegistryManager.class);
 
+    private static final String ROOT_PATH = "/fastcall";
+
     private ZooKeeper zookeeper;
 
     private final String host;
@@ -36,14 +38,11 @@ public class ZooKeeperRegistryManager implements RegistryManager {
 
     private final ServiceAddressCache cache;
 
-    private final ChildPathWatcher watcher;
-
     public ZooKeeperRegistryManager(String host, Integer port, Integer sessionTimeout) throws IOException, InterruptedException {
         this.host = host;
         this.port = port;
         this.sessionTimeout = sessionTimeout;
         this.cache = new ServiceAddressCache();
-        this.watcher = new ChildPathWatcher(cache);
         this.connect();
     }
 
@@ -56,17 +55,16 @@ public class ZooKeeperRegistryManager implements RegistryManager {
     private void connect() throws IOException, InterruptedException {
         String connection = host + ":" + port;
         CountDownLatch countDownLatch = new CountDownLatch(1);
-        watcher.setCountDownLatch(countDownLatch);
-        ZooKeeper zooKeeper = new ZooKeeper(connection, sessionTimeout, watcher);
+        ZooKeeper zooKeeper = new ZooKeeper(connection, sessionTimeout, new InitWatcher(countDownLatch));
         countDownLatch.await();
-        watcher.setZooKeeper(zooKeeper);
         this.zookeeper = zooKeeper;
+        this.checkPathAndCreate(ROOT_PATH);
         log.info("RegistryManager connected zookeeper");
     }
 
     @Override
     public synchronized void registerService(ServiceMetaData meta) {
-        String path = PathConst.ROOT_PATH + "/" + meta.getInterfaceName() + "/" + meta.getGroup();
+        String path = ROOT_PATH + "/" + meta.getInterfaceName();
         this.checkPathAndCreate(path);
         try {
             String json = JsonUtils.bean2json(meta);
@@ -93,26 +91,22 @@ public class ZooKeeperRegistryManager implements RegistryManager {
 
     @Override
     public void subscribe() {
+        ChildrenWatcher childrenWatcher = new ChildrenWatcher(cache, zookeeper);
         log.info("ZooKeeperRegistryManager subscribe service");
         try {
-            List<String> itfChildPaths = zookeeper.getChildren(PathConst.ROOT_PATH, true);
-            log.debug("Zookeeper watched children of path {}", PathConst.ROOT_PATH);
+            List<String> itfChildPaths = zookeeper.getChildren(ROOT_PATH, childrenWatcher);
+            log.debug("Zookeeper watched children of path {}", ROOT_PATH);
             for (String itfChildPath : itfChildPaths) {
-                String itfPath = PathConst.ROOT_PATH + "/" + itfChildPath;
-                List<String> groupChildPaths = zookeeper.getChildren(itfPath, true);
+                String itfPath = ROOT_PATH + "/" + itfChildPath;
+                List<String> serviceChildPaths = zookeeper.getChildren(itfPath, childrenWatcher);
                 log.debug("Zookeeper watched children of path {}", itfPath);
-                for (String groupChildPath : groupChildPaths) {
-                    String groupPath = itfPath + "/" + groupChildPath;
-                    List<String> serviceChildPaths = zookeeper.getChildren(groupPath, true);
-                    log.debug("Zookeeper watched children of path {}", groupPath);
-                    for (String serviceChildPath : serviceChildPaths) {
-                        String servicePath = groupPath + "/" + serviceChildPath;
-                        //目前没有在服务运行过程中，动态修改地址的情况，因此此事件不监听
-                        byte[] bytes = zookeeper.getData(servicePath, false, new Stat());
-                        String json = new String(bytes);
-                        ServiceMetaData meta = JsonUtils.json2bean(json, ServiceMetaData.class);
-                        cache.put(meta);
-                    }
+                for (String serviceChildPath : serviceChildPaths) {
+                    String servicePath = itfPath + "/" + serviceChildPath;
+                    //目前没有在服务运行过程中，动态修改地址的情况，因此此事件不监听
+                    byte[] bytes = zookeeper.getData(servicePath, false, new Stat());
+                    String json = new String(bytes);
+                    ServiceMetaData meta = JsonUtils.json2bean(json, ServiceMetaData.class);
+                    cache.put(meta);
                 }
             }
         } catch (Exception e) {

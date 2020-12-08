@@ -11,7 +11,7 @@ import java.util.*;
  */
 public class ServiceAddressCache {
 
-    private Map<String, Map<String, Set<ServiceMetaData>>> cache;
+    private Map<String, Set<ServiceMetaData>> cache;
 
     public ServiceAddressCache() {
         this.cache = new HashMap<>();
@@ -23,22 +23,13 @@ public class ServiceAddressCache {
      * @param meta
      */
     public synchronized void put(ServiceMetaData meta) {
-        Map<String, Set<ServiceMetaData>> groupMap = cache.get(meta.getInterfaceName());
-        if (groupMap == null) {
-            groupMap = new HashMap<>();
-            Set<ServiceMetaData> metaDataSet = new LinkedHashSet<>();
+        Set<ServiceMetaData> metaDataSet = cache.get(meta.getInterfaceName());
+        if (metaDataSet == null) {
+            metaDataSet = new LinkedHashSet<>();
             metaDataSet.add(meta);
-            groupMap.put(meta.getGroup(), metaDataSet);
-            cache.put(meta.getInterfaceName(), groupMap);
+            cache.put(meta.getInterfaceName(), metaDataSet);
         } else {
-            Set<ServiceMetaData> metaDataSet = groupMap.get(meta.getGroup());
-            if (metaDataSet == null) {
-                metaDataSet = new LinkedHashSet<>();
-                metaDataSet.add(meta);
-                groupMap.put(meta.getGroup(), metaDataSet);
-            } else {
-                metaDataSet.add(meta);
-            }
+            metaDataSet.add(meta);
         }
     }
 
@@ -50,27 +41,40 @@ public class ServiceAddressCache {
      * @return
      */
     public synchronized Set<ServiceMetaData> get(String interfaceName, String group) {
-        Map<String, Set<ServiceMetaData>> groupMap = cache.get(interfaceName);
-        if (groupMap != null) {
-            return groupMap.get(group);
+        Set<ServiceMetaData> set = new HashSet<>();
+        Set<ServiceMetaData> metaDataSet = cache.get(interfaceName);
+        if (metaDataSet != null && metaDataSet.size() > 0) {
+            for (ServiceMetaData meta : metaDataSet) {
+                if (meta.getGroup().equals(group)) {
+                    set.add(meta);
+                }
+            }
+        }
+        return set;
+    }
+
+    /**
+     * 重置指定接口的所有缓存
+     *
+     * @param interfaceName 接口名
+     * @param metaDataSet   服务集合
+     */
+    public synchronized void reset(String interfaceName, Set<ServiceMetaData> metaDataSet) {
+        Set<ServiceMetaData> set = cache.get(interfaceName);
+        if (set == null) {
+            cache.put(interfaceName, metaDataSet);
         } else {
-            return null;
+            set.clear();
+            set.addAll(metaDataSet);
         }
     }
 
     /**
-     * 清空缓存
-     */
-    public synchronized void clear() {
-        this.cache.clear();
-    }
-
-    /**
-     * 重新设置缓存
+     * 重置所有缓存
      *
-     * @param cache
+     * @param cache 缓存map
      */
-    public synchronized void clearAndSet(Map<String, Map<String, Set<ServiceMetaData>>> cache) {
+    public synchronized void reset(Map<String, Set<ServiceMetaData>> cache) {
         this.cache = cache;
     }
 }
