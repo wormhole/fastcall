@@ -24,8 +24,6 @@ public class ZooKeeperRegistryManager implements RegistryManager {
 
     private static final Logger log = LoggerFactory.getLogger(ZooKeeperRegistryManager.class);
 
-    private static final String ROOT_PATH = "/fastcall";
-
     private ZooKeeper zookeeper;
 
     private final String host;
@@ -34,12 +32,15 @@ public class ZooKeeperRegistryManager implements RegistryManager {
 
     private final Integer sessionTimeout;
 
+    private ServiceCache cache;
+
     public ZooKeeperRegistryManager(String host, Integer port, Integer sessionTimeout) throws IOException, InterruptedException {
         this.host = host;
         this.port = port;
         this.sessionTimeout = sessionTimeout;
+        this.cache = new ServiceCache();
         connect();
-        this.checkPathAndCreate(ROOT_PATH);
+        this.checkPathAndCreate(PathConst.ROOT_PATH);
     }
 
     /**
@@ -51,11 +52,7 @@ public class ZooKeeperRegistryManager implements RegistryManager {
     private void connect() throws IOException, InterruptedException {
         String connection = host + ":" + port;
         CountDownLatch connectedSignal = new CountDownLatch(1);
-        ZooKeeper zooKeeper = new ZooKeeper(connection, sessionTimeout, watchedEvent -> {
-            if (watchedEvent.getState() == Watcher.Event.KeeperState.SyncConnected) {
-                connectedSignal.countDown();
-            }
-        });
+        ZooKeeper zooKeeper = new ZooKeeper(connection, sessionTimeout, new ChildPathWatcher(connectedSignal, cache, zookeeper));
         connectedSignal.await();
         this.zookeeper = zooKeeper;
         log.info("RegistryManager connected zookeeper");
@@ -63,7 +60,7 @@ public class ZooKeeperRegistryManager implements RegistryManager {
 
     @Override
     public synchronized void registerService(ServiceMetaData meta) {
-        String path = ROOT_PATH + "/" + meta.getInterfaceName();
+        String path = PathConst.ROOT_PATH + "/" + meta.getInterfaceName();
         this.checkPathAndCreate(path);
         String groupPath = path + "/" + meta.getGroup();
         this.checkPathAndCreate(groupPath);
@@ -80,8 +77,8 @@ public class ZooKeeperRegistryManager implements RegistryManager {
     public List<InetSocketAddress> getServiceAddress(Class<?> clazz, String group) {
         List<InetSocketAddress> socketAddresses = new ArrayList<>();
         try {
-            String path = ROOT_PATH + "/" + clazz.getName() + "/" + group;
-            List<String> childPath = zookeeper.getChildren(path, null);
+            String path = PathConst.ROOT_PATH + "/" + clazz.getName() + "/" + group;
+            List<String> childPath = zookeeper.getChildren(path, true);
             if (childPath != null && childPath.size() > 0) {
                 for (String cp : childPath) {
                     byte[] bytes = zookeeper.getData(path + "/" + cp, false, new Stat());
@@ -103,7 +100,7 @@ public class ZooKeeperRegistryManager implements RegistryManager {
      */
     private synchronized void checkPathAndCreate(String path) {
         try {
-            if (zookeeper.exists(path, false) == null) {
+            if (zookeeper.exists(path, true) == null) {
                 zookeeper.create(path, "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
                 log.info("RegistryManager create path {}", path);
             }
