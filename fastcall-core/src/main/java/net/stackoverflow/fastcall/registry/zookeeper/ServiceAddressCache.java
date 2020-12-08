@@ -9,11 +9,11 @@ import java.util.*;
  *
  * @author wormhole
  */
-public class ServiceCache {
+public class ServiceAddressCache {
 
     private Map<String, Map<String, Set<ServiceMetaData>>> cache;
 
-    public ServiceCache() {
+    public ServiceAddressCache() {
         this.cache = new HashMap<>();
     }
 

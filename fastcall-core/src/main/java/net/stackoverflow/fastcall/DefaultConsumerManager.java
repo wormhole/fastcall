@@ -45,6 +45,7 @@ public class DefaultConsumerManager implements ConsumerManager {
         this.config = config;
         this.clientPool = new ConcurrentHashMap<>();
         this.executorService = Executors.newFixedThreadPool(config.getThreads());
+        this.subscribe();
     }
 
     @Override
@@ -76,6 +77,11 @@ public class DefaultConsumerManager implements ConsumerManager {
             }
         }
         return future;
+    }
+
+    @Override
+    public void subscribe() {
+        registryManager.subscribe();
     }
 
     public synchronized NettyClient getClient(InetSocketAddress address) {

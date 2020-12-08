@@ -7,8 +7,6 @@ import net.stackoverflow.fastcall.registry.RegistryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Method;
-
 /**
  * FastcallManager默认实现
  *
@@ -45,7 +43,7 @@ public class DefaultFastcallManager implements FastcallManager {
 
     @Override
     public <T> T createProxy(Class<T> clazz, String group) {
-        return RpcProxyFactory.create(clazz, group, this);
+        return RpcProxyFactory.create(clazz, group, consumerManager);
     }
 
     @Override
@@ -60,11 +58,6 @@ public class DefaultFastcallManager implements FastcallManager {
     @Override
     public void registerService(Class<?> clazz, Object bean, String group) {
         providerManager.registerService(clazz, bean, group);
-    }
-
-    @Override
-    public ResponseFuture call(Method method, Object[] args, String group) {
-        return consumerManager.call(method, args, group);
     }
 
     @Override

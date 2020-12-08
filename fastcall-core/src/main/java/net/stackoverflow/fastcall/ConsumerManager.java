@@ -15,6 +15,11 @@ import java.net.InetSocketAddress;
  */
 public interface ConsumerManager {
 
+    /**
+     * 获取配置信息
+     *
+     * @return
+     */
     ConsumerConfig getConfig();
 
     /**
@@ -26,4 +31,9 @@ public interface ConsumerManager {
      * @return
      */
     ResponseFuture call(Method method, Object[] args, String group);
+
+    /**
+     * 订阅服务
+     */
+    void subscribe();
 }

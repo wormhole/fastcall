@@ -27,4 +27,9 @@ public interface RegistryManager {
      * @return
      */
     List<InetSocketAddress> getServiceAddress(Class<?> clazz, String group) throws ServiceNotFoundException;
+
+    /**
+     * 订阅服务
+     */
+    void subscribe();
 }

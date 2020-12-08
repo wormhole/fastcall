@@ -1,7 +1,6 @@
 package net.stackoverflow.fastcall;
 
 import net.stackoverflow.fastcall.config.FastcallConfig;
-import net.stackoverflow.fastcall.transport.proto.RpcResponse;
 
 import java.lang.reflect.Method;
 
@@ -52,16 +51,6 @@ public interface FastcallManager {
      * @param group 所属分组
      */
     void registerService(Class<?> clazz, Object bean, String group);
-
-    /**
-     * RPC调用
-     *
-     * @param method 方法
-     * @param args   参数
-     * @param group  所属分组
-     * @return
-     */
-    ResponseFuture call(Method method, Object[] args, String group);
 
     /**
      * 启动服务

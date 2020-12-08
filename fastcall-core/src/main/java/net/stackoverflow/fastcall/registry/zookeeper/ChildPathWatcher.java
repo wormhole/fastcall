@@ -5,6 +5,7 @@ import net.stackoverflow.fastcall.registry.ServiceMetaData;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.ZookeeperBanner;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,15 +22,21 @@ public class ChildPathWatcher implements Watcher {
 
     private static final Logger log = LoggerFactory.getLogger(ChildPathWatcher.class);
 
-    private final CountDownLatch countDownLatch;
+    private CountDownLatch countDownLatch;
 
-    private ServiceCache cache;
+    private final ServiceAddressCache cache;
 
     private ZooKeeper zooKeeper;
 
-    public ChildPathWatcher(CountDownLatch countDownLatch, ServiceCache cache, ZooKeeper zooKeeper) {
-        this.countDownLatch = countDownLatch;
+    public ChildPathWatcher(ServiceAddressCache cache) {
         this.cache = cache;
+    }
+
+    public void setCountDownLatch(CountDownLatch countDownLatch) {
+        this.countDownLatch = countDownLatch;
+    }
+
+    public void setZooKeeper(ZooKeeper zooKeeper) {
         this.zooKeeper = zooKeeper;
     }
 
@@ -42,12 +49,15 @@ public class ChildPathWatcher implements Watcher {
                 Map<String, Map<String, Set<ServiceMetaData>>> latestCache = new HashMap<>();
 
                 List<String> itfChildPaths = zooKeeper.getChildren(PathConst.ROOT_PATH, true);
+                log.debug("Zookeeper watched children of path {}", PathConst.ROOT_PATH);
                 for (String itfChildPath : itfChildPaths) {
                     String itfPath = PathConst.ROOT_PATH + "/" + itfChildPath;
                     List<String> groupChildPaths = zooKeeper.getChildren(itfPath, true);
+                    log.debug("Zookeeper watched children of path {}", itfPath);
                     for (String groupChildPath : groupChildPaths) {
                         String groupPath = itfPath + "/" + groupChildPath;
                         List<String> serviceChildPaths = zooKeeper.getChildren(groupPath, true);
+                        log.debug("Zookeeper watched children of path {}", groupPath);
                         for (String serviceChildPath : serviceChildPaths) {
                             String servicePath = groupPath + "/" + serviceChildPath;
                             //目前没有在服务运行过程中，动态修改地址的情况，因此此事件不监听
