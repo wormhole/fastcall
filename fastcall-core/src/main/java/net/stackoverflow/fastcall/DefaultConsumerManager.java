@@ -87,6 +87,17 @@ public class DefaultConsumerManager implements ConsumerManager {
     }
 
     /**
+     * 关闭客户端所有连接
+     */
+    @Override
+    public void close() {
+        for (NettyClient client : clientPool.values()) {
+            client.close();
+        }
+        executorService.shutdown();
+    }
+
+    /**
      * 获取Netty客户端
      *
      * @param address 地址

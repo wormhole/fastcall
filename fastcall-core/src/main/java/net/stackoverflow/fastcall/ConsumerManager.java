@@ -32,4 +32,9 @@ public interface ConsumerManager {
      * 订阅服务
      */
     void subscribe();
+
+    /**
+     * 关闭客户端所有连接
+     */
+    void close();
 }

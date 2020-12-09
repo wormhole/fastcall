@@ -17,6 +17,8 @@ import net.stackoverflow.fastcall.transport.handler.server.ServerRpcHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.CountDownLatch;
+
 /**
  * Netty服务端
  *
@@ -38,6 +40,8 @@ public class NettyServer {
 
     private final SerializeManager serializeManager;
 
+    private Channel channel;
+
     /**
      * 构造方法
      *
@@ -57,7 +61,7 @@ public class NettyServer {
         this.serializeManager = serializeManager;
     }
 
-    public void bind() {
+    public void bind(CountDownLatch countDownLatch) {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workGroup = new NioEventLoopGroup();
         NioEventLoopGroup businessGroup = new NioEventLoopGroup(threads);
@@ -80,7 +84,9 @@ public class NettyServer {
                     });
             ChannelFuture channelFuture = bootstrap.bind(host, port).sync();
             log.info("[L:{}] Server bind success", host + ":" + port);
-            channelFuture.channel().closeFuture().sync();
+            channel = channelFuture.channel();
+            countDownLatch.countDown();
+            channel.closeFuture().sync();
         } catch (InterruptedException e) {
             log.error("[L:{}] Server fail to bind", host + ":" + port, e);
         } finally {
@@ -88,5 +94,13 @@ public class NettyServer {
             bossGroup.shutdownGracefully();
             workGroup.shutdownGracefully();
         }
+    }
+
+    public boolean isActive() {
+        return channel != null && channel.isActive();
+    }
+
+    public void close() {
+        channel.close();
     }
 }

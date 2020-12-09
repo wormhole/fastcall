@@ -24,7 +24,7 @@ public interface ProviderManager {
     /**
      * 停止服务
      */
-    void stop();
+    void close();
 
     /**
      * 注册服务

@@ -97,6 +97,12 @@ public class NettyClient {
         }
     }
 
+    public void close() {
+        if (isActive()) {
+            channel.close();
+        }
+    }
+
     public String getHost() {
         return host;
     }

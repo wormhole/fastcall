@@ -72,7 +72,8 @@ public class DefaultFastcallManager implements FastcallManager {
      */
     @Override
     public void registerService(Class<?> clazz, Object bean) {
-        FastcallService fastcallService = clazz.getAnnotation(FastcallService.class);
+        Class<?> cls = bean.getClass();
+        FastcallService fastcallService = cls.getAnnotation(FastcallService.class);
         if (fastcallService != null) {
             String group = fastcallService.group();
             providerManager.registerService(clazz, bean, group);
@@ -103,8 +104,12 @@ public class DefaultFastcallManager implements FastcallManager {
      * 停止服务
      */
     @Override
-    public void stop() {
-        providerManager.stop();
+    public void stop() throws InterruptedException {
+        if (config.getProvider().getEnabled()) {
+            providerManager.close();
+        }
+        consumerManager.close();
+        registryManager.close();
     }
 
 

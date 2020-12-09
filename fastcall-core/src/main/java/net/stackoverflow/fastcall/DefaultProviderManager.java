@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -38,7 +39,7 @@ public class DefaultProviderManager implements ProviderManager {
         this.registryManager = registryManager;
         this.config = config;
         this.server = new NettyServer(config.getBacklog(), config.getTimeout(), config.getHost(), config.getPort(), config.getThreads(), serializeManager);
-        this.executorService = Executors.newSingleThreadExecutor();
+        this.executorService = Executors.newFixedThreadPool(1);
     }
 
     /**
@@ -56,15 +57,22 @@ public class DefaultProviderManager implements ProviderManager {
      */
     @Override
     public void start() {
-        executorService.submit(() -> server.bind());
+        try {
+            CountDownLatch countDownLatch = new CountDownLatch(1);
+            executorService.execute(() -> server.bind(countDownLatch));
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            log.error("ProviderManager fail to start server", e);
+        }
     }
 
     /**
      * 停止服务
      */
     @Override
-    public void stop() {
-        executorService.shutdownNow();
+    public void close() {
+        server.close();
+        executorService.shutdown();
     }
 
     /**

@@ -32,4 +32,9 @@ public interface RegistryManager {
      * 订阅服务
      */
     void subscribe();
+
+    /**
+     * 关闭连接
+     */
+    void close() throws InterruptedException;
 }

@@ -129,6 +129,11 @@ public class ZooKeeperRegistryManager implements RegistryManager {
         }
     }
 
+    @Override
+    public void close() throws InterruptedException {
+        zookeeper.close();
+    }
+
     /**
      * 检查节点是否存在，不存在则创建
      */
