@@ -187,7 +187,6 @@ public class FastcallController {
 |fastcall-demo-consumer|样例工程，服务消费者|
 
 ## 五、支持情况
->未勾选的为待支持的类型
 
 |序列化类型|json|protobuf|msgpack|
 |----|----|----|----|
@@ -202,7 +201,7 @@ public class FastcallController {
 |是否支持|✔|❌|❌|❌|
 
 ## 六、附录
-### 6.1 关于`Fastcall`协议
+关于`Fastcall`协议  
 |字段|说明|大小|
 |----|----|----|
 |magic|魔术字，固定为fastcall|8字节|
