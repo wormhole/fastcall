@@ -129,6 +129,11 @@ public class ZooKeeperRegistryManager implements RegistryManager {
         }
     }
 
+    /**
+     * 关闭zookeeper连接
+     *
+     * @throws InterruptedException
+     */
     @Override
     public void close() throws InterruptedException {
         zookeeper.close();
