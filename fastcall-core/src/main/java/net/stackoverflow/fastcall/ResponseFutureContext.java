@@ -21,8 +21,8 @@ public class ResponseFutureContext {
     /**
      * 生成ResponseFuture
      *
-     * @param requestId
-     * @return
+     * @param requestId 请求唯一标识
+     * @return ResponseFuture对象
      */
     public static ResponseFuture createFuture(String requestId) {
         ResponseFuture future = new ResponseFuture();
@@ -33,7 +33,7 @@ public class ResponseFutureContext {
     /**
      * 设置rpc响应结果
      *
-     * @param response
+     * @param response rpc响应对象
      */
     public static void setResponse(RpcResponse response) {
         ResponseFuture future = futurePool.get(response.getId());
@@ -44,7 +44,7 @@ public class ResponseFutureContext {
     /**
      * 删除ResponseFuture
      *
-     * @param requestId
+     * @param requestId 请求唯一标识
      */
     public static void removeFuture(String requestId) {
         futurePool.remove(requestId);

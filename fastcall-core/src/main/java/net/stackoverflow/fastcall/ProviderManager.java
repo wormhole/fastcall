@@ -3,7 +3,7 @@ package net.stackoverflow.fastcall;
 import net.stackoverflow.fastcall.config.ProviderConfig;
 
 /**
- * 服务提供者管理
+ * Provider管理类
  *
  * @author wormhole
  */
@@ -12,12 +12,12 @@ public interface ProviderManager {
     /**
      * 获取配置
      *
-     * @return
+     * @return Provider配置
      */
     ProviderConfig getConfig();
 
     /**
-     * 开始服务
+     * 启动服务
      */
     void start();
 

@@ -20,7 +20,7 @@ public class MessageDecoder extends LengthFieldBasedFrameDecoder {
 
     public static final Logger log = LoggerFactory.getLogger(MessageDecoder.class);
 
-    private SerializeManager serializeManager;
+    private final SerializeManager serializeManager;
 
     public MessageDecoder(SerializeManager serializeManager) {
         super(1024 * 1024, 10, 4, 0, 0);

@@ -1,7 +1,5 @@
 package net.stackoverflow.fastcall.annotation;
 
-import org.springframework.context.annotation.Lazy;
-
 import java.lang.annotation.*;
 
 /**

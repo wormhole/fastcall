@@ -42,7 +42,7 @@ public class ResponseFuture {
                 try {
                     lock.wait();
                 } catch (InterruptedException e) {
-                    log.error("Get response fail", e);
+                    log.error("ResponseFuture fail to get response", e);
                 }
             }
             return response;

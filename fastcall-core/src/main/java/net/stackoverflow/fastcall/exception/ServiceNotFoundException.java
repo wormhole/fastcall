@@ -1,7 +1,7 @@
 package net.stackoverflow.fastcall.exception;
 
 /**
- * 未找到远程服务
+ * 未找到远程服务异常类
  *
  * @author wormhole
  */

@@ -1,7 +1,7 @@
 package net.stackoverflow.fastcall.config;
 
 /**
- * Consumer 配置
+ * Consumer 配置类
  *
  * @author wormhole
  */

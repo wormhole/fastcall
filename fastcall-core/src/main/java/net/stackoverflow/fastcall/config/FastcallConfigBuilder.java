@@ -3,7 +3,7 @@ package net.stackoverflow.fastcall.config;
 import net.stackoverflow.fastcall.registry.JsonUtils;
 
 /**
- * 配置建造者
+ * Fastcall配置建造者类
  *
  * @author wormhole
  */

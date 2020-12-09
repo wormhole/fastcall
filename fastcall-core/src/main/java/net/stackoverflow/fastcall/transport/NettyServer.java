@@ -82,7 +82,7 @@ public class NettyServer {
             log.info("[L:{}] Server bind success", host + ":" + port);
             channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
-            log.error("[L:{}] Server bind fail", host + ":" + port, e);
+            log.error("[L:{}] Server fail to bind", host + ":" + port, e);
         } finally {
             log.info("[L:{}] Server stopped", host + ":" + port);
             bossGroup.shutdownGracefully();

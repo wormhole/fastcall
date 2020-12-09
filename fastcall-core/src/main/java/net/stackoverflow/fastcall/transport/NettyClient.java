@@ -6,9 +6,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
-import net.stackoverflow.fastcall.FastcallManager;
-import net.stackoverflow.fastcall.ResponseFuture;
-import net.stackoverflow.fastcall.exception.ConnectionInActiveException;
+import net.stackoverflow.fastcall.exception.ConnectionInactiveException;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.codec.MessageDecoder;
 import net.stackoverflow.fastcall.transport.codec.MessageEncoder;
@@ -16,12 +14,9 @@ import net.stackoverflow.fastcall.transport.handler.client.ClientAuthHandler;
 import net.stackoverflow.fastcall.transport.handler.client.ClientRpcHandler;
 import net.stackoverflow.fastcall.transport.handler.client.ClientHeatBeatHandler;
 import net.stackoverflow.fastcall.transport.proto.Message;
-import net.stackoverflow.fastcall.transport.proto.MessageType;
-import net.stackoverflow.fastcall.transport.proto.RpcRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -94,11 +89,11 @@ public class NettyClient {
         return channel != null && channel.isActive();
     }
 
-    public void send(Message message) throws ConnectionInActiveException {
+    public void send(Message message) throws ConnectionInactiveException {
         if (isActive()) {
             channel.writeAndFlush(message);
         } else {
-            throw new ConnectionInActiveException(getHost(), getPort());
+            throw new ConnectionInactiveException(getHost(), getPort());
         }
     }
 

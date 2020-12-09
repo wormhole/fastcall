@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 客户端业务Handler
+ * 客户端Rpc Handler
  *
  * @author wormhole
  */

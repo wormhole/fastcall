@@ -1,15 +1,11 @@
 package net.stackoverflow.fastcall;
 
 import net.stackoverflow.fastcall.config.ConsumerConfig;
-import net.stackoverflow.fastcall.transport.NettyClient;
-import net.stackoverflow.fastcall.transport.proto.RpcRequest;
-import net.stackoverflow.fastcall.transport.proto.RpcResponse;
 
 import java.lang.reflect.Method;
-import java.net.InetSocketAddress;
 
 /**
- * 消费者管理器
+ * 消费者管理类
  *
  * @author wormhole
  */
@@ -18,7 +14,7 @@ public interface ConsumerManager {
     /**
      * 获取配置信息
      *
-     * @return
+     * @return Consumer配置类
      */
     ConsumerConfig getConfig();
 
@@ -28,7 +24,7 @@ public interface ConsumerManager {
      * @param method 方法
      * @param args   参数
      * @param group  所属分组
-     * @return
+     * @return ResponseFuture对象
      */
     ResponseFuture call(Method method, Object[] args, String group);
 

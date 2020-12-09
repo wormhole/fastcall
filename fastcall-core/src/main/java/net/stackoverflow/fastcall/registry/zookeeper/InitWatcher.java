@@ -12,7 +12,7 @@ import java.util.concurrent.CountDownLatch;
  */
 public class InitWatcher implements Watcher {
 
-    private CountDownLatch countDownLatch;
+    private final CountDownLatch countDownLatch;
 
     public InitWatcher(CountDownLatch countDownLatch) {
         this.countDownLatch = countDownLatch;

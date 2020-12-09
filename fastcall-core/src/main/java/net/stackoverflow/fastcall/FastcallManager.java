@@ -2,8 +2,6 @@ package net.stackoverflow.fastcall;
 
 import net.stackoverflow.fastcall.config.FastcallConfig;
 
-import java.lang.reflect.Method;
-
 /**
  * Fastcall对外统一外观
  *
@@ -14,14 +12,14 @@ public interface FastcallManager {
     /**
      * 设置服务提供Manager
      *
-     * @param providerManager
+     * @param providerManager provider管理类实现
      */
     void setProviderManager(ProviderManager providerManager);
 
     /**
      * 获取配置
      *
-     * @return
+     * @return fastcall配置
      */
     FastcallConfig getConfig();
 
@@ -31,7 +29,7 @@ public interface FastcallManager {
      * @param clazz 接口Class对象
      * @param group 所属分组
      * @param <T>   泛型
-     * @return
+     * @return 代理对象
      */
     <T> T createProxy(Class<T> clazz, String group);
 

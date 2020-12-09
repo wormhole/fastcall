@@ -16,7 +16,7 @@ public class JsonUtils {
     /**
      * bean转json
      *
-     * @param obj
+     * @param obj 需要序列化的对象
      * @return
      */
     public static String bean2json(Object obj) {
@@ -33,9 +33,9 @@ public class JsonUtils {
     /**
      * json转bean
      *
-     * @param json
-     * @param clazz
-     * @param <T>
+     * @param json  json字符串
+     * @param clazz Class对象
+     * @param <T>   泛型
      * @return
      */
     public static <T> T json2bean(String json, Class<T> clazz) {

@@ -6,7 +6,7 @@ import java.net.InetSocketAddress;
 import java.util.List;
 
 /**
- * 注册中心管理器
+ * 注册中心管理类
  *
  * @author wormhole
  */

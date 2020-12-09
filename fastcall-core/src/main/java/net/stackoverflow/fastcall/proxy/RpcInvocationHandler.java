@@ -11,7 +11,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 /**
- * RpcInvocation
+ * RpcInvocation类
  *
  * @author wormhole
  */
@@ -32,6 +32,7 @@ public class RpcInvocationHandler implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         ResponseFuture future = consumerManager.call(method, args, group);
         RpcResponse response = future.getResponse();
+        log.trace("Method: {}, code: {}", method.getName(), response.getCode());
         if (response.getCode() == 0) {
             return response.getResponse();
         } else {

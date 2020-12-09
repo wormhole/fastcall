@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * ZooKeeper子节点事件Watcher
+ * ZooKeeper子节点事件监听器
  *
  * @author wormhole
  */
@@ -50,7 +50,7 @@ public class ChildrenWatcher implements Watcher {
     /**
      * 缓存全部
      *
-     * @param path
+     * @param path zookeeper路径
      */
     private void cache(String path) {
         try {
@@ -75,15 +75,15 @@ public class ChildrenWatcher implements Watcher {
             }
             cache.reset(latestCache);
         } catch (Exception e) {
-            log.error("ChildrenWatcher subscribe error", e);
+            log.error("Zookeeper fail to watched path", e);
         }
     }
 
     /**
      * 缓存某个接口下的服务
      *
-     * @param interfaceName
-     * @param path
+     * @param interfaceName 接口名
+     * @param path          接口的zookeeper路径
      */
     private void cache(String interfaceName, String path) {
         try {
@@ -100,7 +100,7 @@ public class ChildrenWatcher implements Watcher {
             }
             cache.reset(interfaceName, set);
         } catch (Exception e) {
-            log.error("ChildrenWatcher subscribe error", e);
+            log.error("Zookeeper fail to watched path", e);
         }
     }
 }

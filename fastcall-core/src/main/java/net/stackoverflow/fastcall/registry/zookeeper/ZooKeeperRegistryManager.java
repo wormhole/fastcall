@@ -59,9 +59,14 @@ public class ZooKeeperRegistryManager implements RegistryManager {
         countDownLatch.await();
         this.zookeeper = zooKeeper;
         this.checkPathAndCreate(ROOT_PATH);
-        log.info("RegistryManager connected zookeeper");
+        log.info("RegistryManager connected zookeeper success");
     }
 
+    /**
+     * 注册服务
+     *
+     * @param meta 服务元数据
+     */
     @Override
     public synchronized void registerService(ServiceMetaData meta) {
         String path = ROOT_PATH + "/" + meta.getInterfaceName();
@@ -75,6 +80,13 @@ public class ZooKeeperRegistryManager implements RegistryManager {
         }
     }
 
+    /**
+     * 获取服务地址
+     *
+     * @param clazz 接口Class对象
+     * @param group 所属分组
+     * @return
+     */
     @Override
     public List<InetSocketAddress> getServiceAddress(Class<?> clazz, String group) {
         List<InetSocketAddress> socketAddresses = new ArrayList<>();
@@ -89,10 +101,13 @@ public class ZooKeeperRegistryManager implements RegistryManager {
         return socketAddresses;
     }
 
+    /**
+     * 订阅服务
+     */
     @Override
     public void subscribe() {
         ChildrenWatcher childrenWatcher = new ChildrenWatcher(cache, zookeeper);
-        log.info("ZooKeeperRegistryManager subscribe service");
+        log.info("RegistryManager start subscribe service");
         try {
             List<String> itfChildPaths = zookeeper.getChildren(ROOT_PATH, childrenWatcher);
             log.debug("Zookeeper watched children of path {}", ROOT_PATH);
@@ -110,7 +125,7 @@ public class ZooKeeperRegistryManager implements RegistryManager {
                 }
             }
         } catch (Exception e) {
-            log.error("ZookeeperRegistryManager subscribe service error", e);
+            log.error("RegistryManager fail to subscribe service", e);
         }
     }
 

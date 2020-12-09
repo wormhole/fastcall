@@ -1,7 +1,7 @@
 package net.stackoverflow.fastcall.registry;
 
 /**
- * 服务类元数据
+ * 服务元数据
  *
  * @author wormhole
  */

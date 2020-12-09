@@ -20,7 +20,7 @@ public class MessageEncoder extends MessageToByteEncoder<Message> {
 
     public static final Logger log = LoggerFactory.getLogger(MessageEncoder.class);
 
-    private SerializeManager serializeManager;
+    private final SerializeManager serializeManager;
 
     public MessageEncoder(SerializeManager serializeManager){
         this.serializeManager = serializeManager;

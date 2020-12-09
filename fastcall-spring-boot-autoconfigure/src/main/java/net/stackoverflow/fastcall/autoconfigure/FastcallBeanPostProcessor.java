@@ -2,7 +2,6 @@ package net.stackoverflow.fastcall.autoconfigure;
 
 import net.stackoverflow.fastcall.FastcallManager;
 import net.stackoverflow.fastcall.annotation.FastcallReference;
-import net.stackoverflow.fastcall.proxy.RpcProxyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;
@@ -42,7 +41,7 @@ public class FastcallBeanPostProcessor implements BeanPostProcessor {
                     field.setAccessible(true);
                     field.set(bean, fastcallManager.createProxy(field.getType(), reference.group()));
                 } catch (IllegalAccessException e) {
-                    log.error("BeanPostProcessor set field fail", e);
+                    log.error("BeanPostProcessor fail to set field", e);
                 }
             }
         }

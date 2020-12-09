@@ -42,7 +42,7 @@ public class ServerRpcHandler extends ChannelInboundHandlerAdapter {
             rpcResponse = new RpcResponse(request.getId(), 0, response, null);
             log.debug("[L:{} R:{}] Server execute rpc handler success, requestId:{}", ctx.channel().localAddress(), ctx.channel().remoteAddress(), request.getId());
         } catch (Throwable e) {
-            log.error("[L:{} R:{}] Server execute rpc handler fail, requestId:{}", ctx.channel().localAddress(), ctx.channel().remoteAddress(), request.getId(), e);
+            log.error("[L:{} R:{}] Server fail to execute rpc handler, requestId:{}", ctx.channel().localAddress(), ctx.channel().remoteAddress(), request.getId(), e);
             if (e instanceof InvocationTargetException) {
                 e = ((InvocationTargetException) e).getTargetException();
             }

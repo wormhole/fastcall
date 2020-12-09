@@ -1,7 +1,5 @@
 package net.stackoverflow.fastcall.annotation;
 
-import org.springframework.stereotype.Component;
-
 import java.lang.annotation.*;
 
 /**

@@ -23,15 +23,15 @@ public class DefaultProviderManager implements ProviderManager {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultFastcallManager.class);
 
-    private SerializeManager serializeManager;
+    private final SerializeManager serializeManager;
 
-    private RegistryManager registryManager;
+    private final RegistryManager registryManager;
 
-    private NettyServer server;
+    private final NettyServer server;
 
-    private ProviderConfig config;
+    private final ProviderConfig config;
 
-    private ExecutorService executorService;
+    private final ExecutorService executorService;
 
     public DefaultProviderManager(ProviderConfig config, SerializeManager serializeManager, RegistryManager registryManager) {
         this.serializeManager = serializeManager;
@@ -41,27 +41,50 @@ public class DefaultProviderManager implements ProviderManager {
         this.executorService = Executors.newSingleThreadExecutor();
     }
 
+    /**
+     * 获取配置
+     *
+     * @return provider配置
+     */
     @Override
     public ProviderConfig getConfig() {
         return config;
     }
 
+    /**
+     * 启动服务
+     */
     @Override
     public void start() {
         executorService.submit(() -> server.bind());
     }
 
+    /**
+     * 停止服务
+     */
     @Override
     public void stop() {
         executorService.shutdownNow();
     }
 
+    /**
+     * 注册服务
+     *
+     * @param clazz 需要暴露的接口
+     * @param bean  服务bean对象
+     * @param group 所属分组
+     */
     @Override
     public void registerService(Class<?> clazz, Object bean, String group) {
         BeanContext.setBean(clazz, bean);
         registryManager.registerService(new ServiceMetaData(group, clazz.getName(), getIp(), config.getPort()));
     }
 
+    /**
+     * 获取本机服务ip
+     *
+     * @return
+     */
     private String getIp() {
         if (config.getHost().equals("0.0.0.0")) {
             InetAddress ip4 = null;

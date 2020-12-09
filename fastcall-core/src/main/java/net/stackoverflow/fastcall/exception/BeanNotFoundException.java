@@ -1,7 +1,7 @@
 package net.stackoverflow.fastcall.exception;
 
 /**
- * 未找到bean
+ * 未找到bean，用于Provider端
  *
  * @author wormhole
  */

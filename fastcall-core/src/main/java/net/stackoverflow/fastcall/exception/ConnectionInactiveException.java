@@ -1,23 +1,23 @@
 package net.stackoverflow.fastcall.exception;
 
 /**
- * 连接已断开异常
+ * 连接已断开异常类
  *
  * @author wormhole
  */
-public class ConnectionInActiveException extends Exception {
+public class ConnectionInactiveException extends Exception {
 
     private final String host;
 
     private final Integer port;
 
-    public ConnectionInActiveException(String host, Integer port) {
+    public ConnectionInactiveException(String host, Integer port) {
         super();
         this.host = host;
         this.port = port;
     }
 
-    public ConnectionInActiveException(String host, Integer port, String msg) {
+    public ConnectionInactiveException(String host, Integer port, String msg) {
         super(msg);
         this.host = host;
         this.port = port;

@@ -1,14 +1,13 @@
 package net.stackoverflow.fastcall;
 
 import net.stackoverflow.fastcall.config.ConsumerConfig;
-import net.stackoverflow.fastcall.exception.ConnectionInActiveException;
+import net.stackoverflow.fastcall.exception.ConnectionInactiveException;
 import net.stackoverflow.fastcall.registry.RegistryManager;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.NettyClient;
 import net.stackoverflow.fastcall.transport.proto.Message;
 import net.stackoverflow.fastcall.transport.proto.MessageType;
 import net.stackoverflow.fastcall.transport.proto.RpcRequest;
-import net.stackoverflow.fastcall.transport.proto.RpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +20,7 @@ import java.util.UUID;
 import java.util.concurrent.*;
 
 /**
- * Consumer默认实现
+ * ConsumerManager默认实现
  *
  * @author wormhole
  */
@@ -71,7 +70,7 @@ public class DefaultConsumerManager implements ConsumerManager {
                 future = ResponseFutureContext.createFuture(request.getId());
                 client.send(new Message(MessageType.BUSINESS_REQUEST, request));
                 break;
-            } catch (ConnectionInActiveException e) {
+            } catch (ConnectionInactiveException e) {
                 ResponseFutureContext.removeFuture(request.getId());
                 log.error("[R:{}] Connection is inactive", e.getHost() + ":" + e.getPort());
             }
@@ -79,11 +78,20 @@ public class DefaultConsumerManager implements ConsumerManager {
         return future;
     }
 
+    /**
+     * 订阅服务
+     */
     @Override
     public void subscribe() {
         registryManager.subscribe();
     }
 
+    /**
+     * 获取Netty客户端
+     *
+     * @param address 地址
+     * @return
+     */
     public synchronized NettyClient getClient(InetSocketAddress address) {
         String host = address.getAddress().getHostAddress();
         Integer port = address.getPort();
@@ -103,15 +111,20 @@ public class DefaultConsumerManager implements ConsumerManager {
         return client;
     }
 
+    /**
+     * 初始化连接
+     *
+     * @param client Netty客户端
+     */
     private void initClient(NettyClient client) {
-        log.info("[R:{}] ConsumerManager init client start", client.getHost() + ":" + client.getPort());
+        log.info("[R:{}] ConsumerManager start init client", client.getHost() + ":" + client.getPort());
         CountDownLatch countDownLatch = new CountDownLatch(1);
         executorService.execute(() -> client.connect(countDownLatch));
         try {
             countDownLatch.await();
             log.info("[R:{}] ConsumerManager init client success", client.getHost() + ":" + client.getPort());
         } catch (InterruptedException e) {
-            log.info("[R:{}] ConsumerManager init client fail", client.getHost() + ":" + client.getPort(), e);
+            log.info("[R:{}] ConsumerManager fail to init client", client.getHost() + ":" + client.getPort(), e);
         }
     }
 }

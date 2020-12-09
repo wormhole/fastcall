@@ -1,7 +1,6 @@
 package net.stackoverflow.fastcall.proxy;
 
 import net.stackoverflow.fastcall.ConsumerManager;
-import net.stackoverflow.fastcall.FastcallManager;
 
 import java.lang.reflect.Proxy;
 
@@ -16,7 +15,7 @@ public class RpcProxyFactory {
      * 工厂类方法
      *
      * @param clazz           接口Class对象
-     * @param fastcallManager Fastcall管理器
+     * @param consumerManager Consumer管理对象
      * @param group           所属分组
      * @param <T>             泛型
      * @return
