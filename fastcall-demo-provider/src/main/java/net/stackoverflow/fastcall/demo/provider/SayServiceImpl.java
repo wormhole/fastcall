@@ -1,13 +1,12 @@
 package net.stackoverflow.fastcall.demo.provider;
 
+import net.stackoverflow.fastcall.annotation.FastcallFallback;
 import net.stackoverflow.fastcall.annotation.FastcallService;
 import net.stackoverflow.fastcall.demo.api.SayService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-
-@FastcallService(group = "group-1", fallback = "sayFallback")
+@FastcallService(group = "group-1")
 public class SayServiceImpl implements SayService {
 
     private static final Logger log = LoggerFactory.getLogger(SayServiceImpl.class);
@@ -18,12 +17,13 @@ public class SayServiceImpl implements SayService {
     }
 
     @Override
-    public String sayWithCheckException(String content) throws Exception {
-        throw new IOException("check exception");
+    @FastcallFallback(method = "sayFallback")
+    public String sayWithFallback(String content)  {
+        throw new RuntimeException("fall back");
     }
 
     @Override
-    public String sayWithUncheckException(String content) {
+    public String sayWithException(String content) {
         throw new RuntimeException("uncheck exception");
     }
 

@@ -4,8 +4,8 @@ public interface SayService {
 
     String say(String content);
 
-    String sayWithCheckException(String content) throws Exception;
+    String sayWithFallback(String content);
 
-    String sayWithUncheckException(String content);
+    String sayWithException(String content);
 
 }

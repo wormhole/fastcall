@@ -17,13 +17,13 @@ public class FastcallController {
         return sayService.say(content);
     }
 
-    @GetMapping("/say_with_check_exception")
-    public String sayWithCheckException(@RequestParam("content") String content) throws Exception {
-        return sayService.sayWithCheckException(content);
+    @GetMapping("/say_with_fallback")
+    public String sayWithFallback(@RequestParam("content") String content) {
+        return sayService.sayWithFallback(content);
     }
 
-    @GetMapping("/say_with_uncheck_exception")
-    public String sayWithUncheckException(@RequestParam("content") String content) {
-        return sayService.sayWithUncheckException(content);
+    @GetMapping("/say_with_exception")
+    public String sayWithException(@RequestParam("content") String content) {
+        return sayService.sayWithException(content);
     }
 }
