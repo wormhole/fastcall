@@ -24,8 +24,8 @@ $ mvn install
 ```
 
 ## 三、使用
-### 非spring应用
-#### 服务提供者`Provider`工程
+### 3.1 在非spring应用中使用
+#### 3.1.1 服务提供者`Provider`工程
 
 1. 新建`maven`项目，并添加依赖
 ```
@@ -78,7 +78,7 @@ public class FastcallDemoProviderApplication {
 }
 ```
 
-#### 服务消费者`Consumer`工程
+#### 3.1.2服务消费者`Consumer`工程
 
 1. 新建`maven`项目，添加依赖
 ```
@@ -114,8 +114,8 @@ public class FastcallDemoConsumerApplication {
 }
 ```
 
-### spring应用（spring boot为例）
-#### 服务提供者`Provider`工程 [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-provider)
+### 3.2 在spring应用中使用（spring boot为例）
+#### 3.2.1 服务提供者`Provider`工程 [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-provider)
 
 1. 新建`Spring boot`项目，并添加`maven`依赖
 ```
@@ -187,7 +187,7 @@ public class FastcallDemoProviderApplication {
 }
 ```
 
-#### 服务消费者`Consumer`工程 [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-consumer) 
+#### 3.2.2 服务消费者`Consumer`工程 [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-consumer) 
 
 1. 新建`Spring boot`项目，并添加`maven`依赖
 ```
