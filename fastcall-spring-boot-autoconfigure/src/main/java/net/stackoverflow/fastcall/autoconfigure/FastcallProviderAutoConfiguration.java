@@ -84,11 +84,9 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
 
         for (Object obj : map.values()) {
             Class<?> clazz = obj.getClass();
-            FastcallService fastcallService = clazz.getAnnotation(FastcallService.class);
-            String group = fastcallService.group();
             Class<?>[] interfaces = clazz.getInterfaces();
             for (Class<?> itf : interfaces) {
-                fastcallManager.registerService(itf, obj, group);
+                fastcallManager.registerService(itf, obj);
             }
         }
     }

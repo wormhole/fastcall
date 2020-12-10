@@ -72,24 +72,7 @@ public class DefaultFastcallManager implements FastcallManager {
      */
     @Override
     public void registerService(Class<?> clazz, Object bean) {
-        Class<?> cls = bean.getClass();
-        FastcallService fastcallService = cls.getAnnotation(FastcallService.class);
-        if (fastcallService != null) {
-            String group = fastcallService.group();
-            providerManager.registerService(clazz, bean, group);
-        }
-    }
-
-    /**
-     * 注册服务
-     *
-     * @param clazz 需要暴露的接口
-     * @param bean  服务bean对象
-     * @param group 所属分组
-     */
-    @Override
-    public void registerService(Class<?> clazz, Object bean, String group) {
-        providerManager.registerService(clazz, bean, group);
+        providerManager.registerService(clazz, bean);
     }
 
     /**

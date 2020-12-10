@@ -1,8 +1,7 @@
 package net.stackoverflow.fastcall.proxy;
 
 import net.stackoverflow.fastcall.ConsumerManager;
-import net.stackoverflow.fastcall.FastcallManager;
-import net.stackoverflow.fastcall.ResponseFuture;
+import net.stackoverflow.fastcall.context.ResponseFuture;
 import net.stackoverflow.fastcall.transport.proto.RpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -31,7 +31,6 @@ public interface ProviderManager {
      *
      * @param clazz 需要暴露的接口
      * @param bean  服务bean对象
-     * @param group 所属分组
      */
-    void registerService(Class<?> clazz, Object bean, String group);
+    void registerService(Class<?> clazz, Object bean);
 }

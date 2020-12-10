@@ -42,15 +42,6 @@ public interface FastcallManager {
     void registerService(Class<?> clazz, Object bean);
 
     /**
-     * 注册服务（通过非注解）
-     *
-     * @param clazz 需要暴露的接口
-     * @param bean  服务bean对象
-     * @param group 所属分组
-     */
-    void registerService(Class<?> clazz, Object bean, String group);
-
-    /**
      * 启动服务
      */
     void start();

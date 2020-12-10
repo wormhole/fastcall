@@ -1,6 +1,8 @@
 package net.stackoverflow.fastcall;
 
+import net.stackoverflow.fastcall.annotation.FastcallService;
 import net.stackoverflow.fastcall.config.ProviderConfig;
+import net.stackoverflow.fastcall.context.BeanContext;
 import net.stackoverflow.fastcall.registry.RegistryManager;
 import net.stackoverflow.fastcall.registry.ServiceMetaData;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
@@ -80,12 +82,17 @@ public class DefaultProviderManager implements ProviderManager {
      *
      * @param clazz 需要暴露的接口
      * @param bean  服务bean对象
-     * @param group 所属分组
      */
     @Override
-    public void registerService(Class<?> clazz, Object bean, String group) {
-        BeanContext.setBean(clazz, bean);
-        registryManager.registerService(new ServiceMetaData(group, clazz.getName(), getIp(), config.getPort()));
+    public void registerService(Class<?> clazz, Object bean) {
+        Class<?> cls = bean.getClass();
+        FastcallService fastcallService = cls.getAnnotation(FastcallService.class);
+        if (fastcallService != null) {
+            BeanContext.setBean(clazz, bean);
+            String group = fastcallService.group();
+            String fallback = fastcallService.fallback();
+            registryManager.registerService(new ServiceMetaData(group, clazz.getName(), fallback, getIp(), config.getPort()));
+        }
     }
 
     /**

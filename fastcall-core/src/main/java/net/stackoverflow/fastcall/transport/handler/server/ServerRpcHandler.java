@@ -2,7 +2,7 @@ package net.stackoverflow.fastcall.transport.handler.server;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import net.stackoverflow.fastcall.BeanContext;
+import net.stackoverflow.fastcall.context.BeanContext;
 import net.stackoverflow.fastcall.transport.proto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

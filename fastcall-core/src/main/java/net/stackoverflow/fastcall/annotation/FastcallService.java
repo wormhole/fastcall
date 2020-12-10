@@ -13,4 +13,6 @@ import java.lang.annotation.*;
 public @interface FastcallService {
 
     String group() default "default";
+
+    String fallback() default "";
 }
