@@ -3,15 +3,14 @@ package net.stackoverflow.fastcall.annotation;
 import java.lang.annotation.*;
 
 /**
- * 服务类注册
+ * 服务降级注解
  *
  * @author wormhole
  */
-@Target({ElementType.TYPE})
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface FastcallService {
+public @interface FastcallFallback {
 
-    String group() default "default";
-
+    String method();
 }

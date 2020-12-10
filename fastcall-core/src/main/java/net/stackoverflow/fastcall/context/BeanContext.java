@@ -22,16 +22,11 @@ public class BeanContext {
         BeanContext.setBean(clazz.getName(), bean);
     }
 
-    public static Object getBean(String name) throws BeanNotFoundException {
-        Object bean = beans.get(name);
-        if (bean == null) {
-            throw new BeanNotFoundException();
-        } else {
-            return bean;
-        }
+    public static Object getBean(String name) {
+        return beans.get(name);
     }
 
-    public static <T> T getBean(Class<?> clazz) throws BeanNotFoundException {
+    public static <T> T getBean(Class<?> clazz) {
         return (T) BeanContext.getBean(clazz.getName());
     }
 }

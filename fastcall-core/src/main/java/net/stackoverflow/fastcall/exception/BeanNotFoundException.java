@@ -5,7 +5,7 @@ package net.stackoverflow.fastcall.exception;
  *
  * @author wormhole
  */
-public class BeanNotFoundException extends Exception {
+public class BeanNotFoundException extends RuntimeException {
 
     public BeanNotFoundException() {
         super();

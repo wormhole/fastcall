@@ -11,8 +11,6 @@ public class ServiceMetaData {
 
     private String interfaceName;
 
-    private String fallback;
-
     private String host;
 
     private Integer port;
@@ -26,14 +24,12 @@ public class ServiceMetaData {
      *
      * @param group         分组
      * @param interfaceName 接口名称
-     * @param fallback      降级方法
      * @param host          服务ip
      * @param port          服务端口
      */
-    public ServiceMetaData(String group, String interfaceName, String fallback, String host, Integer port) {
+    public ServiceMetaData(String group, String interfaceName, String host, Integer port) {
         this.group = group;
         this.interfaceName = interfaceName;
-        this.fallback = fallback;
         this.host = host;
         this.port = port;
     }
@@ -52,14 +48,6 @@ public class ServiceMetaData {
 
     public void setInterfaceName(String interfaceName) {
         this.interfaceName = interfaceName;
-    }
-
-    public String getFallback() {
-        return fallback;
-    }
-
-    public void setFallback(String fallback) {
-        this.fallback = fallback;
     }
 
     public String getHost() {
@@ -83,7 +71,6 @@ public class ServiceMetaData {
         final StringBuffer sb = new StringBuffer("ServiceMetaData{");
         sb.append("group='").append(group).append('\'');
         sb.append(", interfaceName='").append(interfaceName).append('\'');
-        sb.append(", fallback='").append(fallback).append('\'');
         sb.append(", host='").append(host).append('\'');
         sb.append(", port=").append(port);
         sb.append('}');

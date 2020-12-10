@@ -90,8 +90,7 @@ public class DefaultProviderManager implements ProviderManager {
         if (fastcallService != null) {
             BeanContext.setBean(clazz, bean);
             String group = fastcallService.group();
-            String fallback = fastcallService.fallback();
-            registryManager.registerService(new ServiceMetaData(group, clazz.getName(), fallback, getIp(), config.getPort()));
+            registryManager.registerService(new ServiceMetaData(group, clazz.getName(), getIp(), config.getPort()));
         }
     }
 
