@@ -24,12 +24,12 @@ $ mvn install
 ```
 
 ## 三、使用
-### 3.1 启动服务注册中心
-目前仅支持`ZooKeeper`，安装与启动过程略。
+### 非spring应用
 
-### 3.2 服务提供者`Provider`工程 [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-provider)
+### spring应用（spring boot为例）
+#### 服务提供者`Provider`工程 [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-provider)
 
-* 新建`Spring boot`项目，并添加依赖
+1. 新建`Spring boot`项目，并添加`maven`依赖
 ```
 <dependencies>
     <dependency>
@@ -40,18 +40,18 @@ $ mvn install
     <dependency>
         <groupId>net.stackoverflow.fastcall</groupId>
         <artifactId>fastcall-spring-boot-starter</artifactId>
-        <version>1.0.0</version>
+        <version>${fastcall.version}</version>
     </dependency>
 
     <dependency>
         <groupId>net.stackoverflow.fastcall</groupId>
         <artifactId>fastcall-demo-api</artifactId>
-        <version>1.0.0</version>
+        <version>${fastcall.version}</version>
     </dependency>
 </dependencies>
 ```
 
-* `application.properties`定义配置，对于服务提供者，`fastcall.provider.enabled`必须指定为`true`，其他除了`fastcall.registry.zookeeper.host`、`fastcall.registry.zookeeper.port`，都可以不配置，使用默认值
+2. `application.properties`定义配置，对于服务提供者，`fastcall.provider.enabled`必须指定为`true`，其他配置项中可以不配置使用默认值
 ```
 #序列化方式
 fastcall.serialize=json
@@ -72,7 +72,7 @@ logging.level.root=INFO
 logging.level.net.stackoverflow.fastcall=DEBUG
 ```
 
-* 在服务实现类上，添加`@FastcallService`注解，标识这是需要暴露的服务，`group`可以指定分组。添加该注解后`fastcall-spring-boot-starter`会将它自动实例化注册成`bean`，并将接口向服务注册中心注册
+3. 在服务实现类上，添加`@FastcallService`注解，标识这是需要暴露的服务，`group`可以指定分组。添加该注解后`fastcall-spring-boot-starter`会将它自动实例化注册成`bean`，并将接口向服务注册中心注册
 ```
 @FastcallService(group = "group-1")
 public class SayServiceImpl implements SayService {
@@ -96,7 +96,7 @@ public class SayServiceImpl implements SayService {
 }
 ```
 
-* 在启动类上添加注解`@EnableFastcall`（必加）指定需要扫描注解的包的位置，如果没有指定`basePackages`或者`basePackageClasses`，则从启动类的包路径包括子包，作为扫描路径
+4. 在启动类上添加注解`@EnableFastcall`（必加）指定需要扫描注解的包的位置，如果没有指定`basePackages`或者`basePackageClasses`，则从启动类的包路径包括子包，作为扫描路径
 ```
 @SpringBootApplication
 @EnableFastcall(basePackages = {"net.stackoverflow.fastcall.demo.provider"})
@@ -109,9 +109,9 @@ public class FastcallDemoProviderApplication {
 }
 ```
 
-### 3.3 服务消费者`Consumer`工程 [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-consumer) 
+#### 服务消费者`Consumer`工程 [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-consumer) 
 
-* 新建`Spring boot`项目，并添加依赖
+1. 新建`Spring boot`项目，并添加`maven`依赖
 ```
 <dependencies>
     <dependency>
@@ -122,18 +122,18 @@ public class FastcallDemoProviderApplication {
     <dependency>
         <groupId>net.stackoverflow.fastcall</groupId>
         <artifactId>fastcall-spring-boot-starter</artifactId>
-        <version>1.0.0</version>
+        <version>${fastcall.version}</version>
     </dependency>
 
     <dependency>
         <groupId>net.stackoverflow.fastcall</groupId>
         <artifactId>fastcall-demo-api</artifactId>
-        <version>1.0.0</version>
+        <version>${fastcall.version}</version>
     </dependency>
 </dependencies>
 ```
 
-* `application.properties`定义配置
+* `application.properties`定义配置，都可以使用默认配置
 ```
 #序列化方式
 fastcall.serialize=json
@@ -200,23 +200,6 @@ public class FastcallController {
 |----|----|----|----|----|
 |是否支持|✔|❌|❌|❌|
 
-## 六、附录
-关于`Fastcall`协议  
-|字段|说明|大小|
-|----|----|----|
-|magic|魔术字，固定为fastcall|8字节|
-|version|协议版本，当前版本为0.1|2字节|
-|length|除去magic,version,length三个字段的报文长度|4字节|
-|type|消息类型|1字节|
-|attachment_size|头部附加信息个数|4字节|
-|key_size|头部附加信息key长度|4字节|
-|key|头部附加信息key|变长|
-|value_size|头部附加信息value长度|4字节|
-|value|头部附加信息value|变长|
-|~|~|~|
-|body_size|消息体长度|4字节|
-|body|消息体|变长|
-
-## 七、LICENSE
+## 六、LICENSE
 Fastcall software is licenced under the [MIT](LICENSE) License
 
