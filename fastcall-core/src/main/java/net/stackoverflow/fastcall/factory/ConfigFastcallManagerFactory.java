@@ -1,15 +1,12 @@
-package net.stackoverflow.fastcall;
+package net.stackoverflow.fastcall.factory;
 
+import net.stackoverflow.fastcall.*;
 import net.stackoverflow.fastcall.config.ConsumerConfig;
 import net.stackoverflow.fastcall.config.FastcallConfig;
 import net.stackoverflow.fastcall.config.ProviderConfig;
 import net.stackoverflow.fastcall.config.RegistryConfig;
 import net.stackoverflow.fastcall.registry.RegistryManager;
-import net.stackoverflow.fastcall.registry.zookeeper.ZooKeeperRegistryManager;
-import net.stackoverflow.fastcall.serialize.JsonSerializeManager;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
-
-import java.io.IOException;
 
 /**
  * ConfigFastcallManager工厂类
@@ -31,7 +28,7 @@ public class ConfigFastcallManagerFactory implements FastcallManagerFactory {
     }
 
     @Override
-    public FastcallManager getInstance() throws IOException, InterruptedException {
+    public FastcallManager getInstance() {
         if (fastcallManager == null) {
             synchronized (this) {
                 if (fastcallManager == null) {
@@ -50,20 +47,11 @@ public class ConfigFastcallManagerFactory implements FastcallManagerFactory {
     }
 
     private SerializeManager serializeManager(String type) {
-        if ("json".equals(type)) {
-            return new JsonSerializeManager();
-        } else {
-            return null;
-        }
+        return new ConfigSerializeManagerFactory(type).getInstance();
     }
 
-    private RegistryManager registryManager(RegistryConfig config) throws IOException, InterruptedException {
-        if ("zookeeper".equals(config.getType())) {
-            RegistryConfig.ZooKeeperConfig zk = config.getZookeeper();
-            return new ZooKeeperRegistryManager(zk.getHost(), zk.getPort(), zk.getSessionTimeout());
-        } else {
-            return null;
-        }
+    private RegistryManager registryManager(RegistryConfig config) {
+        return new ConfigRegistryManagerFactory(config).getInstance();
     }
 
     private ConsumerManager consumerManager(ConsumerConfig config, SerializeManager serializeManager, RegistryManager registryManager) {

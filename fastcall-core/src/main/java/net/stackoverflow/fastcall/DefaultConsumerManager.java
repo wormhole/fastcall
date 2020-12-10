@@ -74,7 +74,7 @@ public class DefaultConsumerManager implements ConsumerManager {
                 break;
             } catch (ConnectionInactiveException e) {
                 ResponseFutureContext.removeFuture(request.getId());
-                log.error("[R:{}] Connection is inactive", e.getHost() + ":" + e.getPort());
+                log.error("[R:{}] ConsumerManager fail to call", e.getHost() + ":" + e.getPort(), e);
             }
         }
         return future;
@@ -111,13 +111,13 @@ public class DefaultConsumerManager implements ConsumerManager {
         String key = host + ":" + port;
         NettyClient client = clientPool.get(key);
         if (client == null) {
-            log.info("[R:{}] ConsumerManager not found client", host + ":" + port);
+            log.debug("[R:{}] ConsumerManager not found client", host + ":" + port);
             client = new NettyClient(serializeManager, host, port, config.getTimeout());
             clientPool.put(key, client);
             initClient(client);
         } else {
             if (!client.isActive()) {
-                log.info("[R:{}] ConsumerManager detect client inactive", client.getHost() + ":" + client.getPort());
+                log.debug("[R:{}] ConsumerManager detect client inactive", client.getHost() + ":" + client.getPort());
                 initClient(client);
             }
         }
@@ -130,14 +130,14 @@ public class DefaultConsumerManager implements ConsumerManager {
      * @param client Netty客户端
      */
     private void initClient(NettyClient client) {
-        log.info("[R:{}] ConsumerManager start init client", client.getHost() + ":" + client.getPort());
+        log.debug("[R:{}] ConsumerManager start init client", client.getHost() + ":" + client.getPort());
         CountDownLatch countDownLatch = new CountDownLatch(1);
         executorService.execute(() -> client.connect(countDownLatch));
         try {
             countDownLatch.await();
-            log.info("[R:{}] ConsumerManager init client success", client.getHost() + ":" + client.getPort());
+            log.debug("[R:{}] ConsumerManager init client success", client.getHost() + ":" + client.getPort());
         } catch (InterruptedException e) {
-            log.info("[R:{}] ConsumerManager fail to init client", client.getHost() + ":" + client.getPort(), e);
+            log.debug("[R:{}] ConsumerManager fail to init client", client.getHost() + ":" + client.getPort(), e);
         }
     }
 }

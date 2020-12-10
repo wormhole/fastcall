@@ -29,6 +29,7 @@ public class ServerRpcHandler extends ChannelInboundHandlerAdapter {
         if (header.getType() == MessageType.BUSINESS_REQUEST.value()) {
             RpcRequest request = (RpcRequest) message.getBody();
             RpcResponse response = handlerRequest(request);
+            log.trace("[L:{} R:{}] Server set response, responseId:{}, responseCode:{}", ctx.channel().localAddress(), ctx.channel().remoteAddress(), response.getId(), response.getCode());
             ctx.writeAndFlush(new Message(MessageType.BUSINESS_RESPONSE, response));
         }
         super.channelRead(ctx, msg);

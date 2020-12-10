@@ -38,7 +38,7 @@ public class ZooKeeperRegistryManager implements RegistryManager {
 
     private final ServiceAddressCache cache;
 
-    public ZooKeeperRegistryManager(String host, Integer port, Integer sessionTimeout) throws IOException, InterruptedException {
+    public ZooKeeperRegistryManager(String host, Integer port, Integer sessionTimeout) {
         this.host = host;
         this.port = port;
         this.sessionTimeout = sessionTimeout;
@@ -48,16 +48,17 @@ public class ZooKeeperRegistryManager implements RegistryManager {
 
     /**
      * 连接zookeeper集群
-     *
-     * @throws IOException
-     * @throws InterruptedException
      */
-    private void connect() throws IOException, InterruptedException {
+    private void connect() {
         String connection = host + ":" + port;
         CountDownLatch countDownLatch = new CountDownLatch(1);
-        ZooKeeper zooKeeper = new ZooKeeper(connection, sessionTimeout, new InitWatcher(countDownLatch));
-        countDownLatch.await();
-        this.zookeeper = zooKeeper;
+        try {
+            ZooKeeper zooKeeper = new ZooKeeper(connection, sessionTimeout, new InitWatcher(countDownLatch));
+            countDownLatch.await();
+            this.zookeeper = zooKeeper;
+        } catch (Exception e) {
+            log.error("RegistryManager fail to connected zookeeper", e);
+        }
         this.checkPathAndCreate(ROOT_PATH);
         log.info("RegistryManager connected zookeeper success");
     }
@@ -150,7 +151,6 @@ public class ZooKeeperRegistryManager implements RegistryManager {
                 sb.append("/").append(paths[i]);
                 if (zookeeper.exists(sb.toString(), false) == null) {
                     zookeeper.create(sb.toString(), "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-                    log.info("RegistryManager create path {}", path);
                 }
             }
         } catch (Exception e) {

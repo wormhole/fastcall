@@ -1,4 +1,6 @@
-package net.stackoverflow.fastcall;
+package net.stackoverflow.fastcall.factory;
+
+import net.stackoverflow.fastcall.FastcallManager;
 
 import java.io.IOException;
 

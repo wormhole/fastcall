@@ -26,8 +26,6 @@ public class DefaultProviderManager implements ProviderManager {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultFastcallManager.class);
 
-    private final SerializeManager serializeManager;
-
     private final RegistryManager registryManager;
 
     private final NettyServer server;
@@ -37,7 +35,6 @@ public class DefaultProviderManager implements ProviderManager {
     private final ExecutorService executorService;
 
     public DefaultProviderManager(ProviderConfig config, SerializeManager serializeManager, RegistryManager registryManager) {
-        this.serializeManager = serializeManager;
         this.registryManager = registryManager;
         this.config = config;
         this.server = new NettyServer(config.getBacklog(), config.getTimeout(), config.getHost(), config.getPort(), config.getThreads(), serializeManager);
@@ -105,7 +102,7 @@ public class DefaultProviderManager implements ProviderManager {
             try {
                 ip4 = Inet4Address.getLocalHost();
             } catch (UnknownHostException e) {
-                log.error("Get ip error", e);
+                log.error("ProviderManager fail to get ip", e);
             }
             assert ip4 != null;
             return ip4.getHostAddress();

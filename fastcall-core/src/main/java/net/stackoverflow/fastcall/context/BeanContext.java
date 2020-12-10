@@ -1,7 +1,5 @@
 package net.stackoverflow.fastcall.context;
 
-import net.stackoverflow.fastcall.exception.BeanNotFoundException;
-
 import java.util.HashMap;
 import java.util.Map;
 
