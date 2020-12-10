@@ -2,7 +2,9 @@ package net.stackoverflow.fastcall.transport.handler.server;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import net.stackoverflow.fastcall.annotation.FastcallService;
 import net.stackoverflow.fastcall.context.BeanContext;
+import net.stackoverflow.fastcall.exception.BeanNotFoundException;
 import net.stackoverflow.fastcall.transport.proto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,19 +35,40 @@ public class ServerRpcHandler extends ChannelInboundHandlerAdapter {
 
     private void handlerRequest(RpcRequest request, ChannelHandlerContext ctx) {
         RpcResponse rpcResponse = null;
+        Object obj = null;
+
+        List<Object> params = request.getParams();
+        List<Class<?>> paramsType = request.getParamsType();
+
         try {
-            Object obj = BeanContext.getBean(request.getInterfaceType());
-            List<Object> params = request.getParams();
-            List<Class<?>> paramsType = request.getParamsType();
+            obj = BeanContext.getBean(request.getInterfaceType());
+        } catch (BeanNotFoundException e) {
+            log.error("[L:{} R:{}] Server fail to execute rpc handler, requestId:{}", ctx.channel().localAddress(), ctx.channel().remoteAddress(), request.getId(), e);
+            rpcResponse = new RpcResponse(request.getId(), -1, null, e);
+            ctx.writeAndFlush(new Message(MessageType.BUSINESS_RESPONSE, rpcResponse));
+            return;
+        }
+
+        try {
             Method method = obj.getClass().getMethod(request.getMethod(), paramsType.toArray(new Class[0]));
             Object response = method.invoke(obj, params == null ? null : params.toArray());
             rpcResponse = new RpcResponse(request.getId(), 0, response, null);
             log.debug("[L:{} R:{}] Server execute rpc handler success, requestId:{}", ctx.channel().localAddress(), ctx.channel().remoteAddress(), request.getId());
-        } catch (Throwable e) {
-            log.error("[L:{} R:{}] Server fail to execute rpc handler, requestId:{}", ctx.channel().localAddress(), ctx.channel().remoteAddress(), request.getId(), e);
-            if (e instanceof InvocationTargetException) {
-                e = ((InvocationTargetException) e).getTargetException();
+        } catch (InvocationTargetException e) {
+            try {
+                Class<?> clazz = obj.getClass();
+                FastcallService fastcallService = clazz.getAnnotation(FastcallService.class);
+                String fallback = fastcallService.fallback();
+                Method method = clazz.getMethod(fallback, paramsType.toArray(new Class[0]));
+                Object response = method.invoke(obj, params == null ? null : params.toArray());
+                rpcResponse = new RpcResponse(request.getId(), 0, response, null);
+                log.debug("[L:{} R:{}] Server execute rpc handler success, requestId:{}", ctx.channel().localAddress(), ctx.channel().remoteAddress(), request.getId());
+            } catch (Throwable throwable) {
+                log.error("[L:{} R:{}] Server fail to execute rpc handler, requestId:{}", ctx.channel().localAddress(), ctx.channel().remoteAddress(), request.getId(), e);
+                rpcResponse = new RpcResponse(request.getId(), -1, null, e);
             }
+        } catch (NoSuchMethodException | IllegalAccessException e) {
+            log.error("[L:{} R:{}] Server fail to execute rpc handler, requestId:{}", ctx.channel().localAddress(), ctx.channel().remoteAddress(), request.getId(), e);
             rpcResponse = new RpcResponse(request.getId(), -1, null, e);
         }
         ctx.writeAndFlush(new Message(MessageType.BUSINESS_RESPONSE, rpcResponse));

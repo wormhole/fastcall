@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-@FastcallService(group = "group-1")
+@FastcallService(group = "group-1", fallback = "sayFallback")
 public class SayServiceImpl implements SayService {
 
     private static final Logger log = LoggerFactory.getLogger(SayServiceImpl.class);
@@ -25,5 +25,9 @@ public class SayServiceImpl implements SayService {
     @Override
     public String sayWithUncheckException(String content) {
         throw new RuntimeException("uncheck exception");
+    }
+
+    public String sayFallback(String content) {
+        return "fallback " + content;
     }
 }
