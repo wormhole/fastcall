@@ -25,6 +25,94 @@ $ mvn install
 
 ## 三、使用
 ### 非spring应用
+#### 服务提供者`Provider`工程
+
+1. 新建`maven`项目，并添加依赖
+```
+<dependencies>
+    <dependency>
+        <groupId>net.stackoverflow.fastcall</groupId>
+        <artifactId>fastcall-core</artifactId>
+        <version>${fastcall.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>net.stackoverflow.fastcall</groupId>
+        <artifactId>fastcall-demo-api</artifactId>
+        <version>${fastcall.version}</version>
+    </dependency>
+</dependencies>
+```
+
+2. 服务类实现，`@FastcallService`标识这是一个需要暴露的服务，并指定了服务的分组等元数据
+```
+@FastcallService(group = "group-1")
+public class SayServiceImpl implements SayService {
+
+    private static final Logger log = LoggerFactory.getLogger(SayServiceImpl.class);
+
+    @Override
+    public String say(String content) {
+        return content;
+    }
+}
+```
+
+3. 利用工厂类，生成`FastcallManager`对象，`FastcallManager`是整个系统的`Facade`，封装了子系统`SerializeManager`、`RegistryManager`，`ProviderManager`，`ConsumerManager`，对外提供统一的接口。
+```
+public class FastcallDemoProviderApplication {
+
+    public static void main(String[] args) throws IOException, InterruptedException {
+        //新建配置类，默认不会加载ProviderManager，除非将ProviderConfig的enabled值设为true
+        FastcallConfig config = new FastcallConfig();
+        config.getProvider().setEnabled(true);
+        //生成工厂类
+        FastcallManagerFactory factory = new ConfigFastcallManagerFactory(config);
+        //由工厂类生成FastcallManager，默认实现为DefaultFastcallManager
+        FastcallManager manager = factory.getInstance();
+        //注册需要暴露的服务
+        manager.registerService(SayService.class, new SayServiceImpl());
+        //启动服务
+        manager.start();
+    }
+}
+```
+
+#### 服务消费者`Consumer`工程
+
+1. 新建`maven`项目，添加依赖
+```
+<dependencies>
+    <dependency>
+        <groupId>net.stackoverflow.fastcall</groupId>
+        <artifactId>fastcall-core</artifactId>
+        <version>${fastcall.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>net.stackoverflow.fastcall</groupId>
+        <artifactId>fastcall-demo-api</artifactId>
+        <version>${fastcall.version}</version>
+    </dependency>
+</dependencies>
+```
+
+2. 利用工厂类，生成`FastcallManager`，将需要远程调用的接口，生成代理对象，之后就可以像调用本地方法一样调用
+```
+public class FastcallDemoConsumerApplication {
+
+    public static void main(String[] args) throws IOException, InterruptedException {
+        //利用工厂类生成FastcallManager
+        FastcallConfig config = new FastcallConfig();
+        FastcallManagerFactory factory = new ConfigFastcallManagerFactory(config);
+        FastcallManager manager = factory.getInstance();
+        //生成代理对象，group指定分组
+        SayService proxy = manager.createProxy(SayService.class, "group-1");
+        //rpc调用
+        proxy.say("hello world");
+    }
+}
+```
 
 ### spring应用（spring boot为例）
 #### 服务提供者`Provider`工程 [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-provider)
@@ -51,7 +139,7 @@ $ mvn install
 </dependencies>
 ```
 
-2. `application.properties`定义配置，对于服务提供者，`fastcall.provider.enabled`必须指定为`true`，其他配置项中可以不配置使用默认值
+2. `application.properties`定义配置，对于服务提供者，`fastcall.provider.enabled`必须指定为`true`
 ```
 #序列化方式
 fastcall.serialize=json
@@ -82,16 +170,6 @@ public class SayServiceImpl implements SayService {
     @Override
     public String say(String content) {
         return "hello " + content;
-    }
-
-    @Override
-    public String sayWithCheckException(String content) throws Exception {
-        throw new IOException("check exception");
-    }
-
-    @Override
-    public String sayWithUncheckException(String content) {
-        throw new RuntimeException("uncheck exception");
     }
 }
 ```
@@ -133,7 +211,7 @@ public class FastcallDemoProviderApplication {
 </dependencies>
 ```
 
-* `application.properties`定义配置，都可以使用默认配置
+2. `application.properties`定义配置
 ```
 #序列化方式
 fastcall.serialize=json
@@ -150,7 +228,7 @@ logging.level.root=INFO
 logging.level.net.stackoverflow.fastcall=DEBUG
 ```
 
-* 在接口引用上，添加注解`@FastcallReference`，添加该注解后，`fastcall-spring-boot-starter`会自动生成动态代理对象，之后可以像调用本地方法一样调用接口
+3. 在接口引用上，添加注解`@FastcallReference`，添加该注解后，`fastcall-spring-boot-starter`会自动生成动态代理对象，之后可以像调用本地方法一样调用接口
 ```
 @RestController
 public class FastcallController {
@@ -161,16 +239,6 @@ public class FastcallController {
     @GetMapping("/say")
     public String say(@RequestParam("content") String content) {
         return sayService.say(content);
-    }
-
-    @GetMapping("/say_with_check_exception")
-    public String sayWithCheckException(@RequestParam("content") String content) throws Exception {
-        return sayService.sayWithCheckException(content);
-    }
-
-    @GetMapping("/say_with_uncheck_exception")
-    public String sayWithUncheckException(@RequestParam("content") String content) {
-        return sayService.sayWithUncheckException(content);
     }
 }
 ```
