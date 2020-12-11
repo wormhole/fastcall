@@ -6,7 +6,7 @@
 
     <groupId>net.stackoverflow.fastcall</groupId>
     <artifactId>fastcall-spring-boot-starter</artifactId>
-    <version>1.0.2</version>
+    <version>1.1.0</version>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -19,7 +19,7 @@
             <dependency>
                 <groupId>net.stackoverflow.fastcall</groupId>
                 <artifactId>fastcall-parent</artifactId>
-                <version>1.0.2</version>
+                <version>1.1.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
