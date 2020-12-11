@@ -9,6 +9,8 @@ public class ServiceMetaData {
 
     private String group;
 
+    private String version;
+
     private String interfaceName;
 
     private String host;
@@ -24,11 +26,13 @@ public class ServiceMetaData {
      *
      * @param group         分组
      * @param interfaceName 接口名称
+     * @param version       版本号
      * @param host          服务ip
      * @param port          服务端口
      */
-    public ServiceMetaData(String group, String interfaceName, String host, Integer port) {
+    public ServiceMetaData(String group, String version, String interfaceName, String host, Integer port) {
         this.group = group;
+        this.version = version;
         this.interfaceName = interfaceName;
         this.host = host;
         this.port = port;
@@ -40,6 +44,14 @@ public class ServiceMetaData {
 
     public void setGroup(String group) {
         this.group = group;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public String getInterfaceName() {
@@ -70,6 +82,7 @@ public class ServiceMetaData {
     public String toString() {
         final StringBuffer sb = new StringBuffer("ServiceMetaData{");
         sb.append("group='").append(group).append('\'');
+        sb.append(", version='").append(version).append('\'');
         sb.append(", interfaceName='").append(interfaceName).append('\'');
         sb.append(", host='").append(host).append('\'');
         sb.append(", port=").append(port);

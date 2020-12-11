@@ -1,4 +1,4 @@
-package net.stackoverflow.fastcall.registry.zookeeper;
+package net.stackoverflow.fastcall.registry;
 
 import net.stackoverflow.fastcall.registry.ServiceMetaData;
 
@@ -40,12 +40,12 @@ public class ServiceAddressCache {
      * @param group         分组名
      * @return
      */
-    public synchronized Set<ServiceMetaData> get(String interfaceName, String group) {
+    public synchronized Set<ServiceMetaData> get(String interfaceName, String group, String version) {
         Set<ServiceMetaData> set = new HashSet<>();
         Set<ServiceMetaData> metaDataSet = cache.get(interfaceName);
         if (metaDataSet != null && metaDataSet.size() > 0) {
             for (ServiceMetaData meta : metaDataSet) {
-                if (meta.getGroup().equals(group)) {
+                if (meta.getGroup().equals(group) && meta.getVersion().equals(version)) {
                     set.add(meta);
                 }
             }

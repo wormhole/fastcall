@@ -1,6 +1,5 @@
 package net.stackoverflow.fastcall;
 
-import net.stackoverflow.fastcall.annotation.FastcallService;
 import net.stackoverflow.fastcall.config.FastcallConfig;
 import net.stackoverflow.fastcall.proxy.RpcProxyFactory;
 import net.stackoverflow.fastcall.registry.RegistryManager;
@@ -54,14 +53,15 @@ public class DefaultFastcallManager implements FastcallManager {
     /**
      * 生成代理对象
      *
-     * @param clazz 接口Class对象
-     * @param group 所属分组
-     * @param <T>   泛型
+     * @param clazz   接口Class对象
+     * @param group   所属分组
+     * @param version 版本号
+     * @param <T>     泛型
      * @return
      */
     @Override
-    public <T> T createProxy(Class<T> clazz, String group) {
-        return RpcProxyFactory.create(clazz, group, consumerManager);
+    public <T> T createProxy(Class<T> clazz, String group, String version) {
+        return RpcProxyFactory.create(clazz, group, version, consumerManager);
     }
 
     /**
@@ -87,7 +87,7 @@ public class DefaultFastcallManager implements FastcallManager {
      * 停止服务
      */
     @Override
-    public void stop()  {
+    public void stop() {
         if (config.getProvider().getEnabled()) {
             providerManager.close();
         }

@@ -13,4 +13,6 @@ import java.lang.annotation.*;
 public @interface FastcallReference {
 
     String group() default "default";
+
+    String version() default "";
 }

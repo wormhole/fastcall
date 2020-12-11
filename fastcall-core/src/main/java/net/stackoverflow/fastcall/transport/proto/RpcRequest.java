@@ -20,6 +20,11 @@ public class RpcRequest {
     private String group;
 
     /**
+     * 版本号
+     */
+    private String version;
+
+    /**
      * 接口Class对象
      */
     private Class<?> interfaceType;
@@ -53,6 +58,14 @@ public class RpcRequest {
 
     public void setGroup(String group) {
         this.group = group;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public Class<?> getInterfaceType() {
@@ -92,6 +105,7 @@ public class RpcRequest {
         final StringBuffer sb = new StringBuffer("RpcRequest{");
         sb.append("id='").append(id).append('\'');
         sb.append(", group='").append(group).append('\'');
+        sb.append(", version='").append(version).append('\'');
         sb.append(", interfaceType=").append(interfaceType);
         sb.append(", method='").append(method).append('\'');
         sb.append(", paramsType=").append(paramsType);

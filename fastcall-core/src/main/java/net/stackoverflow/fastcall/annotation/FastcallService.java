@@ -14,4 +14,5 @@ public @interface FastcallService {
 
     String group() default "default";
 
+    String version() default "";
 }

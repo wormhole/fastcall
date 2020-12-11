@@ -39,7 +39,7 @@ public class FastcallBeanPostProcessor implements BeanPostProcessor {
             if (reference != null) {
                 try {
                     field.setAccessible(true);
-                    field.set(bean, fastcallManager.createProxy(field.getType(), reference.group()));
+                    field.set(bean, fastcallManager.createProxy(field.getType(), reference.group(), reference.version()));
                 } catch (IllegalAccessException e) {
                     log.error("BeanPostProcessor fail to set field", e);
                 }

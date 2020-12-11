@@ -60,16 +60,17 @@ public class DefaultConsumerManager implements ConsumerManager {
     }
 
     @Override
-    public ResponseFuture call(Method method, Object[] args, String group) {
+    public ResponseFuture call(Method method, Object[] args, String group, String version) {
         RpcRequest request = new RpcRequest();
         request.setId(UUID.randomUUID().toString());
         request.setInterfaceType(method.getDeclaringClass());
         request.setMethod(method.getName());
         request.setGroup(group);
+        request.setVersion(version);
         request.setParams(args == null ? null : Arrays.asList(args));
         request.setParamsType(Arrays.asList(method.getParameterTypes()));
 
-        List<InetSocketAddress> addresses = registryManager.getServiceAddress(request.getInterfaceType(), request.getGroup());
+        List<InetSocketAddress> addresses = registryManager.getServiceAddress(request.getInterfaceType(), group, version);
         ResponseFuture future = null;
         for (InetSocketAddress address : addresses) {
             NettyClient client = this.getClient(address);

@@ -7,7 +7,7 @@ import net.stackoverflow.fastcall.demo.api.SayService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@FastcallService(group = "group-1")
+@FastcallService(group = "group-1", version = "0.0.1")
 public class SayServiceImpl implements SayService {
 
     private static final Logger log = LoggerFactory.getLogger(SayServiceImpl.class);

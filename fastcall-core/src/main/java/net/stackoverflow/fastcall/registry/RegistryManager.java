@@ -22,11 +22,12 @@ public interface RegistryManager {
     /**
      * 获取服务
      *
-     * @param clazz 接口Class对象
-     * @param group 所属分组
+     * @param clazz   接口Class对象
+     * @param group   所属分组
+     * @param version 版本号
      * @return
      */
-    List<InetSocketAddress> getServiceAddress(Class<?> clazz, String group) throws ServiceNotFoundException;
+    List<InetSocketAddress> getServiceAddress(Class<?> clazz, String group, String version) throws ServiceNotFoundException;
 
     /**
      * 订阅服务

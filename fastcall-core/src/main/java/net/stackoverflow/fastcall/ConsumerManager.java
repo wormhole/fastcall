@@ -30,12 +30,13 @@ public interface ConsumerManager {
     /**
      * RPC调用
      *
-     * @param method 方法
-     * @param args   参数
-     * @param group  所属分组
+     * @param method  方法
+     * @param args    参数
+     * @param group   所属分组
+     * @param version 版本号
      * @return ResponseFuture对象
      */
-    ResponseFuture call(Method method, Object[] args, String group);
+    ResponseFuture call(Method method, Object[] args, String group, String version);
 
     /**
      * 订阅服务

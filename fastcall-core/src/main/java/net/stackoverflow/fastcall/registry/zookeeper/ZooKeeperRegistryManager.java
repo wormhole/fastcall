@@ -3,6 +3,7 @@ package net.stackoverflow.fastcall.registry.zookeeper;
 import net.stackoverflow.fastcall.exception.ServiceNotFoundException;
 import net.stackoverflow.fastcall.registry.JsonUtils;
 import net.stackoverflow.fastcall.registry.RegistryManager;
+import net.stackoverflow.fastcall.registry.ServiceAddressCache;
 import net.stackoverflow.fastcall.registry.ServiceMetaData;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
@@ -12,7 +13,6 @@ import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -84,14 +84,15 @@ public class ZooKeeperRegistryManager implements RegistryManager {
     /**
      * 获取服务地址
      *
-     * @param clazz 接口Class对象
-     * @param group 所属分组
+     * @param clazz   接口Class对象
+     * @param group   所属分组
+     * @param version 版本号
      * @return
      */
     @Override
-    public List<InetSocketAddress> getServiceAddress(Class<?> clazz, String group) {
+    public List<InetSocketAddress> getServiceAddress(Class<?> clazz, String group, String version) {
         List<InetSocketAddress> socketAddresses = new ArrayList<>();
-        Set<ServiceMetaData> metas = cache.get(clazz.getName(), group);
+        Set<ServiceMetaData> metas = cache.get(clazz.getName(), group, version);
         if (metas != null && metas.size() > 0) {
             for (ServiceMetaData meta : metas) {
                 socketAddresses.add(new InetSocketAddress(meta.getHost(), meta.getPort()));

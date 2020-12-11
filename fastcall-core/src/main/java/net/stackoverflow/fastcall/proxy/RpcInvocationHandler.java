@@ -22,14 +22,17 @@ public class RpcInvocationHandler implements InvocationHandler {
 
     private final String group;
 
-    public RpcInvocationHandler(ConsumerManager consumerManager, String group) {
+    private final String version;
+
+    public RpcInvocationHandler(ConsumerManager consumerManager, String group, String version) {
         this.consumerManager = consumerManager;
         this.group = group;
+        this.version = version;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        ResponseFuture future = consumerManager.call(method, args, group);
+        ResponseFuture future = consumerManager.call(method, args, group, version);
         RpcResponse response = future.getResponse();
         log.trace("Method: {}, code: {}", method.getName(), response.getCode());
         if (response.getCode() == 0) {
