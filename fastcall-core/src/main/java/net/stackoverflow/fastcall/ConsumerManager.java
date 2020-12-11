@@ -39,6 +39,13 @@ public interface ConsumerManager {
     ResponseFuture call(Method method, Object[] args, String group, String version);
 
     /**
+     * 移除ResponseFuture
+     *
+     * @param future
+     */
+    void removeFuture(ResponseFuture future);
+
+    /**
      * 订阅服务
      */
     void subscribe();

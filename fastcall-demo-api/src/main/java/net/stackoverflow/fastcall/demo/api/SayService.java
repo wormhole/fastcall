@@ -8,4 +8,6 @@ public interface SayService {
 
     ContentDTO sayWithDTO(String content);
 
+    String sayWithTimeout(String content);
+
 }

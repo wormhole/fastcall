@@ -29,10 +29,11 @@ public interface FastcallManager {
      * @param clazz   接口Class对象
      * @param group   所属分组
      * @param version 版本号
+     * @param timeout rpc调用超时时间
      * @param <T>     泛型
      * @return 代理对象
      */
-    <T> T createProxy(Class<T> clazz, String group, String version);
+    <T> T createProxy(Class<T> clazz, String group, String version, Long timeout);
 
     /**
      * 注册服务（通过注解）

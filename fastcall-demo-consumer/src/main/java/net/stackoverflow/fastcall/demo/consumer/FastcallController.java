@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class FastcallController {
 
-    @FastcallReference(group = "group-1", version = "0.0.1")
+    @FastcallReference(group = "group-1", version = "0.0.1", timeout = 5000)
     private SayService sayService;
 
     @GetMapping("/say")
@@ -26,5 +26,10 @@ public class FastcallController {
     @GetMapping("/say_with_dto")
     public ContentDTO sayWithDTO(@RequestParam("content") String content) {
         return sayService.sayWithDTO(content);
+    }
+
+    @GetMapping("/say_with_timeout")
+    public String sayWithTimeout(@RequestParam("content") String content) {
+        return sayService.sayWithTimeout(content);
     }
 }

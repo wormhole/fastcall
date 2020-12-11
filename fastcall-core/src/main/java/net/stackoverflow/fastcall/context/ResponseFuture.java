@@ -36,11 +36,15 @@ public class ResponseFuture {
         }
     }
 
-    public RpcResponse getResponse() {
+    public RpcResponse getResponse(long milliseconds) {
         synchronized (lock) {
-            while (!success) {
+            if (!success) {
                 try {
-                    lock.wait();
+                    if (milliseconds == -1) {
+                        lock.wait();
+                    } else {
+                        lock.wait(milliseconds);
+                    }
                 } catch (InterruptedException e) {
                     log.error("ResponseFuture fail to get response", e);
                 }

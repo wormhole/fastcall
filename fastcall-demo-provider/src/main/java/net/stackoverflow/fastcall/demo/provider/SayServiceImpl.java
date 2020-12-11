@@ -28,6 +28,16 @@ public class SayServiceImpl implements SayService {
         return new ContentDTO(content, -1);
     }
 
+    @Override
+    public String sayWithTimeout(String content) {
+        try {
+            Thread.sleep(10000);
+        } catch (Exception e) {
+            log.error("", e);
+        }
+        return "hello " + content;
+    }
+
     public String sayFallback(String content) {
         return "fallback " + content;
     }

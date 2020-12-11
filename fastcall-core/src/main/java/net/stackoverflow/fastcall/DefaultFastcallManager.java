@@ -56,12 +56,13 @@ public class DefaultFastcallManager implements FastcallManager {
      * @param clazz   接口Class对象
      * @param group   所属分组
      * @param version 版本号
+     * @param timeout rpc调用超时时间
      * @param <T>     泛型
      * @return
      */
     @Override
-    public <T> T createProxy(Class<T> clazz, String group, String version) {
-        return RpcProxyFactory.create(clazz, group, version, consumerManager);
+    public <T> T createProxy(Class<T> clazz, String group, String version, Long timeout) {
+        return RpcProxyFactory.create(clazz, group, version, timeout, consumerManager);
     }
 
     /**

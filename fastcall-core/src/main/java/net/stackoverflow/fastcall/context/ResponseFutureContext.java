@@ -43,16 +43,29 @@ public class ResponseFutureContext {
         ResponseFuture future = futurePool.get(response.getId());
         if (future != null) {
             future.setResponse(response);
-            futurePool.remove(response.getId());
         }
     }
 
     /**
-     * 删除ResponseFuture
+     * 移除ResponseFuture
      *
      * @param requestId 请求唯一标识
      */
     public synchronized void removeFuture(String requestId) {
         futurePool.remove(requestId);
+    }
+
+    /**
+     * 移除ResponseFuture
+     *
+     * @param future ResponseFuture
+     */
+    public synchronized void removeFuture(ResponseFuture future) {
+        for (Map.Entry<String, ResponseFuture> entry : futurePool.entrySet()) {
+            if (entry.getValue() == future) {
+                futurePool.remove(entry.getKey());
+                break;
+            }
+        }
     }
 }

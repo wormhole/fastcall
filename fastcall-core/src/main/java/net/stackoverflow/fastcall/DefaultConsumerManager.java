@@ -87,6 +87,16 @@ public class DefaultConsumerManager implements ConsumerManager {
     }
 
     /**
+     * 移除ResponseFuture
+     *
+     * @param future
+     */
+    @Override
+    public void removeFuture(ResponseFuture future) {
+        responseFutureContext.removeFuture(future);
+    }
+
+    /**
      * 订阅服务
      */
     @Override

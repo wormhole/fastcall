@@ -15,4 +15,6 @@ public @interface FastcallReference {
     String group() default "default";
 
     String version() default "";
+
+    long timeout() default -1;
 }

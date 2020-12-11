@@ -11,16 +11,20 @@ public class ServiceNotFoundException extends RuntimeException {
 
     private final String group;
 
-    public ServiceNotFoundException(String interfaceName, String group) {
+    private final String version;
+
+    public ServiceNotFoundException(String interfaceName, String group, String version) {
         super();
         this.interfaceName = interfaceName;
         this.group = group;
+        this.version = version;
     }
 
-    public ServiceNotFoundException(String interfaceName, String group, String msg) {
+    public ServiceNotFoundException(String interfaceName, String group, String version, String msg) {
         super(msg);
         this.interfaceName = interfaceName;
         this.group = group;
+        this.version = version;
     }
 
     public String getInterfaceName() {

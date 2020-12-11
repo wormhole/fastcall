@@ -18,10 +18,11 @@ public class RpcProxyFactory {
      * @param consumerManager Consumer管理对象
      * @param group           所属分组
      * @param version         版本号
+     * @param timeout         rpc调用超时时间
      * @param <T>             泛型
      * @return
      */
-    public static <T> T create(Class<T> clazz, String group, String version, ConsumerManager consumerManager) {
-        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, new RpcInvocationHandler(consumerManager, group, version));
+    public static <T> T create(Class<T> clazz, String group, String version, Long timeout, ConsumerManager consumerManager) {
+        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, new RpcInvocationHandler(consumerManager, group, version, timeout));
     }
 }

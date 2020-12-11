@@ -2,6 +2,7 @@ package net.stackoverflow.fastcall.proxy;
 
 import net.stackoverflow.fastcall.ConsumerManager;
 import net.stackoverflow.fastcall.context.ResponseFuture;
+import net.stackoverflow.fastcall.exception.RpcTimeout;
 import net.stackoverflow.fastcall.transport.proto.RpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,27 +25,38 @@ public class RpcInvocationHandler implements InvocationHandler {
 
     private final String version;
 
-    public RpcInvocationHandler(ConsumerManager consumerManager, String group, String version) {
+    private final Long timeout;
+
+    public RpcInvocationHandler(ConsumerManager consumerManager, String group, String version, Long timeout) {
         this.consumerManager = consumerManager;
         this.group = group;
         this.version = version;
+        this.timeout = timeout;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         ResponseFuture future = consumerManager.call(method, args, group, version);
-        RpcResponse response = future.getResponse();
-        log.trace("Method: {}, code: {}", method.getName(), response.getCode());
-        if (response.getCode() == 0) {
-            byte[] responseBytes = response.getResponseBytes();
-            Class<?> responseType = response.getResponseType();
-            Object object = consumerManager.getSerializeManager().deserialize(responseBytes, responseType);
-            return object;
-        } else {
-            byte[] throwableBytes = response.getThrowableBytes();
-            Class<?> throwableType = response.getThrowableType();
-            Throwable throwable = (Throwable) consumerManager.getSerializeManager().deserialize(throwableBytes, throwableType);
-            throw throwable;
+        try {
+            RpcResponse response = future.getResponse(timeout);
+            if (response != null) {
+                log.trace("Method: {}, code: {}", method.getName(), response.getCode());
+                if (response.getCode() == 0) {
+                    byte[] responseBytes = response.getResponseBytes();
+                    Class<?> responseType = response.getResponseType();
+                    Object object = consumerManager.getSerializeManager().deserialize(responseBytes, responseType);
+                    return object;
+                } else {
+                    byte[] throwableBytes = response.getThrowableBytes();
+                    Class<?> throwableType = response.getThrowableType();
+                    Throwable throwable = (Throwable) consumerManager.getSerializeManager().deserialize(throwableBytes, throwableType);
+                    throw throwable;
+                }
+            } else {
+                throw new RpcTimeout();
+            }
+        } finally {
+            consumerManager.removeFuture(future);
         }
     }
 }
