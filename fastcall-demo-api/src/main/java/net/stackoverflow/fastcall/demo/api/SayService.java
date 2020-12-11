@@ -6,6 +6,6 @@ public interface SayService {
 
     String sayWithFallback(String content);
 
-    String sayWithException(String content);
+    ContentDTO sayWithDTO(String content);
 
 }

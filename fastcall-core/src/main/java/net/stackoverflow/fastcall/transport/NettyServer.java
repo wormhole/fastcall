@@ -79,7 +79,7 @@ public class NettyServer {
                             pipeline.addLast(new ReadTimeoutHandler(timeout));
                             pipeline.addLast(new ServerAuthHandler());
                             pipeline.addLast(new ServerHeatBeatHandler());
-                            pipeline.addLast(businessGroup, new ServerRpcHandler());
+                            pipeline.addLast(businessGroup, new ServerRpcHandler(serializeManager));
                         }
                     });
             ChannelFuture channelFuture = bootstrap.bind(host, port).sync();

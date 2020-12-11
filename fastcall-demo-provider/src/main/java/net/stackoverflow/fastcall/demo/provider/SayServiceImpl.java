@@ -2,6 +2,7 @@ package net.stackoverflow.fastcall.demo.provider;
 
 import net.stackoverflow.fastcall.annotation.FastcallFallback;
 import net.stackoverflow.fastcall.annotation.FastcallService;
+import net.stackoverflow.fastcall.demo.api.ContentDTO;
 import net.stackoverflow.fastcall.demo.api.SayService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,13 +19,13 @@ public class SayServiceImpl implements SayService {
 
     @Override
     @FastcallFallback(method = "sayFallback")
-    public String sayWithFallback(String content)  {
+    public String sayWithFallback(String content) {
         throw new RuntimeException("fall back");
     }
 
     @Override
-    public String sayWithException(String content) {
-        throw new RuntimeException("uncheck exception");
+    public ContentDTO sayWithDTO(String content) {
+        return new ContentDTO(content, -1);
     }
 
     public String sayFallback(String content) {

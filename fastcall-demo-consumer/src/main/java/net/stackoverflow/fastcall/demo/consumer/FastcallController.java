@@ -1,6 +1,7 @@
 package net.stackoverflow.fastcall.demo.consumer;
 
 import net.stackoverflow.fastcall.annotation.FastcallReference;
+import net.stackoverflow.fastcall.demo.api.ContentDTO;
 import net.stackoverflow.fastcall.demo.api.SayService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,8 +23,8 @@ public class FastcallController {
         return sayService.sayWithFallback(content);
     }
 
-    @GetMapping("/say_with_exception")
-    public String sayWithException(@RequestParam("content") String content) {
-        return sayService.sayWithException(content);
+    @GetMapping("/say_with_dto")
+    public ContentDTO sayWithDTO(@RequestParam("content") String content) {
+        return sayService.sayWithDTO(content);
     }
 }
