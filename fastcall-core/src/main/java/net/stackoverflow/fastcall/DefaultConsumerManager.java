@@ -15,10 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
@@ -40,11 +37,14 @@ public class DefaultConsumerManager implements ConsumerManager {
 
     private final ConsumerConfig config;
 
+    private final ResponseFutureContext responseFutureContext;
+
     public DefaultConsumerManager(ConsumerConfig config, SerializeManager serializeManager, RegistryManager registryManager) {
         this.serializeManager = serializeManager;
         this.registryManager = registryManager;
         this.config = config;
-        this.clientPool = new ConcurrentHashMap<>();
+        this.clientPool = new HashMap<>();
+        this.responseFutureContext = new ResponseFutureContext();
         this.executorService = Executors.newFixedThreadPool(config.getThreads());
         this.subscribe();
     }
@@ -72,13 +72,13 @@ public class DefaultConsumerManager implements ConsumerManager {
         List<InetSocketAddress> addresses = registryManager.getServiceAddress(request.getInterfaceType(), request.getGroup());
         ResponseFuture future = null;
         for (InetSocketAddress address : addresses) {
+            NettyClient client = this.getClient(address);
             try {
-                NettyClient client = this.getClient(address);
-                future = ResponseFutureContext.createFuture(request.getId());
+                future = responseFutureContext.createFuture(request.getId());
                 client.send(new Message(MessageType.BUSINESS_REQUEST, request));
                 break;
             } catch (ConnectionInactiveException e) {
-                ResponseFutureContext.removeFuture(request.getId());
+                responseFutureContext.removeFuture(request.getId());
                 log.error("[R:{}] ConsumerManager fail to call", e.getHost() + ":" + e.getPort(), e);
             }
         }
@@ -117,7 +117,7 @@ public class DefaultConsumerManager implements ConsumerManager {
         NettyClient client = clientPool.get(key);
         if (client == null) {
             log.debug("[R:{}] ConsumerManager not found client", host + ":" + port);
-            client = new NettyClient(serializeManager, host, port, config.getTimeout());
+            client = new NettyClient(serializeManager, responseFutureContext, host, port, config.getTimeout());
             clientPool.put(key, client);
             initClient(client);
         } else {

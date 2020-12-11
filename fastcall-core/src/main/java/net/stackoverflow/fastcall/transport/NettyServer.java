@@ -8,6 +8,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import net.stackoverflow.fastcall.context.ServiceContext;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.codec.MessageDecoder;
 import net.stackoverflow.fastcall.transport.codec.MessageEncoder;
@@ -40,6 +41,8 @@ public class NettyServer {
 
     private final SerializeManager serializeManager;
 
+    private final ServiceContext serviceContext;
+
     private Channel channel;
 
     /**
@@ -51,14 +54,16 @@ public class NettyServer {
      * @param port             监听端口
      * @param threads          业务线程池大小
      * @param serializeManager 序列化管理器
+     * @param serviceContext   服务上下文
      */
-    public NettyServer(Integer backlog, Integer timeout, String host, Integer port, Integer threads, SerializeManager serializeManager) {
+    public NettyServer(Integer backlog, Integer timeout, String host, Integer port, Integer threads, SerializeManager serializeManager, ServiceContext serviceContext) {
         this.backlog = backlog;
         this.timeout = timeout;
         this.host = host;
         this.port = port;
         this.threads = threads;
         this.serializeManager = serializeManager;
+        this.serviceContext = serviceContext;
     }
 
     public void bind(CountDownLatch countDownLatch) {
@@ -79,7 +84,7 @@ public class NettyServer {
                             pipeline.addLast(new ReadTimeoutHandler(timeout));
                             pipeline.addLast(new ServerAuthHandler());
                             pipeline.addLast(new ServerHeatBeatHandler());
-                            pipeline.addLast(businessGroup, new ServerRpcHandler(serializeManager));
+                            pipeline.addLast(businessGroup, new ServerRpcHandler(serializeManager, serviceContext));
                         }
                     });
             ChannelFuture channelFuture = bootstrap.bind(host, port).sync();

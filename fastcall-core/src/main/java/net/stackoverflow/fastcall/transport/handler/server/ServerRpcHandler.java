@@ -3,7 +3,7 @@ package net.stackoverflow.fastcall.transport.handler.server;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.stackoverflow.fastcall.annotation.FastcallFallback;
-import net.stackoverflow.fastcall.context.BeanContext;
+import net.stackoverflow.fastcall.context.ServiceContext;
 import net.stackoverflow.fastcall.exception.BeanNotFoundException;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.proto.*;
@@ -25,8 +25,11 @@ public class ServerRpcHandler extends ChannelInboundHandlerAdapter {
 
     private final SerializeManager serializeManager;
 
-    public ServerRpcHandler(SerializeManager serializeManager) {
+    private final ServiceContext serviceContext;
+
+    public ServerRpcHandler(SerializeManager serializeManager, ServiceContext serviceContext) {
         this.serializeManager = serializeManager;
+        this.serviceContext = serviceContext;
     }
 
     @Override
@@ -48,7 +51,7 @@ public class ServerRpcHandler extends ChannelInboundHandlerAdapter {
         List<Object> params = request.getParams();
         List<Class<?>> paramsType = request.getParamsType();
 
-        Object obj = BeanContext.getBean(request.getInterfaceType());
+        Object obj = serviceContext.getBean(request.getInterfaceType());
         if (obj == null) {
             return new RpcResponse(request.getId(), -1, null, null, BeanNotFoundException.class, serializeManager.serialize(new BeanNotFoundException()));
         }

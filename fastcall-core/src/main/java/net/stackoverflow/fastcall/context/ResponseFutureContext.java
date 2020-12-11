@@ -16,7 +16,11 @@ public class ResponseFutureContext {
 
     private static final Logger log = LoggerFactory.getLogger(ResponseFutureContext.class);
 
-    private static final Map<String, ResponseFuture> futurePool = new HashMap<>();
+    private final Map<String, ResponseFuture> futurePool;
+
+    public ResponseFutureContext() {
+        this.futurePool = new HashMap<>();
+    }
 
     /**
      * 生成ResponseFuture
@@ -24,7 +28,7 @@ public class ResponseFutureContext {
      * @param requestId 请求唯一标识
      * @return ResponseFuture对象
      */
-    public static ResponseFuture createFuture(String requestId) {
+    public ResponseFuture createFuture(String requestId) {
         ResponseFuture future = new ResponseFuture();
         futurePool.put(requestId, future);
         return future;
@@ -35,10 +39,12 @@ public class ResponseFutureContext {
      *
      * @param response rpc响应对象
      */
-    public static void setResponse(RpcResponse response) {
+    public synchronized void setResponse(RpcResponse response) {
         ResponseFuture future = futurePool.get(response.getId());
-        future.setResponse(response);
-        futurePool.remove(response.getId());
+        if (future != null) {
+            future.setResponse(response);
+            futurePool.remove(response.getId());
+        }
     }
 
     /**
@@ -46,7 +52,7 @@ public class ResponseFutureContext {
      *
      * @param requestId 请求唯一标识
      */
-    public static void removeFuture(String requestId) {
+    public synchronized void removeFuture(String requestId) {
         futurePool.remove(requestId);
     }
 }

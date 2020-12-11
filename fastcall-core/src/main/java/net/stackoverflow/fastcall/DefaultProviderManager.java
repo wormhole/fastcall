@@ -2,7 +2,7 @@ package net.stackoverflow.fastcall;
 
 import net.stackoverflow.fastcall.annotation.FastcallService;
 import net.stackoverflow.fastcall.config.ProviderConfig;
-import net.stackoverflow.fastcall.context.BeanContext;
+import net.stackoverflow.fastcall.context.ServiceContext;
 import net.stackoverflow.fastcall.registry.RegistryManager;
 import net.stackoverflow.fastcall.registry.ServiceMetaData;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
@@ -28,6 +28,8 @@ public class DefaultProviderManager implements ProviderManager {
 
     private final RegistryManager registryManager;
 
+    private final ServiceContext serviceContext;
+
     private final NettyServer server;
 
     private final ProviderConfig config;
@@ -36,9 +38,10 @@ public class DefaultProviderManager implements ProviderManager {
 
     public DefaultProviderManager(ProviderConfig config, SerializeManager serializeManager, RegistryManager registryManager) {
         this.registryManager = registryManager;
+        this.serviceContext = new ServiceContext();
         this.config = config;
-        this.server = new NettyServer(config.getBacklog(), config.getTimeout(), config.getHost(), config.getPort(), config.getThreads(), serializeManager);
-        this.executorService = Executors.newFixedThreadPool(1);
+        this.server = new NettyServer(config.getBacklog(), config.getTimeout(), config.getHost(), config.getPort(), config.getThreads(), serializeManager, serviceContext);
+        this.executorService = Executors.newSingleThreadExecutor();
     }
 
     /**
@@ -85,7 +88,7 @@ public class DefaultProviderManager implements ProviderManager {
         Class<?> cls = bean.getClass();
         FastcallService fastcallService = cls.getAnnotation(FastcallService.class);
         if (fastcallService != null) {
-            BeanContext.setBean(clazz, bean);
+            serviceContext.setBean(clazz, bean);
             String group = fastcallService.group();
             registryManager.registerService(new ServiceMetaData(group, clazz.getName(), getIp(), config.getPort()));
         }
