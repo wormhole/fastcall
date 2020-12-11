@@ -49,5 +49,5 @@ public interface FastcallManager {
     /**
      * 停止服务
      */
-    void stop() throws InterruptedException;
+    void stop();
 }

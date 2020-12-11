@@ -36,5 +36,5 @@ public interface RegistryManager {
     /**
      * 关闭连接
      */
-    void close() throws InterruptedException;
+    void close();
 }

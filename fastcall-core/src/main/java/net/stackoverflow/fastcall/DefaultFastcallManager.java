@@ -87,7 +87,7 @@ public class DefaultFastcallManager implements FastcallManager {
      * 停止服务
      */
     @Override
-    public void stop() throws InterruptedException {
+    public void stop()  {
         if (config.getProvider().getEnabled()) {
             providerManager.close();
         }
