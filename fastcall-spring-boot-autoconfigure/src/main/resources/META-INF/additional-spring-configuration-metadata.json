@@ -32,6 +32,18 @@
   ],
   "properties": [
     {
+      "name": "fastcall.consumer.balance",
+      "type": "java.lang.String",
+      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Consumer",
+      "defaultValue": "random"
+    },
+    {
+      "name": "fastcall.consumer.retry",
+      "type": "java.lang.Integer",
+      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Consumer",
+      "defaultValue": 0
+    },
+    {
       "name": "fastcall.consumer.threads",
       "type": "java.lang.Integer",
       "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Consumer",

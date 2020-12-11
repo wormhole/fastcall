@@ -36,27 +36,38 @@ public class RpcInvocationHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        ResponseFuture future = consumerManager.call(method, args, group, version);
-        try {
-            RpcResponse response = future.getResponse(timeout);
-            if (response != null) {
-                log.trace("Method: {}, code: {}", method.getName(), response.getCode());
-                if (response.getCode() == 0) {
-                    byte[] responseBytes = response.getResponseBytes();
-                    Class<?> responseType = response.getResponseType();
-                    Object object = consumerManager.getSerializeManager().deserialize(responseBytes, responseType);
-                    return object;
+        ResponseFuture future = null;
+        int retry = consumerManager.getConfig().getRetry();
+        while (true) {
+            try {
+                future = consumerManager.call(method, args, group, version);
+                RpcResponse response = future.getResponse(timeout);
+                if (response != null) {
+                    log.trace("Method: {}, code: {}", method.getName(), response.getCode());
+                    if (response.getCode() == 0) {
+                        byte[] responseBytes = response.getResponseBytes();
+                        Class<?> responseType = response.getResponseType();
+                        Object object = consumerManager.getSerializeManager().deserialize(responseBytes, responseType);
+                        return object;
+                    } else {
+                        byte[] throwableBytes = response.getThrowableBytes();
+                        Class<?> throwableType = response.getThrowableType();
+                        Throwable throwable = (Throwable) consumerManager.getSerializeManager().deserialize(throwableBytes, throwableType);
+                        throw throwable;
+                    }
                 } else {
-                    byte[] throwableBytes = response.getThrowableBytes();
-                    Class<?> throwableType = response.getThrowableType();
-                    Throwable throwable = (Throwable) consumerManager.getSerializeManager().deserialize(throwableBytes, throwableType);
+                    throw new RpcTimeout();
+                }
+            } catch (Throwable throwable) {
+                if (retry > 0) {
+                    log.debug("Proxy retry rpc, retry:{}", retry);
+                    --retry;
+                } else {
                     throw throwable;
                 }
-            } else {
-                throw new RpcTimeout();
+            } finally {
+                consumerManager.removeFuture(future);
             }
-        } finally {
-            consumerManager.removeFuture(future);
         }
     }
 }

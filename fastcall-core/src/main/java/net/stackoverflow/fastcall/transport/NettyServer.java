@@ -52,7 +52,7 @@ public class NettyServer {
      * @param port             监听端口
      * @param threads          业务线程池大小
      * @param serializeManager 序列化管理器
-     * @param beanContext   服务上下文
+     * @param beanContext      服务上下文
      */
     public NettyServer(Integer backlog, Integer timeout, String host, Integer port, Integer threads, SerializeManager serializeManager, BeanContext beanContext) {
         this.backlog = backlog;
@@ -99,11 +99,9 @@ public class NettyServer {
         }
     }
 
-    public boolean isActive() {
-        return channel != null && channel.isActive();
-    }
-
     public void close() {
-        channel.close();
+        if (channel != null) {
+            channel.close();
+        }
     }
 }

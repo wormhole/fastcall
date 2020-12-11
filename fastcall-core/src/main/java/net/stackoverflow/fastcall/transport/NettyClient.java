@@ -90,20 +90,14 @@ public class NettyClient {
         }
     }
 
-    public boolean isActive() {
-        return channel != null && channel.isActive();
-    }
-
-    public void send(Message message) throws ConnectionInactiveException {
-        if (isActive()) {
+    public void send(Message message) {
+        if (channel != null) {
             channel.writeAndFlush(message);
-        } else {
-            throw new ConnectionInactiveException(getHost(), getPort());
         }
     }
 
     public void close() {
-        if (isActive()) {
+        if (channel != null) {
             channel.close();
         }
     }

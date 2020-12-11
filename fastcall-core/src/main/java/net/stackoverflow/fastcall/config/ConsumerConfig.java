@@ -10,6 +10,10 @@ public class ConsumerConfig {
 
     private Integer threads = 512;
 
+    private Integer retry = 0;
+
+    private String balance = "random";
+
     public Integer getTimeout() {
         return timeout;
     }
@@ -24,5 +28,21 @@ public class ConsumerConfig {
 
     public void setThreads(Integer threads) {
         this.threads = threads;
+    }
+
+    public Integer getRetry() {
+        return retry;
+    }
+
+    public void setRetry(Integer retry) {
+        this.retry = retry;
+    }
+
+    public String getBalance() {
+        return balance;
+    }
+
+    public void setBalance(String balance) {
+        this.balance = balance;
     }
 }

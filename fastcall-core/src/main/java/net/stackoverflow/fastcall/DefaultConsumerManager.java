@@ -71,18 +71,11 @@ public class DefaultConsumerManager implements ConsumerManager {
         request.setParamsType(Arrays.asList(method.getParameterTypes()));
 
         List<InetSocketAddress> addresses = registryManager.getServiceAddress(request.getInterfaceType(), group, version);
-        ResponseFuture future = null;
-        for (InetSocketAddress address : addresses) {
-            NettyClient client = this.getClient(address);
-            try {
-                future = responseFutureContext.createFuture(request.getId());
-                client.send(new Message(MessageType.BUSINESS_REQUEST, request));
-                break;
-            } catch (ConnectionInactiveException e) {
-                responseFutureContext.removeFuture(request.getId());
-                log.error("[R:{}] ConsumerManager fail to call", e.getHost() + ":" + e.getPort(), e);
-            }
-        }
+        //当前仅支持随机策略
+        InetSocketAddress address = this.random(addresses);
+        NettyClient client = this.getClient(address);
+        ResponseFuture future = responseFutureContext.createFuture(request.getId());
+        client.send(new Message(MessageType.BUSINESS_REQUEST, request));
         return future;
     }
 
@@ -116,6 +109,19 @@ public class DefaultConsumerManager implements ConsumerManager {
     }
 
     /**
+     * 负载均衡策略-随机
+     *
+     * @param addresses 地址列表
+     * @return
+     */
+    private InetSocketAddress random(List<InetSocketAddress> addresses) {
+        int length = addresses.size();
+        Random random = new Random();
+        int index = random.nextInt(length);
+        return addresses.get(index);
+    }
+
+    /**
      * 获取Netty客户端
      *
      * @param address 地址
@@ -131,11 +137,6 @@ public class DefaultConsumerManager implements ConsumerManager {
             client = new NettyClient(serializeManager, responseFutureContext, host, port, config.getTimeout());
             clientPool.put(key, client);
             initClient(client);
-        } else {
-            if (!client.isActive()) {
-                log.debug("[R:{}] ConsumerManager detect client inactive", client.getHost() + ":" + client.getPort());
-                initClient(client);
-            }
         }
         return client;
     }
@@ -148,7 +149,10 @@ public class DefaultConsumerManager implements ConsumerManager {
     private void initClient(NettyClient client) {
         log.debug("[R:{}] ConsumerManager start init client", client.getHost() + ":" + client.getPort());
         CountDownLatch countDownLatch = new CountDownLatch(1);
-        executorService.execute(() -> client.connect(countDownLatch));
+        executorService.execute(() -> {
+            client.connect(countDownLatch);
+            clientPool.remove(client.getHost() + ":" + client.getPort());
+        });
         try {
             countDownLatch.await();
             log.debug("[R:{}] ConsumerManager init client success", client.getHost() + ":" + client.getPort());
