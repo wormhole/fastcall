@@ -44,9 +44,9 @@ $ mvn install
 </dependencies>
 ```
 
-2. 服务类实现，`@FastcallService`标识这是一个需要暴露的服务，并指定了服务的分组等元数据
+2. 服务类实现，`@FastcallService`标识这是一个需要暴露的服务，并指定了服务的分组，版本，响应超时等元数据
 ```
-@FastcallService(group = "group-1")
+@FastcallService(group = "group-1", version="1.0", timeout=5000)
 public class SayServiceImpl implements SayService {
 
     private static final Logger log = LoggerFactory.getLogger(SayServiceImpl.class);
@@ -106,8 +106,8 @@ public class FastcallDemoConsumerApplication {
         FastcallConfig config = new FastcallConfig();
         FastcallManagerFactory factory = new ConfigFastcallManagerFactory(config);
         FastcallManager manager = factory.getInstance();
-        //生成代理对象，group指定分组
-        SayService proxy = manager.createProxy(SayService.class, "group-1");
+        //生成代理对象，指定分组，版本，超时时间
+        SayService proxy = manager.createProxy(SayService.class, "group-1", "1.0", 5000);
         //rpc调用
         proxy.say("hello world");
     }
@@ -162,7 +162,7 @@ logging.level.net.stackoverflow.fastcall=DEBUG
 
 3. 在服务实现类上，添加`@FastcallService`注解，标识这是需要暴露的服务，`group`可以指定分组。添加该注解后`fastcall-spring-boot-starter`会将它自动实例化注册成`bean`，并将接口向服务注册中心注册
 ```
-@FastcallService(group = "group-1")
+@FastcallService(group = "group-1", version="1.0", timeout=5000)
 public class SayServiceImpl implements SayService {
 
     private static final Logger log = LoggerFactory.getLogger(SayServiceImpl.class);
@@ -223,6 +223,8 @@ fastcall.registry.zookeeper.session-timeout=5000
 #Consumer配置
 fastcall.consumer.timeout=60
 fastcall.consumer.threads=512
+fastcall.consumer.retry=1
+fastcall.consumer.balance=random
 #日志配置
 logging.level.root=INFO
 logging.level.net.stackoverflow.fastcall=DEBUG
@@ -233,7 +235,7 @@ logging.level.net.stackoverflow.fastcall=DEBUG
 @RestController
 public class FastcallController {
 
-    @FastcallReference(group = "group-1")
+    @FastcallReference(group = "group-1", version="1.0", timeout=5000)
     private SayService sayService;
 
     @GetMapping("/say")
@@ -254,7 +256,26 @@ public class FastcallController {
 |fastcall-demo-provider|样例工程，服务提供者|
 |fastcall-demo-consumer|样例工程，服务消费者|
 
-## 五、支持情况
+## 五、详细配置说明
+|key|说明|默认值|当前可选值|单位|
+|----|----|----|----|----|
+|fastcall.serialize|序列化方式|json|json|-|
+|fastcall.registry.type|服务注册中心类型|zookeeper|zookeeper|-|
+|fastcall.registry.zookeeper.host|zookeeper地址|127.0.0.1|-|-|
+|fastcall.registry.zookeeper.port|zookeeper端口|2181|-|-|
+|fastcall.registry.zookeeper.session-timeout|zookeeper会话超时时间|5000|-|毫秒|
+|fastcall.provider.enabled|是否启用provider模块|false|true/false|-|
+|fastcall.provider.backlog|等待队列长度|1024|-|-|
+|fastcall.provider.host|provider服务绑定地址|0.0.0.0|-|-|
+|fastcall.provider.port|provider服务绑定端口|9966|-|-|
+|fastcall.provider.timeout|provider心跳检测超时时间|60|-|秒|
+|fastcall.provider.threads|provider并发处理最大线程数|100|-|-|
+|fastcall.consumer.timeout|consumer心跳检测超时时间|60|-|秒|
+|fastcall.consumer.threads|consumer最大连接数|512|-|-|
+|fastcall.consumer.retry|服务调用失败重试次数|0|-|-|
+|fastcall.consumer.balance|负载均衡策略|random|random|-|
+
+## 六、支持情况
 
 |序列化类型|json|protobuf|msgpack|
 |----|----|----|----|
@@ -268,6 +289,6 @@ public class FastcallController {
 |----|----|----|----|----|
 |是否支持|✔|❌|❌|❌|
 
-## 六、LICENSE
+## 七、LICENSE
 Fastcall software is licenced under the [MIT](LICENSE) License
 
