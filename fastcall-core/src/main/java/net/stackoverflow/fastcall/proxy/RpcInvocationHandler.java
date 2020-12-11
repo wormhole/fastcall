@@ -33,9 +33,15 @@ public class RpcInvocationHandler implements InvocationHandler {
         RpcResponse response = future.getResponse();
         log.trace("Method: {}, code: {}", method.getName(), response.getCode());
         if (response.getCode() == 0) {
-            return response.getResponse();
+            byte[] responseBytes = response.getResponseBytes();
+            Class<?> responseType = response.getResponseType();
+            Object object = consumerManager.getSerializeManager().deserialize(responseBytes, responseType);
+            return object;
         } else {
-            throw response.getThrowable();
+            byte[] throwableBytes = response.getThrowableBytes();
+            Class<?> throwableType = response.getThrowableType();
+            Throwable throwable = (Throwable) consumerManager.getSerializeManager().deserialize(throwableBytes, throwableType);
+            throw throwable;
         }
     }
 }

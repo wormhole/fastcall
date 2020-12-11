@@ -55,6 +55,11 @@ public class DefaultConsumerManager implements ConsumerManager {
     }
 
     @Override
+    public SerializeManager getSerializeManager() {
+        return this.serializeManager;
+    }
+
+    @Override
     public ResponseFuture call(Method method, Object[] args, String group) {
         RpcRequest request = new RpcRequest();
         request.setId(UUID.randomUUID().toString());

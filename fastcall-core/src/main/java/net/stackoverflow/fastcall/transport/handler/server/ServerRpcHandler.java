@@ -5,6 +5,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.stackoverflow.fastcall.annotation.FastcallFallback;
 import net.stackoverflow.fastcall.context.BeanContext;
 import net.stackoverflow.fastcall.exception.BeanNotFoundException;
+import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.proto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,12 @@ import java.util.List;
 public class ServerRpcHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(ServerRpcHandler.class);
+
+    private final SerializeManager serializeManager;
+
+    public ServerRpcHandler(SerializeManager serializeManager) {
+        this.serializeManager = serializeManager;
+    }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -43,13 +50,13 @@ public class ServerRpcHandler extends ChannelInboundHandlerAdapter {
 
         Object obj = BeanContext.getBean(request.getInterfaceType());
         if (obj == null) {
-            return new RpcResponse(request.getId(), -1, null, new BeanNotFoundException());
+            return new RpcResponse(request.getId(), -1, null, null, BeanNotFoundException.class, serializeManager.serialize(new BeanNotFoundException()));
         }
 
         try {
             Method method = obj.getClass().getMethod(request.getMethod(), paramsType.toArray(new Class[0]));
             Object response = method.invoke(obj, params == null ? null : params.toArray());
-            rpcResponse = new RpcResponse(request.getId(), 0, response, null);
+            rpcResponse = new RpcResponse(request.getId(), 0, response.getClass(), serializeManager.serialize(response), null, null);
         } catch (InvocationTargetException e) {
             try {
                 Class<?> clazz = obj.getClass();
@@ -59,15 +66,15 @@ public class ServerRpcHandler extends ChannelInboundHandlerAdapter {
                     String fallback = fastcallFallback.method();
                     Method fallbackMethod = clazz.getMethod(fallback, paramsType.toArray(new Class[0]));
                     Object response = fallbackMethod.invoke(obj, params == null ? null : params.toArray());
-                    rpcResponse = new RpcResponse(request.getId(), 0, response, null);
+                    rpcResponse = new RpcResponse(request.getId(), 0, response.getClass(), serializeManager.serialize(response), null, null);
                 } else {
-                    rpcResponse = new RpcResponse(request.getId(), -1, null, e.getTargetException());
+                    rpcResponse = new RpcResponse(request.getId(), -1, null, null, e.getTargetException().getClass(), serializeManager.serialize(e.getTargetException()));
                 }
             } catch (Throwable throwable) {
-                rpcResponse = new RpcResponse(request.getId(), -1, null, throwable);
+                rpcResponse = new RpcResponse(request.getId(), -1, null, null, throwable.getClass(), serializeManager.serialize(throwable));
             }
         } catch (Throwable throwable) {
-            rpcResponse = new RpcResponse(request.getId(), -1, null, throwable);
+            rpcResponse = new RpcResponse(request.getId(), -1, null, null, throwable.getClass(), serializeManager.serialize(throwable));
         }
         return rpcResponse;
     }

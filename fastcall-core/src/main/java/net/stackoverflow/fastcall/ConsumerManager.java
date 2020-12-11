@@ -2,6 +2,7 @@ package net.stackoverflow.fastcall;
 
 import net.stackoverflow.fastcall.config.ConsumerConfig;
 import net.stackoverflow.fastcall.context.ResponseFuture;
+import net.stackoverflow.fastcall.serialize.SerializeManager;
 
 import java.lang.reflect.Method;
 
@@ -18,6 +19,13 @@ public interface ConsumerManager {
      * @return Consumer配置类
      */
     ConsumerConfig getConfig();
+
+    /**
+     * 获取SerializeManager
+     *
+     * @return SerializeManager实例
+     */
+    SerializeManager getSerializeManager();
 
     /**
      * RPC调用

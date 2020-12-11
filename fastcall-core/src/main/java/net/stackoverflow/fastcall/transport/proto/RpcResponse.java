@@ -11,19 +11,25 @@ public class RpcResponse {
 
     private Integer code;
 
-    private Object response;
+    private Class<?> responseType;
 
-    private Throwable throwable;
+    private byte[] responseBytes;
+
+    private Class<?> throwableType;
+
+    private byte[] throwableBytes;
 
     public RpcResponse() {
 
     }
 
-    public RpcResponse(String id, Integer code, Object response, Throwable throwable) {
+    public RpcResponse(String id, Integer code, Class<?> responseType, byte[] responseBytes, Class<?> throwableType, byte[] throwableBytes) {
         this.id = id;
         this.code = code;
-        this.response = response;
-        this.throwable = throwable;
+        this.responseType = responseType;
+        this.responseBytes = responseBytes;
+        this.throwableType = throwableType;
+        this.throwableBytes = throwableBytes;
     }
 
     public String getId() {
@@ -42,20 +48,36 @@ public class RpcResponse {
         this.code = code;
     }
 
-    public Object getResponse() {
-        return response;
+    public Class<?> getResponseType() {
+        return responseType;
     }
 
-    public void setResponse(Object response) {
-        this.response = response;
+    public void setResponseType(Class<?> responseType) {
+        this.responseType = responseType;
     }
 
-    public Throwable getThrowable() {
-        return throwable;
+    public byte[] getResponseBytes() {
+        return responseBytes;
     }
 
-    public void setThrowable(Throwable throwable) {
-        this.throwable = throwable;
+    public void setResponseBytes(byte[] responseBytes) {
+        this.responseBytes = responseBytes;
+    }
+
+    public Class<?> getThrowableType() {
+        return throwableType;
+    }
+
+    public void setThrowableType(Class<?> throwableType) {
+        this.throwableType = throwableType;
+    }
+
+    public byte[] getThrowableBytes() {
+        return throwableBytes;
+    }
+
+    public void setThrowableBytes(byte[] throwableBytes) {
+        this.throwableBytes = throwableBytes;
     }
 
     @Override
@@ -63,8 +85,8 @@ public class RpcResponse {
         final StringBuffer sb = new StringBuffer("RpcResponse{");
         sb.append("id='").append(id).append('\'');
         sb.append(", code=").append(code);
-        sb.append(", response=").append(response);
-        sb.append(", throwable=").append(throwable);
+        sb.append(", responseType=").append(responseType);
+        sb.append(", throwableType=").append(throwableType);
         sb.append('}');
         return sb.toString();
     }
