@@ -5,7 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * ResponseFuture上下文
@@ -19,7 +21,7 @@ public class ResponseFutureContext {
     private final Map<String, ResponseFuture> futurePool;
 
     public ResponseFutureContext() {
-        this.futurePool = new HashMap<>();
+        this.futurePool = new ConcurrentHashMap<>();
     }
 
     /**
@@ -39,7 +41,7 @@ public class ResponseFutureContext {
      *
      * @param response rpc响应对象
      */
-    public synchronized void setResponse(RpcResponse response) {
+    public void setResponse(RpcResponse response) {
         ResponseFuture future = futurePool.get(response.getId());
         if (future != null) {
             future.setResponse(response);
@@ -51,7 +53,7 @@ public class ResponseFutureContext {
      *
      * @param requestId 请求唯一标识
      */
-    public synchronized void removeFuture(String requestId) {
+    public void removeFuture(String requestId) {
         futurePool.remove(requestId);
     }
 
@@ -60,10 +62,12 @@ public class ResponseFutureContext {
      *
      * @param future ResponseFuture
      */
-    public synchronized void removeFuture(ResponseFuture future) {
-        for (Map.Entry<String, ResponseFuture> entry : futurePool.entrySet()) {
+    public void removeFuture(ResponseFuture future) {
+        Iterator<Map.Entry<String, ResponseFuture>> iterator = futurePool.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, ResponseFuture> entry = iterator.next();
             if (entry.getValue() == future) {
-                futurePool.remove(entry.getKey());
+                iterator.remove();
                 break;
             }
         }

@@ -112,6 +112,7 @@ public class ZooKeeperRegistryManager implements RegistryManager {
             for (String itfChildPath : itfChildPaths) {
                 String itfPath = ROOT_PATH + "/" + itfChildPath;
                 List<String> serviceChildPaths = zookeeper.getChildren(itfPath, childrenWatcher);
+                Collections.sort(serviceChildPaths);
                 log.debug("Zookeeper watched children of path {}", itfPath);
                 for (String serviceChildPath : serviceChildPaths) {
                     String servicePath = itfPath + "/" + serviceChildPath;

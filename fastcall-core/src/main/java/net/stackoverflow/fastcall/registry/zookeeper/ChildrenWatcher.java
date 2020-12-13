@@ -92,7 +92,6 @@ public class ChildrenWatcher implements Watcher {
             List<ServiceMetaData> list = new ArrayList<>();
             List<String> serviceChildPaths = zooKeeper.getChildren(path, this);
             Collections.sort(serviceChildPaths);
-            log.debug(serviceChildPaths.toString());
             log.debug("Zookeeper watched children of path {}", path);
             for (String serviceChildPath : serviceChildPaths) {
                 String servicePath = path + "/" + serviceChildPath;

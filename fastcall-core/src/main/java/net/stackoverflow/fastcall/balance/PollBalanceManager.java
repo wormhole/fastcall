@@ -12,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 轮询负载均衡策略
@@ -24,8 +25,11 @@ public class PollBalanceManager implements BalanceManager {
 
     private final Map<String, ServiceMetaData> history;
 
+    private final ReentrantLock lock;
+
     public PollBalanceManager() {
         this.history = new ConcurrentHashMap<>();
+        lock = new ReentrantLock();
     }
 
     @Override
@@ -36,6 +40,7 @@ public class PollBalanceManager implements BalanceManager {
         }
         try {
             String key = getKey(meta.getInterfaceName(), meta.getGroup(), meta.getVersion());
+            lock.lock();
             ServiceMetaData last = history.get(key);
             if (last != null) {
                 int index = serviceMetaDataList.indexOf(last);
@@ -49,6 +54,9 @@ public class PollBalanceManager implements BalanceManager {
             }
         } catch (Exception e) {
             log.error("BalanceManager fail to choose", e);
+        } finally {
+            log.debug("BalanceManager choose remote {}", meta.getHost() + ":" + meta.getPort());
+            lock.unlock();
         }
         return new InetSocketAddress(meta.getHost(), meta.getPort());
     }
