@@ -88,7 +88,7 @@ public class ChildrenWatcher implements Watcher {
      */
     private void cache(String interfaceName, String path) {
         try {
-            Set<ServiceMetaData> set = new HashSet<>();
+            Set<ServiceMetaData> set = new LinkedHashSet<>();
             List<String> serviceChildPaths = zooKeeper.getChildren(path, this);
             log.debug("Zookeeper watched children of path {}", path);
             for (String serviceChildPath : serviceChildPaths) {

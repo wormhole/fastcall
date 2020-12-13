@@ -1,7 +1,5 @@
 package net.stackoverflow.fastcall.registry;
 
-import net.stackoverflow.fastcall.registry.ServiceMetaData;
-
 import java.util.*;
 
 /**
@@ -41,7 +39,7 @@ public class ServiceAddressCache {
      * @return
      */
     public synchronized Set<ServiceMetaData> get(String interfaceName, String group, String version) {
-        Set<ServiceMetaData> set = new HashSet<>();
+        Set<ServiceMetaData> set = new LinkedHashSet<>();
         Set<ServiceMetaData> metaDataSet = cache.get(interfaceName);
         if (metaDataSet != null && metaDataSet.size() > 0) {
             for (ServiceMetaData meta : metaDataSet) {
@@ -60,13 +58,7 @@ public class ServiceAddressCache {
      * @param metaDataSet   服务集合
      */
     public synchronized void reset(String interfaceName, Set<ServiceMetaData> metaDataSet) {
-        Set<ServiceMetaData> set = cache.get(interfaceName);
-        if (set == null) {
-            cache.put(interfaceName, metaDataSet);
-        } else {
-            set.clear();
-            set.addAll(metaDataSet);
-        }
+        cache.put(interfaceName, metaDataSet);
     }
 
     /**
