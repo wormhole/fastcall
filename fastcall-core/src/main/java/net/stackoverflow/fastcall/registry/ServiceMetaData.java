@@ -89,4 +89,10 @@ public class ServiceMetaData {
         sb.append('}');
         return sb.toString();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        ServiceMetaData other = (ServiceMetaData) obj;
+        return group.equals(other.group) && version.equals(other.version) && interfaceName.equals(other.interfaceName) && host.equals(other.host) && port.equals(other.port);
+    }
 }

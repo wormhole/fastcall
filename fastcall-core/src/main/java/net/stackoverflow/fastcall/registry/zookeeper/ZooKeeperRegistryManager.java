@@ -3,7 +3,7 @@ package net.stackoverflow.fastcall.registry.zookeeper;
 import net.stackoverflow.fastcall.exception.ServiceNotFoundException;
 import net.stackoverflow.fastcall.registry.JsonUtils;
 import net.stackoverflow.fastcall.registry.RegistryManager;
-import net.stackoverflow.fastcall.registry.ServiceAddressCache;
+import net.stackoverflow.fastcall.registry.ServiceMetaCache;
 import net.stackoverflow.fastcall.registry.ServiceMetaData;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
@@ -36,13 +36,13 @@ public class ZooKeeperRegistryManager implements RegistryManager {
 
     private final Integer sessionTimeout;
 
-    private final ServiceAddressCache cache;
+    private final ServiceMetaCache cache;
 
     public ZooKeeperRegistryManager(String host, Integer port, Integer sessionTimeout) {
         this.host = host;
         this.port = port;
         this.sessionTimeout = sessionTimeout;
-        this.cache = new ServiceAddressCache();
+        this.cache = new ServiceMetaCache();
         this.connect();
     }
 
@@ -90,17 +90,13 @@ public class ZooKeeperRegistryManager implements RegistryManager {
      * @return
      */
     @Override
-    public List<InetSocketAddress> getServiceAddress(Class<?> clazz, String group, String version) {
-        List<InetSocketAddress> socketAddresses = new ArrayList<>();
-        Set<ServiceMetaData> metas = cache.get(clazz.getName(), group, version);
+    public List<ServiceMetaData> getServiceMeta(Class<?> clazz, String group, String version) {
+        List<ServiceMetaData> metas = cache.get(clazz.getName(), group, version);
         if (metas != null && metas.size() > 0) {
-            for (ServiceMetaData meta : metas) {
-                socketAddresses.add(new InetSocketAddress(meta.getHost(), meta.getPort()));
-            }
+            return metas;
         } else {
             throw new ServiceNotFoundException(clazz.getName(), group, String.format("Service not found, interfaceName:%s, group:%s, version:%s", clazz.getName(), group, version));
         }
-        return socketAddresses;
     }
 
     /**

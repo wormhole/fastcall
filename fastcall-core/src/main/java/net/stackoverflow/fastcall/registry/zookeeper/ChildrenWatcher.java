@@ -1,7 +1,7 @@
 package net.stackoverflow.fastcall.registry.zookeeper;
 
 import net.stackoverflow.fastcall.registry.JsonUtils;
-import net.stackoverflow.fastcall.registry.ServiceAddressCache;
+import net.stackoverflow.fastcall.registry.ServiceMetaCache;
 import net.stackoverflow.fastcall.registry.ServiceMetaData;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
@@ -21,11 +21,11 @@ public class ChildrenWatcher implements Watcher {
 
     private static final Logger log = LoggerFactory.getLogger(ChildrenWatcher.class);
 
-    private final ServiceAddressCache cache;
+    private final ServiceMetaCache cache;
 
     private final ZooKeeper zooKeeper;
 
-    public ChildrenWatcher(ServiceAddressCache cache, ZooKeeper zooKeeper) {
+    public ChildrenWatcher(ServiceMetaCache cache, ZooKeeper zooKeeper) {
         this.cache = cache;
         this.zooKeeper = zooKeeper;
     }
@@ -55,23 +55,24 @@ public class ChildrenWatcher implements Watcher {
      */
     private void cache(String path) {
         try {
-            Map<String, Set<ServiceMetaData>> latestCache = new HashMap<>();
+            Map<String, List<ServiceMetaData>> latestCache = new HashMap<>();
             List<String> itfChildPaths = zooKeeper.getChildren(path, this);
             log.debug("Zookeeper watched children of path {}", path);
             for (String itfChildPath : itfChildPaths) {
                 String itfPath = path + "/" + itfChildPath;
                 List<String> serviceChildPaths = zooKeeper.getChildren(itfPath, this);
+                Collections.sort(serviceChildPaths);
                 log.debug("Zookeeper watched children of path {}", itfPath);
 
-                Set<ServiceMetaData> metaDataSet = new LinkedHashSet<>();
-                latestCache.put(itfChildPath, metaDataSet);
+                List<ServiceMetaData> metaDataList = new ArrayList<>();
+                latestCache.put(itfChildPath, metaDataList);
                 for (String serviceChildPath : serviceChildPaths) {
                     String servicePath = itfPath + "/" + serviceChildPath;
                     //目前没有在服务运行过程中，动态修改地址的情况，因此此事件不监听
                     byte[] bytes = zooKeeper.getData(servicePath, false, new Stat());
                     String json = new String(bytes);
                     ServiceMetaData meta = JsonUtils.json2bean(json, ServiceMetaData.class);
-                    metaDataSet.add(meta);
+                    metaDataList.add(meta);
                 }
             }
             cache.reset(latestCache);
@@ -88,8 +89,10 @@ public class ChildrenWatcher implements Watcher {
      */
     private void cache(String interfaceName, String path) {
         try {
-            Set<ServiceMetaData> set = new LinkedHashSet<>();
+            List<ServiceMetaData> list = new ArrayList<>();
             List<String> serviceChildPaths = zooKeeper.getChildren(path, this);
+            Collections.sort(serviceChildPaths);
+            log.debug(serviceChildPaths.toString());
             log.debug("Zookeeper watched children of path {}", path);
             for (String serviceChildPath : serviceChildPaths) {
                 String servicePath = path + "/" + serviceChildPath;
@@ -97,9 +100,9 @@ public class ChildrenWatcher implements Watcher {
                 byte[] bytes = zooKeeper.getData(servicePath, false, new Stat());
                 String json = new String(bytes);
                 ServiceMetaData meta = JsonUtils.json2bean(json, ServiceMetaData.class);
-                set.add(meta);
+                list.add(meta);
             }
-            cache.reset(interfaceName, set);
+            cache.reset(interfaceName, list);
         } catch (Exception e) {
             log.error("Zookeeper fail to watched path", e);
         }

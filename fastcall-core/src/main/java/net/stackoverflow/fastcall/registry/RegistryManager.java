@@ -4,6 +4,7 @@ import net.stackoverflow.fastcall.exception.ServiceNotFoundException;
 
 import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 注册中心管理类
@@ -27,7 +28,7 @@ public interface RegistryManager {
      * @param version 版本号
      * @return
      */
-    List<InetSocketAddress> getServiceAddress(Class<?> clazz, String group, String version) throws ServiceNotFoundException;
+    List<ServiceMetaData> getServiceMeta(Class<?> clazz, String group, String version) throws ServiceNotFoundException;
 
     /**
      * 订阅服务

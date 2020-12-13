@@ -1,7 +1,6 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
 import net.stackoverflow.fastcall.DefaultProviderManager;
-import net.stackoverflow.fastcall.FastcallManager;
 import net.stackoverflow.fastcall.ProviderManager;
 import net.stackoverflow.fastcall.annotation.FastcallService;
 import net.stackoverflow.fastcall.config.FastcallConfig;
@@ -28,7 +27,7 @@ import java.util.Map;
  * @author wormhole
  */
 @Configuration
-@AutoConfigureAfter(FastcallCommonAutoConfiguration.class)
+@AutoConfigureAfter(FastcallConsumerAutoConfiguration.class)
 @ConditionalOnProperty(prefix = "fastcall.provider", name = "enabled", havingValue = "true")
 public class FastcallProviderAutoConfiguration implements InitializingBean, ApplicationContextAware {
 
@@ -43,9 +42,6 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
     @Autowired
     private RegistryManager registryManager;
 
-    @Autowired
-    private FastcallManager fastcallManager;
-
     private ApplicationContext applicationContext;
 
     @Override
@@ -58,7 +54,6 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
      */
     @Override
     public void afterPropertiesSet() {
-        fastcallManager.setProviderManager(providerManager());
         this.registerService();
         this.start();
     }
@@ -80,13 +75,14 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
      * 向注册中心注册服务信息
      */
     private void registerService() {
+        ProviderManager providerManager = providerManager();
         Map<String, Object> map = applicationContext.getBeansWithAnnotation(FastcallService.class);
 
         for (Object obj : map.values()) {
             Class<?> clazz = obj.getClass();
             Class<?>[] interfaces = clazz.getInterfaces();
             for (Class<?> itf : interfaces) {
-                fastcallManager.registerService(itf, obj);
+                providerManager.registerService(itf, obj);
             }
         }
     }
@@ -95,6 +91,7 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
      * 绑定服务端
      */
     private void start() {
-        fastcallManager.start();
+        ProviderManager providerManager = providerManager();
+        providerManager.start();
     }
 }

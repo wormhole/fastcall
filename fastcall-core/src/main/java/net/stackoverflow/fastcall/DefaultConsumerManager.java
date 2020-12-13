@@ -1,9 +1,12 @@
 package net.stackoverflow.fastcall;
 
+import net.stackoverflow.fastcall.balance.BalanceManager;
 import net.stackoverflow.fastcall.config.ConsumerConfig;
 import net.stackoverflow.fastcall.context.ResponseFuture;
 import net.stackoverflow.fastcall.context.ResponseFutureContext;
 import net.stackoverflow.fastcall.registry.RegistryManager;
+import net.stackoverflow.fastcall.registry.ServiceMetaCache;
+import net.stackoverflow.fastcall.registry.ServiceMetaData;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.NettyClient;
 import net.stackoverflow.fastcall.transport.proto.Message;
@@ -32,6 +35,8 @@ public class DefaultConsumerManager implements ConsumerManager {
 
     private final RegistryManager registryManager;
 
+    private final BalanceManager balanceManager;
+
     private final Map<String, NettyClient> clientPool;
 
     private final ExecutorService executorService;
@@ -40,9 +45,10 @@ public class DefaultConsumerManager implements ConsumerManager {
 
     private final ResponseFutureContext responseFutureContext;
 
-    public DefaultConsumerManager(ConsumerConfig config, SerializeManager serializeManager, RegistryManager registryManager) {
+    public DefaultConsumerManager(ConsumerConfig config, SerializeManager serializeManager, RegistryManager registryManager, BalanceManager balanceManager) {
         this.serializeManager = serializeManager;
         this.registryManager = registryManager;
+        this.balanceManager = balanceManager;
         this.config = config;
         this.clientPool = new HashMap<>();
         this.responseFutureContext = new ResponseFutureContext();
@@ -71,9 +77,8 @@ public class DefaultConsumerManager implements ConsumerManager {
         request.setParams(args == null ? null : Arrays.asList(args));
         request.setParamsType(Arrays.asList(method.getParameterTypes()));
 
-        List<InetSocketAddress> addresses = registryManager.getServiceAddress(request.getInterfaceType(), group, version);
-        //当前仅支持随机策略
-        InetSocketAddress address = this.random(addresses);
+        List<ServiceMetaData> serviceMetaDataList = registryManager.getServiceMeta(request.getInterfaceType(), group, version);
+        InetSocketAddress address = balanceManager.choose(serviceMetaDataList);
         NettyClient client = this.getClient(address);
         ResponseFuture future = responseFutureContext.createFuture(request.getId());
         client.send(new Message(MessageType.BUSINESS_REQUEST, request));
@@ -107,19 +112,6 @@ public class DefaultConsumerManager implements ConsumerManager {
             client.close();
         }
         executorService.shutdown();
-    }
-
-    /**
-     * 负载均衡策略-随机
-     *
-     * @param addresses 地址列表
-     * @return
-     */
-    private InetSocketAddress random(List<InetSocketAddress> addresses) {
-        int length = addresses.size();
-        Random random = new Random();
-        int index = random.nextInt(length);
-        return addresses.get(index);
     }
 
     /**

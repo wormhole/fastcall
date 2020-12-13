@@ -1,6 +1,9 @@
 package net.stackoverflow.fastcall.factory;
 
 import net.stackoverflow.fastcall.*;
+import net.stackoverflow.fastcall.balance.BalanceManager;
+import net.stackoverflow.fastcall.balance.PollBalanceManager;
+import net.stackoverflow.fastcall.balance.RandomBalanceManager;
 import net.stackoverflow.fastcall.config.ConsumerConfig;
 import net.stackoverflow.fastcall.config.FastcallConfig;
 import net.stackoverflow.fastcall.config.ProviderConfig;
@@ -36,20 +39,21 @@ public class ConfigFastcallManagerFactory implements FastcallManagerFactory {
                 if (fastcallManager == null) {
                     SerializeManager serializeManager = this.serializeManager(config.getSerialize());
                     RegistryManager registryManager = this.registryManager(config.getRegistry());
-                    ConsumerManager consumerManager = this.consumerManager(config.getConsumer(), serializeManager, registryManager);
-                    fastcallManager = new DefaultFastcallManager(config, registryManager, null, consumerManager);
+                    BalanceManager balanceManager = this.balanceManager(config.getConsumer().getBalance());
+                    ConsumerManager consumerManager = this.consumerManager(config.getConsumer(), serializeManager, registryManager, balanceManager);
+                    ProviderManager providerManager = null;
                     if (config.getProvider().getEnabled()) {
-                        ProviderManager providerManager = this.providerManager(config.getProvider(), serializeManager, registryManager);
-                        fastcallManager.setProviderManager(providerManager);
+                        providerManager = this.providerManager(config.getProvider(), serializeManager, registryManager);
                     }
+                    fastcallManager = new DefaultFastcallManager(config, registryManager, providerManager, consumerManager);
                 }
             }
         }
         return this.fastcallManager;
     }
 
-    private SerializeManager serializeManager(String type) {
-        if ("json".equals(type)) {
+    private SerializeManager serializeManager(String serialize) {
+        if ("json".equals(serialize)) {
             return new JsonSerializeManager();
         } else {
             return null;
@@ -65,8 +69,18 @@ public class ConfigFastcallManagerFactory implements FastcallManagerFactory {
         }
     }
 
-    private ConsumerManager consumerManager(ConsumerConfig config, SerializeManager serializeManager, RegistryManager registryManager) {
-        return new DefaultConsumerManager(config, serializeManager, registryManager);
+    private BalanceManager balanceManager(String balance) {
+        if ("random".equals(balance)) {
+            return new RandomBalanceManager();
+        } else if ("poll".equals(balance)) {
+            return new PollBalanceManager();
+        } else {
+            return null;
+        }
+    }
+
+    private ConsumerManager consumerManager(ConsumerConfig config, SerializeManager serializeManager, RegistryManager registryManager, BalanceManager balanceManager) {
+        return new DefaultConsumerManager(config, serializeManager, registryManager, balanceManager);
     }
 
     private ProviderManager providerManager(ProviderConfig config, SerializeManager serializeManager, RegistryManager registryManager) {
