@@ -6,6 +6,8 @@ import net.stackoverflow.fastcall.config.FastcallConfig;
 import net.stackoverflow.fastcall.config.ProviderConfig;
 import net.stackoverflow.fastcall.config.RegistryConfig;
 import net.stackoverflow.fastcall.registry.RegistryManager;
+import net.stackoverflow.fastcall.registry.zookeeper.ZooKeeperRegistryManager;
+import net.stackoverflow.fastcall.serialize.JsonSerializeManager;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 
 /**
@@ -47,11 +49,20 @@ public class ConfigFastcallManagerFactory implements FastcallManagerFactory {
     }
 
     private SerializeManager serializeManager(String type) {
-        return new ConfigSerializeManagerFactory(type).getInstance();
+        if ("json".equals(type)) {
+            return new JsonSerializeManager();
+        } else {
+            return null;
+        }
     }
 
     private RegistryManager registryManager(RegistryConfig config) {
-        return new ConfigRegistryManagerFactory(config).getInstance();
+        if ("zookeeper".equals(config.getType())) {
+            RegistryConfig.ZooKeeperConfig zk = config.getZookeeper();
+            return new ZooKeeperRegistryManager(zk.getHost(), zk.getPort(), zk.getSessionTimeout());
+        } else {
+            return null;
+        }
     }
 
     private ConsumerManager consumerManager(ConsumerConfig config, SerializeManager serializeManager, RegistryManager registryManager) {

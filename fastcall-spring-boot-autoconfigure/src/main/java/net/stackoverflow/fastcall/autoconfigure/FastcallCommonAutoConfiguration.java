@@ -20,8 +20,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.io.IOException;
-
 /**
  * fastcall 公共模块自动化配置类
  *
@@ -67,12 +65,10 @@ public class FastcallCommonAutoConfiguration {
      * 初始化注册管理器
      *
      * @return
-     * @throws IOException
-     * @throws InterruptedException
      */
     @Bean
     @ConditionalOnProperty(prefix = "fastcall.registry", name = "type", havingValue = "zookeeper")
-    public RegistryManager registryManager() throws IOException, InterruptedException {
+    public RegistryManager registryManager() {
         FastcallProperties.Zookeeper zk = properties.getRegistry().getZookeeper();
         RegistryManager manager = new ZooKeeperRegistryManager(zk.getHost(), zk.getPort(), zk.getSessionTimeout());
         log.info("Instance ZooKeeperRegistryManager");
@@ -80,15 +76,15 @@ public class FastcallCommonAutoConfiguration {
     }
 
     @Bean
-    public ConsumerManager consumerManager() throws IOException, InterruptedException {
-        ConsumerManager manager = new DefaultConsumerManager(fastcallConfig().getConsumer(), serializeManager(), registryManager());
+    public ConsumerManager consumerManager(FastcallConfig fastcallConfig, SerializeManager serializeManager, RegistryManager registryManager) {
+        ConsumerManager manager = new DefaultConsumerManager(fastcallConfig.getConsumer(), serializeManager, registryManager);
         log.info("Instance DefaultConsumerManager");
         return manager;
     }
 
     @Bean
-    public FastcallManager fastcallManager() throws IOException, InterruptedException {
-        FastcallManager manager = new DefaultFastcallManager(fastcallConfig(), registryManager(), null, consumerManager());
+    public FastcallManager fastcallManager(FastcallConfig fastcallConfig, RegistryManager registryManager, ConsumerManager consumerManager) {
+        FastcallManager manager = new DefaultFastcallManager(fastcallConfig, registryManager, null, consumerManager);
         log.info("Instance FastcallManager");
         return manager;
     }
@@ -99,8 +95,8 @@ public class FastcallCommonAutoConfiguration {
      * @return
      */
     @Bean
-    public BeanPostProcessor beanPostProcessor() throws IOException, InterruptedException {
-        FastcallBeanPostProcessor fastcallBeanPostProcessor = new FastcallBeanPostProcessor(fastcallManager());
+    public BeanPostProcessor beanPostProcessor(FastcallManager fastcallManager) {
+        FastcallBeanPostProcessor fastcallBeanPostProcessor = new FastcallBeanPostProcessor(fastcallManager);
         log.info("Instance FastcallBeanPostProcessor");
         return fastcallBeanPostProcessor;
     }
