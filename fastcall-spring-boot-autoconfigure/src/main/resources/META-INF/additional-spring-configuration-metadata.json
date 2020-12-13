@@ -38,16 +38,16 @@
       "defaultValue": "random"
     },
     {
+      "name": "fastcall.consumer.max-connection",
+      "type": "java.lang.Integer",
+      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Consumer",
+      "defaultValue": 512
+    },
+    {
       "name": "fastcall.consumer.retry",
       "type": "java.lang.Integer",
       "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Consumer",
       "defaultValue": 0
-    },
-    {
-      "name": "fastcall.consumer.threads",
-      "type": "java.lang.Integer",
-      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Consumer",
-      "defaultValue": 512
     },
     {
       "name": "fastcall.consumer.timeout",

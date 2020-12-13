@@ -222,7 +222,7 @@ fastcall.registry.zookeeper.port=2181
 fastcall.registry.zookeeper.session-timeout=5000
 #Consumer配置
 fastcall.consumer.timeout=60
-fastcall.consumer.threads=512
+fastcall.consumer.max-connection=512
 fastcall.consumer.retry=1
 fastcall.consumer.balance=random
 #日志配置
@@ -271,7 +271,7 @@ public class FastcallController {
 |fastcall.provider.timeout|provider心跳检测超时时间|60|-|秒|
 |fastcall.provider.threads|provider并发处理最大线程数|100|-|-|
 |fastcall.consumer.timeout|consumer心跳检测超时时间|60|-|秒|
-|fastcall.consumer.threads|consumer最大连接数|512|-|-|
+|fastcall.consumer.max-connection|consumer最大连接数|512|-|-|
 |fastcall.consumer.retry|服务调用失败重试次数|0|-|-|
 |fastcall.consumer.balance|负载均衡策略|random|random|-|
 

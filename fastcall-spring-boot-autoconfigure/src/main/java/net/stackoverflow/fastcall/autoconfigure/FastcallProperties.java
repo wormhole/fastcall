@@ -83,7 +83,7 @@ public class FastcallProperties {
     public static class Consumer {
         private Integer timeout = 60;
 
-        private Integer threads = 512;
+        private Integer maxConnection = 512;
 
         private Integer retry = 0;
 
@@ -97,12 +97,12 @@ public class FastcallProperties {
             this.timeout = timeout;
         }
 
-        public Integer getThreads() {
-            return threads;
+        public Integer getMaxConnection() {
+            return maxConnection;
         }
 
-        public void setThreads(Integer threads) {
-            this.threads = threads;
+        public void setMaxConnection(Integer maxConnection) {
+            this.maxConnection = maxConnection;
         }
 
         public Integer getRetry() {

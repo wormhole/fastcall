@@ -45,7 +45,7 @@ public class DefaultConsumerManager implements ConsumerManager {
         this.config = config;
         this.clientPool = new HashMap<>();
         this.responseFutureContext = new ResponseFutureContext();
-        this.executorService = Executors.newFixedThreadPool(config.getThreads());
+        this.executorService = Executors.newFixedThreadPool(config.getMaxConnection());
         this.subscribe();
     }
 
