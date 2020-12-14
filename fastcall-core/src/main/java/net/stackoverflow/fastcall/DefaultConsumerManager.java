@@ -5,7 +5,6 @@ import net.stackoverflow.fastcall.config.ConsumerConfig;
 import net.stackoverflow.fastcall.context.ResponseFuture;
 import net.stackoverflow.fastcall.context.ResponseFutureContext;
 import net.stackoverflow.fastcall.registry.RegistryManager;
-import net.stackoverflow.fastcall.registry.ServiceMetaCache;
 import net.stackoverflow.fastcall.registry.ServiceMetaData;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.NettyClient;
