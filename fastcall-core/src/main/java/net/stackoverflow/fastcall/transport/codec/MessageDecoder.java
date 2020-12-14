@@ -74,6 +74,7 @@ public class MessageDecoder extends LengthFieldBasedFrameDecoder {
             }
         }
         log.trace("Receive: {}", message);
+        frame.release();
         return message;
     }
 }

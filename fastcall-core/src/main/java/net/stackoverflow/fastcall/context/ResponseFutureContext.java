@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -21,7 +20,7 @@ public class ResponseFutureContext {
     private final Map<String, ResponseFuture> futurePool;
 
     public ResponseFutureContext() {
-        this.futurePool = new ConcurrentHashMap<>();
+        this.futurePool = new HashMap<>();
     }
 
     /**
@@ -31,7 +30,7 @@ public class ResponseFutureContext {
      * @return ResponseFuture对象
      */
     public ResponseFuture createFuture(String requestId) {
-        ResponseFuture future = new ResponseFuture();
+        ResponseFuture future = new ResponseFuture(requestId);
         futurePool.put(requestId, future);
         return future;
     }
@@ -55,21 +54,5 @@ public class ResponseFutureContext {
      */
     public void removeFuture(String requestId) {
         futurePool.remove(requestId);
-    }
-
-    /**
-     * 移除ResponseFuture
-     *
-     * @param future ResponseFuture
-     */
-    public void removeFuture(ResponseFuture future) {
-        Iterator<Map.Entry<String, ResponseFuture>> iterator = futurePool.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, ResponseFuture> entry = iterator.next();
-            if (entry.getValue() == future) {
-                iterator.remove();
-                break;
-            }
-        }
     }
 }

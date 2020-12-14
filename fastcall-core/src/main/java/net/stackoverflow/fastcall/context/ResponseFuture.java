@@ -15,9 +15,19 @@ public class ResponseFuture {
 
     private final Object lock = new Object();
 
+    private final String requestId;
+
     private volatile boolean success = false;
 
     private volatile RpcResponse response;
+
+    public ResponseFuture(String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getRequestId(){
+        return requestId;
+    }
 
     public boolean isSuccess() {
         synchronized (lock) {

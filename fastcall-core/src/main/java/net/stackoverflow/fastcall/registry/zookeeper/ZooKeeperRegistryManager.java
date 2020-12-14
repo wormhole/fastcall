@@ -93,7 +93,7 @@ public class ZooKeeperRegistryManager implements RegistryManager {
      * @return
      */
     @Override
-    public List<ServiceMetaData> getServiceMeta(Class<?> clazz, String group, String version) {
+    public List<ServiceMetaData> getService(Class<?> clazz, String group, String version) {
         List<ServiceMetaData> metas = cache.get(clazz.getName(), group, version);
         if (metas != null && metas.size() > 0) {
             return metas;
@@ -106,7 +106,7 @@ public class ZooKeeperRegistryManager implements RegistryManager {
      * 订阅服务
      */
     @Override
-    public synchronized void subscribe() {
+    public void subscribe() {
         log.info("RegistryManager start subscribe service");
         try {
             Map<String, List<ServiceMetaData>> latestCache = new ConcurrentHashMap<>();
@@ -139,7 +139,7 @@ public class ZooKeeperRegistryManager implements RegistryManager {
      * 关闭zookeeper连接
      */
     @Override
-    public synchronized void close() {
+    public void close() {
         try {
             zookeeper.close();
         } catch (InterruptedException e) {
@@ -150,7 +150,7 @@ public class ZooKeeperRegistryManager implements RegistryManager {
     /**
      * 检查节点是否存在，不存在则创建
      */
-    private synchronized void checkPathAndCreate(String path) {
+    private void checkPathAndCreate(String path) {
         try {
             String[] paths = path.split("/");
             StringBuilder sb = new StringBuilder();

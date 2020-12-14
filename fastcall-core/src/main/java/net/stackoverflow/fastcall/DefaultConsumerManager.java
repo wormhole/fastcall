@@ -76,7 +76,7 @@ public class DefaultConsumerManager implements ConsumerManager {
         request.setParams(args == null ? null : Arrays.asList(args));
         request.setParamsType(Arrays.asList(method.getParameterTypes()));
 
-        List<ServiceMetaData> serviceMetaDataList = registryManager.getServiceMeta(request.getInterfaceType(), group, version);
+        List<ServiceMetaData> serviceMetaDataList = registryManager.getService(request.getInterfaceType(), group, version);
         InetSocketAddress address = balanceManager.choose(serviceMetaDataList);
         NettyClient client = this.getClient(address);
         ResponseFuture future = responseFutureContext.createFuture(request.getId());
@@ -87,11 +87,11 @@ public class DefaultConsumerManager implements ConsumerManager {
     /**
      * 移除ResponseFuture
      *
-     * @param future
+     * @param requestId
      */
     @Override
-    public void removeFuture(ResponseFuture future) {
-        responseFutureContext.removeFuture(future);
+    public void removeFuture(String requestId) {
+        responseFutureContext.removeFuture(requestId);
     }
 
     /**
@@ -127,7 +127,6 @@ public class DefaultConsumerManager implements ConsumerManager {
         if (client == null) {
             log.debug("[R:{}] ConsumerManager not found client", host + ":" + port);
             client = new NettyClient(serializeManager, responseFutureContext, host, port, config.getTimeout());
-            clientPool.put(key, client);
             initClient(client);
         }
         return client;
@@ -142,6 +141,7 @@ public class DefaultConsumerManager implements ConsumerManager {
         log.debug("[R:{}] ConsumerManager start init client", client.getHost() + ":" + client.getPort());
         CountDownLatch countDownLatch = new CountDownLatch(1);
         executorService.execute(() -> {
+            clientPool.put(client.getHost() + ":" + client.getPort(), client);
             client.connect(countDownLatch);
             clientPool.remove(client.getHost() + ":" + client.getPort());
         });

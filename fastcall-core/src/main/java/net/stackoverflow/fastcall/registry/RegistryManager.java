@@ -28,7 +28,7 @@ public interface RegistryManager {
      * @param version 版本号
      * @return
      */
-    List<ServiceMetaData> getServiceMeta(Class<?> clazz, String group, String version) throws ServiceNotFoundException;
+    List<ServiceMetaData> getService(Class<?> clazz, String group, String version) throws ServiceNotFoundException;
 
     /**
      * 订阅服务

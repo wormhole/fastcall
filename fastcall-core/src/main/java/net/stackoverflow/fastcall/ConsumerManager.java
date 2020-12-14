@@ -41,9 +41,9 @@ public interface ConsumerManager {
     /**
      * 移除ResponseFuture
      *
-     * @param future
+     * @param requestId
      */
-    void removeFuture(ResponseFuture future);
+    void removeFuture(String requestId);
 
     /**
      * 订阅服务

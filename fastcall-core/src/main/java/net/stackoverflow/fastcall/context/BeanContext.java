@@ -20,7 +20,7 @@ public class BeanContext {
         this.beans = new HashMap<>();
     }
 
-    public synchronized void setBean(String name, Object bean) {
+    public void setBean(String name, Object bean) {
         Set<Object> set = beans.get(name);
         if (set == null) {
             set = new HashSet<>();
@@ -29,7 +29,7 @@ public class BeanContext {
         beans.put(name, set);
     }
 
-    public synchronized void setBean(Class<?> clazz, Object bean) {
+    public void setBean(Class<?> clazz, Object bean) {
         this.setBean(clazz.getName(), bean);
     }
 

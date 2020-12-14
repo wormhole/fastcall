@@ -66,7 +66,7 @@ public class RpcInvocationHandler implements InvocationHandler {
                     throw throwable;
                 }
             } finally {
-                consumerManager.removeFuture(future);
+                consumerManager.removeFuture(future.getRequestId());
             }
         }
     }
