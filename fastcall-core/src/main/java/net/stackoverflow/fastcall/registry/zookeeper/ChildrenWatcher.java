@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * ZooKeeper子节点事件监听器
@@ -31,7 +32,7 @@ public class ChildrenWatcher implements Watcher {
     }
 
     @Override
-    public void process(WatchedEvent watchedEvent) {
+    public synchronized void process(WatchedEvent watchedEvent) {
         if (watchedEvent.getType() == Event.EventType.NodeChildrenChanged) {
             String path = watchedEvent.getPath();
             String[] paths = path.split("/");
@@ -55,7 +56,7 @@ public class ChildrenWatcher implements Watcher {
      */
     private void cache(String path) {
         try {
-            Map<String, List<ServiceMetaData>> latestCache = new HashMap<>();
+            Map<String, List<ServiceMetaData>> latestCache = new ConcurrentHashMap<>();
             List<String> itfChildPaths = zooKeeper.getChildren(path, this);
             log.debug("Zookeeper watched children of path {}", path);
             for (String itfChildPath : itfChildPaths) {

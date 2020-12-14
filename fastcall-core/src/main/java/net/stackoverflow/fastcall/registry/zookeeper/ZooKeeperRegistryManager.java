@@ -13,8 +13,8 @@ import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -69,7 +69,7 @@ public class ZooKeeperRegistryManager implements RegistryManager {
      * @param meta 服务元数据
      */
     @Override
-    public synchronized void registerService(ServiceMetaData meta) {
+    public void registerService(ServiceMetaData meta) {
         String path = ROOT_PATH + "/" + meta.getInterfaceName();
         this.checkPathAndCreate(path);
         try {
@@ -103,10 +103,11 @@ public class ZooKeeperRegistryManager implements RegistryManager {
      * 订阅服务
      */
     @Override
-    public void subscribe() {
+    public synchronized void subscribe() {
         ChildrenWatcher childrenWatcher = new ChildrenWatcher(cache, zookeeper);
         log.info("RegistryManager start subscribe service");
         try {
+            Map<String, List<ServiceMetaData>> latestCache = new ConcurrentHashMap<>();
             List<String> itfChildPaths = zookeeper.getChildren(ROOT_PATH, childrenWatcher);
             log.debug("Zookeeper watched children of path {}", ROOT_PATH);
             for (String itfChildPath : itfChildPaths) {
@@ -114,15 +115,19 @@ public class ZooKeeperRegistryManager implements RegistryManager {
                 List<String> serviceChildPaths = zookeeper.getChildren(itfPath, childrenWatcher);
                 Collections.sort(serviceChildPaths);
                 log.debug("Zookeeper watched children of path {}", itfPath);
+
+                List<ServiceMetaData> metaDataList = new ArrayList<>();
+                latestCache.put(itfChildPath, metaDataList);
                 for (String serviceChildPath : serviceChildPaths) {
                     String servicePath = itfPath + "/" + serviceChildPath;
                     //目前没有在服务运行过程中，动态修改地址的情况，因此此事件不监听
                     byte[] bytes = zookeeper.getData(servicePath, false, new Stat());
                     String json = new String(bytes);
                     ServiceMetaData meta = JsonUtils.json2bean(json, ServiceMetaData.class);
-                    cache.put(meta);
+                    metaDataList.add(meta);
                 }
             }
+            cache.reset(latestCache);
         } catch (Exception e) {
             log.error("RegistryManager fail to subscribe service", e);
         }
@@ -132,7 +137,7 @@ public class ZooKeeperRegistryManager implements RegistryManager {
      * 关闭zookeeper连接
      */
     @Override
-    public void close() {
+    public synchronized void close() {
         try {
             zookeeper.close();
         } catch (InterruptedException e) {
