@@ -129,7 +129,7 @@ public class ZooKeeperRegistryManager implements RegistryManager {
                     metaDataList.add(meta);
                 }
             }
-            cache.reset(latestCache);
+            cache.setCache(latestCache);
         } catch (Exception e) {
             log.error("RegistryManager fail to subscribe service", e);
         }

@@ -1,7 +1,6 @@
 package net.stackoverflow.fastcall.registry;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 服务地址缓存
@@ -13,7 +12,7 @@ public class ServiceMetaCache {
     private Map<String, List<ServiceMetaData>> cache;
 
     public ServiceMetaCache() {
-        this.cache = new ConcurrentHashMap<>();
+        this.cache = new HashMap<>();
     }
 
     /**
@@ -23,7 +22,7 @@ public class ServiceMetaCache {
      * @param group         分组名
      * @return
      */
-    public List<ServiceMetaData> get(String interfaceName, String group, String version) {
+    public synchronized List<ServiceMetaData> get(String interfaceName, String group, String version) {
         List<ServiceMetaData> list = new ArrayList<>();
         List<ServiceMetaData> metaDataList = cache.get(interfaceName);
         if (metaDataList != null && metaDataList.size() > 0) {
@@ -42,8 +41,16 @@ public class ServiceMetaCache {
      * @param interfaceName 接口名
      * @param metaDataList  服务集合
      */
-    public void reset(String interfaceName, List<ServiceMetaData> metaDataList) {
-        cache.put(interfaceName, metaDataList);
+    public synchronized void setCache(String interfaceName, List<ServiceMetaData> metaDataList) {
+        List<ServiceMetaData> list = cache.get(interfaceName);
+        if (list == null) {
+            list = new ArrayList<>();
+            list.addAll(metaDataList);
+            cache.put(interfaceName, list);
+        } else {
+            list.clear();
+            list.addAll(metaDataList);
+        }
     }
 
     /**
@@ -51,7 +58,9 @@ public class ServiceMetaCache {
      *
      * @param cache 缓存map
      */
-    public void reset(Map<String, List<ServiceMetaData>> cache) {
-        this.cache = cache;
+    public synchronized void setCache(Map<String, List<ServiceMetaData>> cache) {
+        for (Map.Entry<String, List<ServiceMetaData>> entry : cache.entrySet()) {
+            this.setCache(entry.getKey(), entry.getValue());
+        }
     }
 }

@@ -76,7 +76,7 @@ public class ChildrenWatcher implements Watcher {
                     metaDataList.add(meta);
                 }
             }
-            cache.reset(latestCache);
+            cache.setCache(latestCache);
         } catch (Exception e) {
             log.error("Zookeeper fail to watched path", e);
         }
@@ -102,7 +102,7 @@ public class ChildrenWatcher implements Watcher {
                 ServiceMetaData meta = JsonUtils.json2bean(json, ServiceMetaData.class);
                 list.add(meta);
             }
-            cache.reset(interfaceName, list);
+            cache.setCache(interfaceName, list);
         } catch (Exception e) {
             log.error("Zookeeper fail to watched path", e);
         }
