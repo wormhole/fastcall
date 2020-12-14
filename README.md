@@ -273,7 +273,7 @@ public class FastcallController {
 |fastcall.consumer.timeout|consumer心跳检测超时时间|60|-|秒|
 |fastcall.consumer.max-connection|consumer最大连接数|512|-|-|
 |fastcall.consumer.retry|服务调用失败重试次数|0|-|-|
-|fastcall.consumer.balance|负载均衡策略|random|random|-|
+|fastcall.consumer.balance|负载均衡策略|random|random/poll|-|
 
 ## 六、支持情况
 
