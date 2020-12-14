@@ -5,15 +5,15 @@ import net.stackoverflow.fastcall.registry.JsonUtils;
 import net.stackoverflow.fastcall.registry.RegistryManager;
 import net.stackoverflow.fastcall.registry.ServiceMetaCache;
 import net.stackoverflow.fastcall.registry.ServiceMetaData;
-import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.ZooDefs;
-import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
@@ -36,6 +36,8 @@ public class ZooKeeperRegistryManager implements RegistryManager {
 
     private final Integer sessionTimeout;
 
+    private Watcher childrenWatcher;
+
     private final ServiceMetaCache cache;
 
     public ZooKeeperRegistryManager(String host, Integer port, Integer sessionTimeout) {
@@ -56,6 +58,7 @@ public class ZooKeeperRegistryManager implements RegistryManager {
             ZooKeeper zooKeeper = new ZooKeeper(connection, sessionTimeout, new InitWatcher(countDownLatch));
             countDownLatch.await();
             this.zookeeper = zooKeeper;
+            this.childrenWatcher = new ChildrenWatcher(cache, zookeeper);
         } catch (Exception e) {
             log.error("RegistryManager fail to connected zookeeper", e);
         }
@@ -104,7 +107,6 @@ public class ZooKeeperRegistryManager implements RegistryManager {
      */
     @Override
     public synchronized void subscribe() {
-        ChildrenWatcher childrenWatcher = new ChildrenWatcher(cache, zookeeper);
         log.info("RegistryManager start subscribe service");
         try {
             Map<String, List<ServiceMetaData>> latestCache = new ConcurrentHashMap<>();
