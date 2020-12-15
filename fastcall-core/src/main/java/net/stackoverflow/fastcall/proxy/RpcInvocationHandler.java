@@ -60,9 +60,10 @@ public class RpcInvocationHandler implements InvocationHandler {
                 }
             } catch (Throwable throwable) {
                 if (retry > 0) {
-                    log.debug("Proxy retry rpc, retry:{}", retry);
+                    log.debug("Proxy retry rpc, retry:{}, requestId:{}", retry, future.getRequestId());
                     --retry;
                 } else {
+                    log.error("Proxy fail to call rpc, requestId:{}", future.getRequestId());
                     throw throwable;
                 }
             } finally {

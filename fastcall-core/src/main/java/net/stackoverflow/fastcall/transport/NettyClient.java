@@ -6,6 +6,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import net.stackoverflow.fastcall.context.ResponseFuture;
 import net.stackoverflow.fastcall.context.ResponseFutureContext;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.codec.MessageDecoder;
@@ -14,6 +15,7 @@ import net.stackoverflow.fastcall.transport.handler.client.ClientAuthHandler;
 import net.stackoverflow.fastcall.transport.handler.client.ClientHeatBeatHandler;
 import net.stackoverflow.fastcall.transport.handler.client.ClientRpcHandler;
 import net.stackoverflow.fastcall.transport.proto.Message;
+import net.stackoverflow.fastcall.transport.proto.RpcRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,10 +91,13 @@ public class NettyClient {
         }
     }
 
-    public void send(Message message) {
+    public ResponseFuture send(Message message) {
+        RpcRequest request = (RpcRequest) message.getBody();
+        ResponseFuture future = responseFutureContext.createFuture(request.getId());
         if (channel != null) {
             channel.writeAndFlush(message);
         }
+        return future;
     }
 
     public void close() {

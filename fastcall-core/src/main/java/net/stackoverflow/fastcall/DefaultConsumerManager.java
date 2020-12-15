@@ -79,8 +79,7 @@ public class DefaultConsumerManager implements ConsumerManager {
         List<ServiceMetaData> serviceMetaDataList = registryManager.getService(request.getInterfaceType(), group, version);
         InetSocketAddress address = balanceManager.choose(serviceMetaDataList);
         NettyClient client = this.getClient(address);
-        ResponseFuture future = responseFutureContext.createFuture(request.getId());
-        client.send(new Message(MessageType.BUSINESS_REQUEST, request));
+        ResponseFuture future = client.send(new Message(MessageType.BUSINESS_REQUEST, request));
         return future;
     }
 

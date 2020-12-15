@@ -55,7 +55,7 @@ public class PollBalanceManager implements BalanceManager {
         } catch (Exception e) {
             log.error("BalanceManager fail to choose", e);
         } finally {
-            log.debug("BalanceManager choose remote {}", meta.getHost() + ":" + meta.getPort());
+            log.trace("BalanceManager choose remote {}", meta.getHost() + ":" + meta.getPort());
             lock.unlock();
         }
         return new InetSocketAddress(meta.getHost(), meta.getPort());
