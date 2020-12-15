@@ -37,7 +37,7 @@ public class RpcInvocationHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         ResponseFuture future = null;
-        int retry = consumerManager.getConfig().getRetry();
+        int retry = consumerManager.config().getRetry();
         while (true) {
             try {
                 future = consumerManager.call(method, args, group, version);

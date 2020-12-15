@@ -2,8 +2,8 @@ package net.stackoverflow.fastcall.registry.zookeeper;
 
 import net.stackoverflow.fastcall.exception.ServiceNotFoundException;
 import net.stackoverflow.fastcall.registry.JsonUtils;
+import net.stackoverflow.fastcall.registry.RegistryCache;
 import net.stackoverflow.fastcall.registry.RegistryManager;
-import net.stackoverflow.fastcall.registry.ServiceMetaCache;
 import net.stackoverflow.fastcall.registry.ServiceMetaData;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
@@ -38,13 +38,13 @@ public class ZooKeeperRegistryManager implements RegistryManager {
 
     private Watcher childrenWatcher;
 
-    private final ServiceMetaCache cache;
+    private final RegistryCache cache;
 
     public ZooKeeperRegistryManager(String host, Integer port, Integer sessionTimeout) {
         this.host = host;
         this.port = port;
         this.sessionTimeout = sessionTimeout;
-        this.cache = new ServiceMetaCache();
+        this.cache = new RegistryCache();
         this.connect();
     }
 
@@ -72,7 +72,7 @@ public class ZooKeeperRegistryManager implements RegistryManager {
      * @param meta 服务元数据
      */
     @Override
-    public void registerService(ServiceMetaData meta) {
+    public void register(ServiceMetaData meta) {
         String path = ROOT_PATH + "/" + meta.getInterfaceName();
         this.checkPathAndCreate(path);
         try {
@@ -107,7 +107,6 @@ public class ZooKeeperRegistryManager implements RegistryManager {
      */
     @Override
     public void subscribe() {
-        log.info("RegistryManager start subscribe service");
         try {
             Map<String, List<ServiceMetaData>> latestCache = new ConcurrentHashMap<>();
             List<String> itfChildPaths = zookeeper.getChildren(ROOT_PATH, childrenWatcher);
@@ -142,6 +141,7 @@ public class ZooKeeperRegistryManager implements RegistryManager {
     public void close() {
         try {
             zookeeper.close();
+            log.info("RegistryManager close zookeeper success");
         } catch (InterruptedException e) {
             log.error("RegistryManager fail to close zookeeper", e);
         }

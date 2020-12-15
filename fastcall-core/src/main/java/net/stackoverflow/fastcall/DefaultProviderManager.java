@@ -50,7 +50,7 @@ public class DefaultProviderManager implements ProviderManager {
      * @return provider配置
      */
     @Override
-    public ProviderConfig getConfig() {
+    public ProviderConfig config() {
         return config;
     }
 
@@ -84,14 +84,14 @@ public class DefaultProviderManager implements ProviderManager {
      * @param bean  服务bean对象
      */
     @Override
-    public void registerService(Class<?> clazz, Object bean) {
+    public void register(Class<?> clazz, Object bean) {
         Class<?> cls = bean.getClass();
         FastcallService fastcallService = cls.getAnnotation(FastcallService.class);
         if (fastcallService != null) {
             beanContext.setBean(clazz, bean);
             String group = fastcallService.group();
             String version = fastcallService.version();
-            registryManager.registerService(new ServiceMetaData(group, version, clazz.getName(), getIp(), config.getPort()));
+            registryManager.register(new ServiceMetaData(group, version, clazz.getName(), getIp(), config.getPort()));
         }
     }
 

@@ -84,7 +84,7 @@ public class NettyClient {
             log.info("[L:{} R:{}] Client connect success", channel.localAddress(), channel.remoteAddress());
             channel.closeFuture().sync();
         } catch (InterruptedException e) {
-            log.error("[R:{}] Client connect fail", getHost() + ":" + getPort(), e);
+            log.error("[R:{}] Client fail to connect", getHost() + ":" + getPort(), e);
         } finally {
             log.info("[L:{} R:{}] Client connection closed", channel.localAddress(), channel.remoteAddress());
             eventLoopGroup.shutdownGracefully();

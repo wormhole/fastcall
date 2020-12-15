@@ -17,7 +17,7 @@ public class DefaultFastcallManager implements FastcallManager {
 
     private final RegistryManager registryManager;
 
-    private ProviderManager providerManager;
+    private final ProviderManager providerManager;
 
     private final ConsumerManager consumerManager;
 
@@ -31,22 +31,12 @@ public class DefaultFastcallManager implements FastcallManager {
     }
 
     /**
-     * 设置Provider管理类实现
-     *
-     * @param providerManager provider管理类实现
-     */
-    @Override
-    public void setProviderManager(ProviderManager providerManager) {
-        this.providerManager = providerManager;
-    }
-
-    /**
      * 获取fastcall配置
      *
      * @return fastcall配置类
      */
     @Override
-    public FastcallConfig getConfig() {
+    public FastcallConfig config() {
         return config;
     }
 
@@ -72,8 +62,8 @@ public class DefaultFastcallManager implements FastcallManager {
      * @param bean  服务bean对象
      */
     @Override
-    public void registerService(Class<?> clazz, Object bean) {
-        providerManager.registerService(clazz, bean);
+    public void register(Class<?> clazz, Object bean) {
+        providerManager.register(clazz, bean);
     }
 
     /**

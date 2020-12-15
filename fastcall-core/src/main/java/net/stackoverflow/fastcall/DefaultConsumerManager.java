@@ -56,7 +56,7 @@ public class DefaultConsumerManager implements ConsumerManager {
     }
 
     @Override
-    public ConsumerConfig getConfig() {
+    public ConsumerConfig config() {
         return config;
     }
 
@@ -79,14 +79,13 @@ public class DefaultConsumerManager implements ConsumerManager {
         List<ServiceMetaData> serviceMetaDataList = registryManager.getService(request.getInterfaceType(), group, version);
         InetSocketAddress address = balanceManager.choose(serviceMetaDataList);
         NettyClient client = this.getClient(address);
-        ResponseFuture future = client.send(new Message(MessageType.BUSINESS_REQUEST, request));
-        return future;
+        return client.send(new Message(MessageType.BUSINESS_REQUEST, request));
     }
 
     /**
      * 移除ResponseFuture
      *
-     * @param requestId
+     * @param requestId 唯一标识
      */
     @Override
     public void removeFuture(String requestId) {
@@ -124,7 +123,6 @@ public class DefaultConsumerManager implements ConsumerManager {
         String key = host + ":" + port;
         NettyClient client = clientPool.get(key);
         if (client == null) {
-            log.debug("[R:{}] ConsumerManager not found client", host + ":" + port);
             client = new NettyClient(serializeManager, responseFutureContext, host, port, config.getTimeout());
             initClient(client);
         }
@@ -137,7 +135,6 @@ public class DefaultConsumerManager implements ConsumerManager {
      * @param client Netty客户端
      */
     private void initClient(NettyClient client) {
-        log.debug("[R:{}] ConsumerManager start init client", client.getHost() + ":" + client.getPort());
         CountDownLatch countDownLatch = new CountDownLatch(1);
         executorService.execute(() -> {
             clientPool.put(client.getHost() + ":" + client.getPort(), client);

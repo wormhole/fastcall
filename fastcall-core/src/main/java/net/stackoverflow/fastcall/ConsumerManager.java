@@ -18,7 +18,7 @@ public interface ConsumerManager {
      *
      * @return Consumer配置类
      */
-    ConsumerConfig getConfig();
+    ConsumerConfig config();
 
     /**
      * 获取SerializeManager
@@ -41,7 +41,7 @@ public interface ConsumerManager {
     /**
      * 移除ResponseFuture
      *
-     * @param requestId
+     * @param requestId 唯一标识
      */
     void removeFuture(String requestId);
 

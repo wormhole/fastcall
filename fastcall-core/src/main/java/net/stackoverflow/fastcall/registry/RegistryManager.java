@@ -18,7 +18,7 @@ public interface RegistryManager {
      *
      * @param meta 服务元数据
      */
-    void registerService(ServiceMetaData meta);
+    void register(ServiceMetaData meta);
 
     /**
      * 获取服务

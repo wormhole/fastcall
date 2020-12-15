@@ -7,11 +7,11 @@ import java.util.*;
  *
  * @author wormhole
  */
-public class ServiceMetaCache {
+public class RegistryCache {
 
     private final Map<String, List<ServiceMetaData>> cache;
 
-    public ServiceMetaCache() {
+    public RegistryCache() {
         this.cache = new HashMap<>();
     }
 

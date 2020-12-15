@@ -1,7 +1,7 @@
 package net.stackoverflow.fastcall.registry.zookeeper;
 
 import net.stackoverflow.fastcall.registry.JsonUtils;
-import net.stackoverflow.fastcall.registry.ServiceMetaCache;
+import net.stackoverflow.fastcall.registry.RegistryCache;
 import net.stackoverflow.fastcall.registry.ServiceMetaData;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
@@ -22,11 +22,11 @@ public class ChildrenWatcher implements Watcher {
 
     private static final Logger log = LoggerFactory.getLogger(ChildrenWatcher.class);
 
-    private final ServiceMetaCache cache;
+    private final RegistryCache cache;
 
     private final ZooKeeper zooKeeper;
 
-    public ChildrenWatcher(ServiceMetaCache cache, ZooKeeper zooKeeper) {
+    public ChildrenWatcher(RegistryCache cache, ZooKeeper zooKeeper) {
         this.cache = cache;
         this.zooKeeper = zooKeeper;
     }

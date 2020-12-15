@@ -10,18 +10,11 @@ import net.stackoverflow.fastcall.config.FastcallConfig;
 public interface FastcallManager {
 
     /**
-     * 设置服务提供Manager
-     *
-     * @param providerManager provider管理类实现
-     */
-    void setProviderManager(ProviderManager providerManager);
-
-    /**
      * 获取配置
      *
      * @return fastcall配置
      */
-    FastcallConfig getConfig();
+    FastcallConfig config();
 
     /**
      * 生成代理对象
@@ -41,7 +34,7 @@ public interface FastcallManager {
      * @param clazz 需要暴露的接口
      * @param bean  服务bean对象
      */
-    void registerService(Class<?> clazz, Object bean);
+    void register(Class<?> clazz, Object bean);
 
     /**
      * 启动服务

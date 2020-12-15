@@ -14,7 +14,7 @@ public interface ProviderManager {
      *
      * @return Provider配置
      */
-    ProviderConfig getConfig();
+    ProviderConfig config();
 
     /**
      * 启动服务
@@ -32,5 +32,5 @@ public interface ProviderManager {
      * @param clazz 需要暴露的接口
      * @param bean  服务bean对象
      */
-    void registerService(Class<?> clazz, Object bean);
+    void register(Class<?> clazz, Object bean);
 }

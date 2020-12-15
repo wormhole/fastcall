@@ -35,4 +35,7 @@ public class ServiceNotFoundException extends RuntimeException {
         return group;
     }
 
+    public String getVersion() {
+        return version;
+    }
 }

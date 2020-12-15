@@ -82,7 +82,7 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
             Class<?> clazz = obj.getClass();
             Class<?>[] interfaces = clazz.getInterfaces();
             for (Class<?> itf : interfaces) {
-                providerManager.registerService(itf, obj);
+                providerManager.register(itf, obj);
             }
         }
     }
