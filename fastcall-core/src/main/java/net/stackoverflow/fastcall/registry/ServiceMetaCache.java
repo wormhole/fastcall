@@ -9,7 +9,7 @@ import java.util.*;
  */
 public class ServiceMetaCache {
 
-    private Map<String, List<ServiceMetaData>> cache;
+    private final Map<String, List<ServiceMetaData>> cache;
 
     public ServiceMetaCache() {
         this.cache = new HashMap<>();
