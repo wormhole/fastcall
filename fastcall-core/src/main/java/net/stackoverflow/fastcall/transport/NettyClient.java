@@ -96,6 +96,7 @@ public class NettyClient {
         ResponseFuture future = responseFutureContext.createFuture(request.getId());
         if (channel != null) {
             channel.writeAndFlush(message);
+            log.trace("[L:{} R:{}] Client send request, responseId:{}", channel.localAddress(), channel.remoteAddress(), request.getId());
         }
         return future;
     }
