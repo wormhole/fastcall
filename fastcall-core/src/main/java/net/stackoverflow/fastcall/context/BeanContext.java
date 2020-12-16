@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Bean容器
@@ -17,7 +18,7 @@ public class BeanContext {
     private final Map<String, Set<Object>> beans;
 
     public BeanContext() {
-        this.beans = new HashMap<>();
+        this.beans = new ConcurrentHashMap<>();
     }
 
     public void setBean(String name, Object bean) {

@@ -13,8 +13,6 @@ public class ResponseFuture {
 
     private static final Logger log = LoggerFactory.getLogger(ResponseFuture.class);
 
-    private final Object lock = new Object();
-
     private final String requestId;
 
     private volatile boolean success = false;
@@ -25,41 +23,35 @@ public class ResponseFuture {
         this.requestId = requestId;
     }
 
-    public String getRequestId(){
+    public String getRequestId() {
         return requestId;
     }
 
-    public boolean isSuccess() {
-        synchronized (lock) {
-            return success;
-        }
+    public synchronized boolean isSuccess() {
+        return success;
     }
 
-    public void setResponse(RpcResponse response) {
-        synchronized (lock) {
-            if (this.response != null) {
-                return;
-            }
-            this.success = true;
-            this.response = response;
-            lock.notifyAll();
+    public synchronized void setResponse(RpcResponse response) {
+        if (this.response != null) {
+            return;
         }
+        this.success = true;
+        this.response = response;
+        this.notifyAll();
     }
 
-    public RpcResponse getResponse(long milliseconds) {
-        synchronized (lock) {
-            if (!success) {
-                try {
-                    if (milliseconds == -1) {
-                        lock.wait();
-                    } else {
-                        lock.wait(milliseconds);
-                    }
-                } catch (InterruptedException e) {
-                    log.error("ResponseFuture fail to get response", e);
+    public synchronized RpcResponse getResponse(long milliseconds) {
+        if (!success) {
+            try {
+                if (milliseconds == -1) {
+                    this.wait();
+                } else {
+                    this.wait(milliseconds);
                 }
+            } catch (InterruptedException e) {
+                log.error("ResponseFuture fail to get response", e);
             }
-            return response;
         }
+        return response;
     }
 }

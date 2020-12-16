@@ -1,6 +1,7 @@
 package net.stackoverflow.fastcall.registry;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 服务地址缓存
@@ -12,7 +13,7 @@ public class RegistryCache {
     private final Map<String, List<ServiceMetaData>> cache;
 
     public RegistryCache() {
-        this.cache = new HashMap<>();
+        this.cache = new ConcurrentHashMap<>();
     }
 
     /**
