@@ -71,7 +71,7 @@ public class FastcallDemoProviderApplication {
         //由工厂类生成FastcallManager，默认实现为DefaultFastcallManager
         FastcallManager manager = factory.getInstance();
         //注册需要暴露的服务
-        manager.registerService(SayService.class, new SayServiceImpl());
+        manager.register(SayService.class, new SayServiceImpl());
         //启动服务
         manager.start();
     }
