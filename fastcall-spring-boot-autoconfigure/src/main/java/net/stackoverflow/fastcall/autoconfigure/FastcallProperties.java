@@ -83,7 +83,7 @@ public class FastcallProperties {
     public static class Consumer {
         private Integer timeout = 60;
 
-        private Integer maxConnection = 128;
+        private Integer maxConnection = Integer.MAX_VALUE;
 
         private Integer retry = 0;
 

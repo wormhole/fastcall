@@ -40,8 +40,7 @@
     {
       "name": "fastcall.consumer.max-connection",
       "type": "java.lang.Integer",
-      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Consumer",
-      "defaultValue": 128
+      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Consumer"
     },
     {
       "name": "fastcall.consumer.retry",

@@ -8,7 +8,7 @@ package net.stackoverflow.fastcall.config;
 public class ConsumerConfig {
     private Integer timeout = 60;
 
-    private Integer maxConnection = 128;
+    private Integer maxConnection = Integer.MAX_VALUE;
 
     private Integer retry = 0;
 

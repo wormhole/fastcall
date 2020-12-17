@@ -50,7 +50,7 @@ public class DefaultConsumerManager implements ConsumerManager {
         this.config = config;
         this.clientPool = new ConcurrentHashMap<>();
         this.responseFutureContext = new ResponseFutureContext();
-        this.connectionExecutorService = new ThreadPoolExecutor(128, config.getMaxConnection() < 128 ? 128 : config.getMaxConnection(), 60, TimeUnit.SECONDS, new SynchronousQueue<>(), new NameThreadFactory("Connection"));
+        this.connectionExecutorService = new ThreadPoolExecutor(0, config.getMaxConnection(), 60, TimeUnit.SECONDS, new SynchronousQueue<>(), new NameThreadFactory("Connection"));
         this.subscribe();
     }
 
