@@ -271,7 +271,7 @@ public class FastcallController {
 |fastcall.provider.timeout|provider心跳检测超时时间|60|-|秒|
 |fastcall.provider.threads|provider并发处理最大线程数|1024|>=1024|-|
 |fastcall.consumer.timeout|consumer心跳检测超时时间|60|-|秒|
-|fastcall.consumer.max-connection|consumer最大连接数|128|>=128|-|
+|fastcall.consumer.max-connection|consumer最大连接数|0x7fffffff|<=0x7fffffff|-|
 |fastcall.consumer.retry|服务调用失败重试次数|0|-|-|
 |fastcall.consumer.balance|负载均衡策略|random|random/poll|-|
 
