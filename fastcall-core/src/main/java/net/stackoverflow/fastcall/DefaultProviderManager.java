@@ -14,10 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.*;
 
 /**
  * ProviderManager默认实现
@@ -44,8 +41,8 @@ public class DefaultProviderManager implements ProviderManager {
         this.registryManager = registryManager;
         this.beanContext = new BeanContext();
         this.config = config;
-        this.serverExecutorService = Executors.newSingleThreadExecutor(new NameThreadFactory("ServerThreadPool"));
-        this.rpcExecutorService = Executors.newFixedThreadPool(config.getThreads(), new NameThreadFactory("RpcThreadPool"));
+        this.serverExecutorService = Executors.newSingleThreadExecutor(new NameThreadFactory("NettyServer"));
+        this.rpcExecutorService = new ThreadPoolExecutor(1024, config.getThreads() < 1024 ? 1024 : config.getThreads(), 60, TimeUnit.SECONDS, new SynchronousQueue<>(), new NameThreadFactory("Rpc"));
         this.server = new NettyServer(config.getBacklog(), config.getTimeout(), config.getHost(), config.getPort(), serializeManager, beanContext, rpcExecutorService);
     }
 

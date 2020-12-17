@@ -18,10 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * ConsumerManager默认实现
@@ -53,7 +50,7 @@ public class DefaultConsumerManager implements ConsumerManager {
         this.config = config;
         this.clientPool = new ConcurrentHashMap<>();
         this.responseFutureContext = new ResponseFutureContext();
-        this.connectionExecutorService = Executors.newFixedThreadPool(config.getMaxConnection(), new NameThreadFactory("ConnectionThreadPool"));
+        this.connectionExecutorService = new ThreadPoolExecutor(128, config.getMaxConnection() < 128 ? 128 : config.getMaxConnection(), 60, TimeUnit.SECONDS, new SynchronousQueue<>(), new NameThreadFactory("Connection"));
         this.subscribe();
     }
 

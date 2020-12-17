@@ -29,7 +29,7 @@ public class FastcallProperties {
 
         private Integer port = 9966;
 
-        private Integer threads = 100;
+        private Integer threads = 1024;
 
         public Boolean getEnabled() {
             return enabled;
@@ -83,7 +83,7 @@ public class FastcallProperties {
     public static class Consumer {
         private Integer timeout = 60;
 
-        private Integer maxConnection = 512;
+        private Integer maxConnection = 128;
 
         private Integer retry = 0;
 
