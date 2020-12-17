@@ -1,7 +1,7 @@
 package net.stackoverflow.fastcall;
 
 import net.stackoverflow.fastcall.config.FastcallConfig;
-import net.stackoverflow.fastcall.proxy.RpcProxyFactory;
+import net.stackoverflow.fastcall.factory.RpcProxyFactory;
 import net.stackoverflow.fastcall.registry.RegistryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

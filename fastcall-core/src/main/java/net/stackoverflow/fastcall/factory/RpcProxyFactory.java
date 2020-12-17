@@ -1,6 +1,7 @@
-package net.stackoverflow.fastcall.proxy;
+package net.stackoverflow.fastcall.factory;
 
 import net.stackoverflow.fastcall.ConsumerManager;
+import net.stackoverflow.fastcall.core.RpcInvocationHandler;
 
 import java.lang.reflect.Proxy;
 

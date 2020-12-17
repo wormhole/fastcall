@@ -3,6 +3,7 @@ package net.stackoverflow.fastcall;
 import net.stackoverflow.fastcall.annotation.FastcallService;
 import net.stackoverflow.fastcall.config.ProviderConfig;
 import net.stackoverflow.fastcall.context.BeanContext;
+import net.stackoverflow.fastcall.factory.NameThreadFactory;
 import net.stackoverflow.fastcall.registry.RegistryManager;
 import net.stackoverflow.fastcall.registry.ServiceMetaData;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
@@ -16,6 +17,7 @@ import java.net.UnknownHostException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * ProviderManager默认实现
@@ -34,14 +36,17 @@ public class DefaultProviderManager implements ProviderManager {
 
     private final ProviderConfig config;
 
-    private final ExecutorService executorService;
+    private final ExecutorService serverExecutorService;
+
+    private final ExecutorService rpcExecutorService;
 
     public DefaultProviderManager(ProviderConfig config, SerializeManager serializeManager, RegistryManager registryManager) {
         this.registryManager = registryManager;
         this.beanContext = new BeanContext();
         this.config = config;
-        this.server = new NettyServer(config.getBacklog(), config.getTimeout(), config.getHost(), config.getPort(), config.getThreads(), serializeManager, beanContext);
-        this.executorService = Executors.newSingleThreadExecutor();
+        this.serverExecutorService = Executors.newSingleThreadExecutor(new NameThreadFactory("ServerThreadPool"));
+        this.rpcExecutorService = Executors.newFixedThreadPool(config.getThreads(), new NameThreadFactory("RpcThreadPool"));
+        this.server = new NettyServer(config.getBacklog(), config.getTimeout(), config.getHost(), config.getPort(), serializeManager, beanContext, rpcExecutorService);
     }
 
     /**
@@ -61,7 +66,7 @@ public class DefaultProviderManager implements ProviderManager {
     public void start() {
         try {
             CountDownLatch countDownLatch = new CountDownLatch(1);
-            executorService.execute(() -> server.bind(countDownLatch));
+            serverExecutorService.execute(() -> server.bind(countDownLatch));
             countDownLatch.await();
         } catch (InterruptedException e) {
             log.error("ProviderManager fail to start server", e);
@@ -74,7 +79,8 @@ public class DefaultProviderManager implements ProviderManager {
     @Override
     public void close() {
         server.close();
-        executorService.shutdown();
+        serverExecutorService.shutdown();
+        rpcExecutorService.shutdown();
     }
 
     /**

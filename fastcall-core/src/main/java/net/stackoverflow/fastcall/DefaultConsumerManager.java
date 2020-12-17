@@ -2,8 +2,9 @@ package net.stackoverflow.fastcall;
 
 import net.stackoverflow.fastcall.balance.BalanceManager;
 import net.stackoverflow.fastcall.config.ConsumerConfig;
-import net.stackoverflow.fastcall.context.ResponseFuture;
+import net.stackoverflow.fastcall.core.ResponseFuture;
 import net.stackoverflow.fastcall.context.ResponseFutureContext;
+import net.stackoverflow.fastcall.factory.NameThreadFactory;
 import net.stackoverflow.fastcall.registry.RegistryManager;
 import net.stackoverflow.fastcall.registry.ServiceMetaData;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
@@ -39,7 +40,7 @@ public class DefaultConsumerManager implements ConsumerManager {
 
     private final Map<String, NettyClient> clientPool;
 
-    private final ExecutorService executorService;
+    private final ExecutorService connectionExecutorService;
 
     private final ConsumerConfig config;
 
@@ -52,7 +53,7 @@ public class DefaultConsumerManager implements ConsumerManager {
         this.config = config;
         this.clientPool = new ConcurrentHashMap<>();
         this.responseFutureContext = new ResponseFutureContext();
-        this.executorService = Executors.newFixedThreadPool(config.getMaxConnection());
+        this.connectionExecutorService = Executors.newFixedThreadPool(config.getMaxConnection(), new NameThreadFactory("ConnectionThreadPool"));
         this.subscribe();
     }
 
@@ -109,7 +110,7 @@ public class DefaultConsumerManager implements ConsumerManager {
         for (NettyClient client : clientPool.values()) {
             client.close();
         }
-        executorService.shutdown();
+        connectionExecutorService.shutdown();
     }
 
     /**
@@ -137,7 +138,7 @@ public class DefaultConsumerManager implements ConsumerManager {
      */
     private void initClient(NettyClient client) {
         CountDownLatch countDownLatch = new CountDownLatch(1);
-        executorService.execute(() -> {
+        connectionExecutorService.execute(() -> {
             clientPool.put(client.getHost() + ":" + client.getPort(), client);
             client.connect(countDownLatch);
             clientPool.remove(client.getHost() + ":" + client.getPort());

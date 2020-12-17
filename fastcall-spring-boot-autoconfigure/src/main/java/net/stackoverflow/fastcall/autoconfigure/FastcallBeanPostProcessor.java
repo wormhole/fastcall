@@ -1,9 +1,8 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
 import net.stackoverflow.fastcall.ConsumerManager;
-import net.stackoverflow.fastcall.FastcallManager;
 import net.stackoverflow.fastcall.annotation.FastcallReference;
-import net.stackoverflow.fastcall.proxy.RpcProxyFactory;
+import net.stackoverflow.fastcall.factory.RpcProxyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;

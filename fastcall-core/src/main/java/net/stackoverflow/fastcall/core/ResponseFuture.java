@@ -1,4 +1,4 @@
-package net.stackoverflow.fastcall.context;
+package net.stackoverflow.fastcall.core;
 
 import net.stackoverflow.fastcall.transport.proto.RpcResponse;
 import org.slf4j.Logger;

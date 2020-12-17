@@ -1,7 +1,7 @@
 package net.stackoverflow.fastcall;
 
 import net.stackoverflow.fastcall.config.ConsumerConfig;
-import net.stackoverflow.fastcall.context.ResponseFuture;
+import net.stackoverflow.fastcall.core.ResponseFuture;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 
 import java.lang.reflect.Method;

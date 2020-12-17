@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Netty服务端
@@ -35,39 +36,38 @@ public class NettyServer {
 
     private final Integer port;
 
-    private final Integer threads;
-
     private final SerializeManager serializeManager;
 
     private final BeanContext beanContext;
+
+    private final ExecutorService rpcExecutorService;
 
     private Channel channel;
 
     /**
      * 构造方法
      *
-     * @param backlog          监听队列
-     * @param timeout          心跳检测超时时间
-     * @param host             监听地址
-     * @param port             监听端口
-     * @param threads          业务线程池大小
-     * @param serializeManager 序列化管理器
-     * @param beanContext      服务上下文
+     * @param backlog            监听队列
+     * @param timeout            心跳检测超时时间
+     * @param host               监听地址
+     * @param port               监听端口
+     * @param serializeManager   序列化管理器
+     * @param beanContext        服务上下文
+     * @param rpcExecutorService rpc线程池
      */
-    public NettyServer(Integer backlog, Integer timeout, String host, Integer port, Integer threads, SerializeManager serializeManager, BeanContext beanContext) {
+    public NettyServer(Integer backlog, Integer timeout, String host, Integer port, SerializeManager serializeManager, BeanContext beanContext, ExecutorService rpcExecutorService) {
         this.backlog = backlog;
         this.timeout = timeout;
         this.host = host;
         this.port = port;
-        this.threads = threads;
         this.serializeManager = serializeManager;
         this.beanContext = beanContext;
+        this.rpcExecutorService = rpcExecutorService;
     }
 
     public void bind(CountDownLatch countDownLatch) {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workGroup = new NioEventLoopGroup();
-        NioEventLoopGroup businessGroup = new NioEventLoopGroup(threads);
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workGroup)
@@ -82,7 +82,7 @@ public class NettyServer {
                             pipeline.addLast(new ReadTimeoutHandler(timeout));
                             pipeline.addLast(new ServerAuthHandler());
                             pipeline.addLast(new ServerHeatBeatHandler());
-                            pipeline.addLast(businessGroup, new ServerRpcHandler(serializeManager, beanContext));
+                            pipeline.addLast(new ServerRpcHandler(serializeManager, beanContext, rpcExecutorService));
                         }
                     });
             ChannelFuture channelFuture = bootstrap.bind(host, port).sync();

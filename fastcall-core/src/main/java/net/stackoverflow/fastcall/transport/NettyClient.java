@@ -6,7 +6,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
-import net.stackoverflow.fastcall.context.ResponseFuture;
+import net.stackoverflow.fastcall.core.ResponseFuture;
 import net.stackoverflow.fastcall.context.ResponseFutureContext;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.codec.MessageDecoder;

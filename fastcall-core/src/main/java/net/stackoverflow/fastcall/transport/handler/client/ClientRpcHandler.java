@@ -1,7 +1,6 @@
 package net.stackoverflow.fastcall.transport.handler.client;
 
 import io.netty.channel.*;
-import net.stackoverflow.fastcall.context.ResponseFuture;
 import net.stackoverflow.fastcall.context.ResponseFutureContext;
 import net.stackoverflow.fastcall.transport.proto.*;
 import org.slf4j.Logger;
