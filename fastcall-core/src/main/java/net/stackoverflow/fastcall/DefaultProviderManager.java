@@ -42,7 +42,7 @@ public class DefaultProviderManager implements ProviderManager {
         this.beanContext = new BeanContext();
         this.config = config;
         this.serverExecutorService = Executors.newSingleThreadExecutor(new NameThreadFactory("NettyServer"));
-        this.rpcExecutorService = new ThreadPoolExecutor(1024, config.getThreads() < 1024 ? 1024 : config.getThreads(), 60, TimeUnit.SECONDS, new SynchronousQueue<>(), new NameThreadFactory("Rpc"));
+        this.rpcExecutorService = new ThreadPoolExecutor(0, config.getThreads(), 60, TimeUnit.SECONDS, new SynchronousQueue<>(), new NameThreadFactory("Rpc"));
         this.server = new NettyServer(config.getBacklog(), config.getTimeout(), config.getHost(), config.getPort(), serializeManager, beanContext, rpcExecutorService);
     }
 

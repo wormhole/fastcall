@@ -29,7 +29,7 @@ public class FastcallProperties {
 
         private Integer port = 9966;
 
-        private Integer threads = 1024;
+        private Integer threads = Integer.MAX_VALUE;
 
         public Boolean getEnabled() {
             return enabled;
@@ -122,7 +122,7 @@ public class FastcallProperties {
         }
     }
 
-    public static class Registry{
+    public static class Registry {
         private String type = "zookeeper";
 
         private Zookeeper zookeeper = new Zookeeper();

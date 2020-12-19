@@ -16,7 +16,7 @@ public class ProviderConfig {
 
     private Integer port = 9966;
 
-    private Integer threads = 1024;
+    private Integer threads = Integer.MAX_VALUE;
 
     public Boolean getEnabled() {
         return enabled;

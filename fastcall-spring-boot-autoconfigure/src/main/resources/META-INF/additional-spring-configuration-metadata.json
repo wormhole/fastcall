@@ -81,8 +81,7 @@
     {
       "name": "fastcall.provider.threads",
       "type": "java.lang.Integer",
-      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Provider",
-      "defaultValue": 1024
+      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Provider"
     },
     {
       "name": "fastcall.provider.timeout",
