@@ -9,7 +9,13 @@
 [![stars](https://img.shields.io/github/stars/wormhole/fastcall)](https://github.com/wormhole/fastcall/stargazers) 
 
 ## 一、简介
-`fastcall`是一款`java`开发的高性能、轻量级、低配置、无侵入的`RPC`框架，采用了类似`dubbo`的注解风格，支持`ZooKeeper`服务注册中心，对于`Spring`和`非Spring`应用都完美支持，并提供`fastcall-spring-boot-starter`，支持自动配置。
+&emsp;&emsp;`fastcall`是一款`java`开发的高性能、轻量级、低配置、无侵入的`RPC`框架。底层通信采用了`netty`的`nio`模式，应用层协议采用了自研的`fastcall`协议，支持长连接。  
+
+&emsp;&emsp;在使用上，该框架采用了类似`dubbo`的注解风格，对业务入侵小，并且对`Spring`和`非Spring`应用都有很好的支持。特别的，对于`Spring boot`应用，提供`fastcall-spring-boot-autoconfigure`和`fastcall-spring-boot-starter`模块以支持应用的自动化配置。  
+
+&emsp;&emsp;框架本身支持可配置化的多服务注册中心，多负载均衡策略，多序列化方式。但对于未支持的情况，框架有预留扩展接口，使用者完全可以根据自己的喜好，实现扩展接口，实现自己的服务注册中心、负载策略和序列化方式。  
+
+&emsp;&emsp;与`grpc`等其他`rpc`框架不同，`fastcall`拥有基本的服务治理能力，支持服务发现，服务发现，服务降级，负载均衡策略等功能。相比于`grpc`的一大堆配置和生成代码的引入，`fastcall`继承了`dubbo`的优点，做到了低业务入侵性。
 
 ## 二、安装
 ```
@@ -40,7 +46,7 @@ $ sh build.sh
 
 2. 服务类实现，`@FastcallService`标识这是一个需要暴露的服务，并指定了服务的分组，版本，响应超时等元数据
 ```
-@FastcallService(group = "group-1", version="1.0", timeout=5000)
+@FastcallService(group = "group-1", version="1.0")
 public class SayServiceImpl implements SayService {
 
     private static final Logger log = LoggerFactory.getLogger(SayServiceImpl.class);
@@ -246,47 +252,44 @@ public class FastcallController {
 |fastcall-core|核心模块，包括序列化管理，注册中心管理，连接管理，应用层协议等|
 |fastcall-spring-boot-autoconfigure|spring boot自动化配置模块，用于spring boot项目|
 |fastcall-spring-boot-starter|spring boot starter模块，对自动化配置模块及相关依赖进行统一管理|
+|fastcall-doc|gitbook文档|
 |fastcall-demo-api|样例工程，公共接口|
 |fastcall-demo-provider|样例工程，服务提供者|
 |fastcall-demo-consumer|样例工程，服务消费者|
 
-## 五、详细配置说明
-|key|说明|默认值|当前可选值|单位|
-|----|----|----|----|----|
-|fastcall.serialize|序列化方式|json|json|-|
-|fastcall.registry.type|服务注册中心类型|zookeeper|zookeeper|-|
-|fastcall.registry.zookeeper.host|zookeeper地址|127.0.0.1|-|-|
-|fastcall.registry.zookeeper.port|zookeeper端口|2181|-|-|
-|fastcall.registry.zookeeper.session-timeout|zookeeper会话超时时间|5000|-|毫秒|
-|fastcall.provider.enabled|是否启用provider模块|false|true/false|-|
-|fastcall.provider.backlog|等待队列长度|1024|-|-|
-|fastcall.provider.host|provider服务绑定地址|0.0.0.0|-|-|
-|fastcall.provider.port|provider服务绑定端口|9966|-|-|
-|fastcall.provider.timeout|provider心跳检测超时时间|60|-|秒|
-|fastcall.provider.threads|provider并发处理最大线程数|0x7fffffff|<=0x7fffffff|-|
-|fastcall.consumer.timeout|consumer心跳检测超时时间|60|-|秒|
-|fastcall.consumer.max-connection|consumer最大连接数|0x7fffffff|<=0x7fffffff|-|
-|fastcall.consumer.retry|服务调用失败重试次数|0|-|-|
-|fastcall.consumer.balance|负载均衡策略|random|random/poll|-|
-
-## 六、支持情况
+## 五、支持情况
 
 |序列化类型|json|protobuf|msgpack|
 |----|----|----|----|
 |是否支持|✔|❌|❌|
 
-|注册中心|zookeeper|redis|multicast|
+|注册中心|zookeeper|redis|eureka|
 |----|----|----|----|
 |是否支持|✔|❌|❌|
 
-|负载均衡|随机|轮询|权重|
+|负载均衡|random|poll|weight|
 |----|----|----|----|
 |是否支持|✔|✔|❌|
 
-|协议|fastcall|rmi|http|hessian|
-|----|----|----|----|----|
-|是否支持|✔|❌|❌|❌|
+|协议|fastcall|rmi|http|
+|----|----|----|----|
+|是否支持|✔|❌|❌|
 
-## 七、LICENSE
+## 六、LICENSE
 Fastcall software is licenced under the [MIT](LICENSE) License
+
+<style>
+table th:first-of-type {
+    width: 25%;
+}
+table th:nth-of-type(2) {
+    width: 25%;
+}
+table th:nth-of-type(3) {
+    width: 25%;
+}
+table th:nth-of-type(3) {
+    width: 25%;
+}
+</style>
 
