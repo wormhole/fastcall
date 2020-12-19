@@ -182,18 +182,3 @@ public class FastcallController {
 ## 六、LICENSE
 Fastcall software is licenced under the [MIT](LICENSE) License
 
-<style>
-table th:first-of-type {
-    width: 25%;
-}
-table th:nth-of-type(2) {
-    width: 25%;
-}
-table th:nth-of-type(3) {
-    width: 25%;
-}
-table th:nth-of-type(3) {
-    width: 25%;
-}
-</style>
-
