@@ -72,7 +72,7 @@ public interface SayService {
 
 4. 在服务实现类上，添加`@FastcallService`注解，标识这是需要暴露的服务。
 ```
-@FastcallService(group = "group-1", version="1.0", timeout=5000)
+@FastcallService(group = "group-1", version="1.0")
 public class SayServiceImpl implements SayService {
 
     private static final Logger log = LoggerFactory.getLogger(SayServiceImpl.class);
