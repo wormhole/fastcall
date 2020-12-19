@@ -24,7 +24,7 @@
 </dependencies>
 ```
 
-##### 2. `application.properties`配置信息（具体含义在`详细配置`章节中介绍），对于服务提供者，`fastcall.provider.enabled`必须指定为`true`值
+##### 2. `application.properties`配置信息（具体含义在[3.6. 详细配置](properties.html)章节中介绍），对于服务提供者，`fastcall.provider.enabled`必须指定为`true`值
 ```
 #序列化方式，可以不指定，使用默认值
 fastcall.serialize=json
