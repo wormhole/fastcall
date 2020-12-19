@@ -1,4 +1,6 @@
-### 服务提供者`Provider`
+### 在非Spring应用中使用
+
+#### 一、服务提供者`Provider`
 
 ##### 1. 新建`maven`项目，并添加依赖
 ```
@@ -51,7 +53,7 @@ public class FastcallDemoProviderApplication {
 }
 ```
 
-### 服务消费者`Consumer`工程
+#### 二、服务消费者`Consumer`工程
 
 ##### 1. 新建`maven`项目，添加依赖
 ```

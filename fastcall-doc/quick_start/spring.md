@@ -1,4 +1,6 @@
-### 对于服务提供者`Provider` [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-provider)
+### 在Spring应用中使用
+
+#### 一、对于服务提供者`Provider` [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-provider)
 
 ##### 1. 新建`Spring boot`项目，并添加`maven`依赖，`fastcall-demo-api`为`Provider`和`Consumer`公共依赖的服务调用接口
 ```
@@ -73,7 +75,7 @@ public class FastcallDemoProviderApplication {
 }
 ```
 
-### 对于服务消费者`Consumer` [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-consumer) 
+#### 二、对于服务消费者`Consumer` [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-consumer) 
 
 ##### 1. 新建`Spring boot`项目，并添加`maven`依赖，`fastcall-demo-api`为`Provider`和`Consumer`公共依赖的服务调用接口
 ```

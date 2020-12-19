@@ -1,13 +1,15 @@
-#### 1. 准备
+### 安装
+
+#### 一、 准备
 * maven
 * git
 
-#### 2. 下载源码
+#### 二、 下载源码
 ```
 $ git clone https://github.com/wormhole/fastcall
 ```
 
-#### 3. 构建
+#### 三、 构建
 `windows`环境
 ```
 $ build.bat

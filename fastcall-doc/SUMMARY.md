@@ -5,3 +5,4 @@
 * [三、快速入门]()
     * [3.1. 在Spring应用中使用](quick_start/spring.md)
     * [3.2. 在非Spring应用中使用](quick_start/unspring.md)
+    * [3.3. 负载均衡策略](quick_start/balance.md)
