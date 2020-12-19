@@ -154,7 +154,7 @@ fastcall.provider.backlog=1024
 fastcall.provider.host=0.0.0.0
 fastcall.provider.port=9966
 fastcall.provider.timeout=60
-fastcall.provider.threads=100
+fastcall.provider.threads=1024
 #日志配置
 logging.level.root=INFO
 logging.level.net.stackoverflow.fastcall=DEBUG
@@ -222,8 +222,8 @@ fastcall.registry.zookeeper.port=2181
 fastcall.registry.zookeeper.session-timeout=5000
 #Consumer配置
 fastcall.consumer.timeout=60
-fastcall.consumer.max-connection=512
-fastcall.consumer.retry=1
+fastcall.consumer.max-connection=1024
+fastcall.consumer.retry=0
 fastcall.consumer.balance=random
 #日志配置
 logging.level.root=INFO
@@ -269,7 +269,7 @@ public class FastcallController {
 |fastcall.provider.host|provider服务绑定地址|0.0.0.0|-|-|
 |fastcall.provider.port|provider服务绑定端口|9966|-|-|
 |fastcall.provider.timeout|provider心跳检测超时时间|60|-|秒|
-|fastcall.provider.threads|provider并发处理最大线程数|1024|>=1024|-|
+|fastcall.provider.threads|provider并发处理最大线程数|0x7fffffff|<=0x7fffffff|-|
 |fastcall.consumer.timeout|consumer心跳检测超时时间|60|-|秒|
 |fastcall.consumer.max-connection|consumer最大连接数|0x7fffffff|<=0x7fffffff|-|
 |fastcall.consumer.retry|服务调用失败重试次数|0|-|-|
