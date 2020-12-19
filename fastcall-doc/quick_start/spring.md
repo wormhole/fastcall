@@ -46,8 +46,7 @@ logging.level.root=INFO
 logging.level.net.stackoverflow.fastcall=DEBUG
 ```
 
-##### 3. 在服务实现类上，添加`@FastcallService`注解，标识这是需要暴露的服务，`group`可以指定分组，`version`可以指定版本。
-添加该注解后`fastcall-spring-boot-starter`会将它自动实例化注册成`bean`，并将接口向服务注册中心注册。
+##### 3. 在服务实现类上，添加`@FastcallService`注解，标识这是需要暴露的服务，`group`可以指定分组，`version`可以指定版本。添加该注解后`fastcall-spring-boot-starter`会将它自动实例化注册成`bean`，并将接口向服务注册中心注册。
 ```
 @FastcallService(group = "group-1", version="1.0")
 public class SayServiceImpl implements SayService {
@@ -120,8 +119,7 @@ logging.level.root=INFO
 logging.level.net.stackoverflow.fastcall=DEBUG
 ```
 
-##### 3. 在接口引用上，添加注解`@FastcallReference`，`group`可以指定分组，`version`可以指定版本，`timeout`可以指定调用超时时间。
-添加该注解后，`fastcall-spring-boot-starter`会自动生成动态代理对象，之后可以像调用本地方法一样调用接口
+##### 3. 在接口引用上，添加注解`@FastcallReference`，`group`可以指定分组，`version`可以指定版本，`timeout`可以指定调用超时时间。添加该注解后，`fastcall-spring-boot-starter`会自动生成动态代理对象，之后可以像调用本地方法一样调用接口
 ```
 @RestController
 public class FastcallController {
