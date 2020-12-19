@@ -176,15 +176,15 @@ public class FastcallController {
 |----|----|----|----|
 |是否支持|✔|❌|❌|
 
-|注册中心|zookeeper|redis|eureka|
+|注册中心&emsp;|zookeeper|redis|eureka|
 |----|----|----|----|
 |是否支持|✔|❌|❌|
 
-|负载均衡|random|poll|weight|
+|负载均衡&emsp;|random|poll|weight|
 |----|----|----|----|
 |是否支持|✔|✔|❌|
 
-|协议|fastcall|rmi|http|
+|协议&emsp;&emsp;&emsp;|fastcall|rmi|http|
 |----|----|----|----|
 |是否支持|✔|❌|❌|
 
