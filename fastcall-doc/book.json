@@ -1,0 +1,21 @@
+{
+  "title": "fastcall",
+  "author": "wormhole",
+  "description": "fastcall框架文档",
+  "language": "zh-hans",
+  "gitbook": "3.2.3",
+  "plugins": [
+    "github",
+    "donate"
+  ],
+  "pluginsConfig": {
+    "github": {
+      "url": "https://github.com/wormhole"
+    },
+    "donate": {
+      "wechat": "/image/wechat.png",
+      "alipay": "/image/alipay.jpg",
+      "button": "赏"
+    }
+  }
+}
