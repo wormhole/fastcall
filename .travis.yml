@@ -1,0 +1,14 @@
+language: java
+
+jdk:
+  - oraclejdk8
+
+install:
+  - cd fastcall-parent
+  - mvn clean install
+  - cd ../fastcall-core
+  - mvn clean install
+  - cd ../fastcall-spring-boot-autoconfigure
+  - mvn clean install
+  - cd ../fastcall-spring-boot-starter
+  - mvn clean install
