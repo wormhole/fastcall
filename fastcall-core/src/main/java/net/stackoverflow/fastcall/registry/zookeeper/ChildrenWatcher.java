@@ -1,6 +1,6 @@
 package net.stackoverflow.fastcall.registry.zookeeper;
 
-import net.stackoverflow.fastcall.registry.JsonUtils;
+import net.stackoverflow.fastcall.util.JsonUtils;
 import net.stackoverflow.fastcall.registry.RegistryCache;
 import net.stackoverflow.fastcall.registry.ServiceMetaData;
 import org.apache.zookeeper.WatchedEvent;

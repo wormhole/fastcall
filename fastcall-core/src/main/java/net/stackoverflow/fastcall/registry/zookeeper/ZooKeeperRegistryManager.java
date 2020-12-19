@@ -1,7 +1,7 @@
 package net.stackoverflow.fastcall.registry.zookeeper;
 
 import net.stackoverflow.fastcall.exception.ServiceNotFoundException;
-import net.stackoverflow.fastcall.registry.JsonUtils;
+import net.stackoverflow.fastcall.util.JsonUtils;
 import net.stackoverflow.fastcall.registry.RegistryCache;
 import net.stackoverflow.fastcall.registry.RegistryManager;
 import net.stackoverflow.fastcall.registry.ServiceMetaData;

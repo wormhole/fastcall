@@ -1,6 +1,6 @@
 package net.stackoverflow.fastcall.config;
 
-import net.stackoverflow.fastcall.registry.JsonUtils;
+import net.stackoverflow.fastcall.util.JsonUtils;
 
 /**
  * Fastcall配置建造者类

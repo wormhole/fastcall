@@ -7,7 +7,7 @@ import net.stackoverflow.fastcall.balance.PollBalanceManager;
 import net.stackoverflow.fastcall.balance.RandomBalanceManager;
 import net.stackoverflow.fastcall.config.FastcallConfig;
 import net.stackoverflow.fastcall.config.FastcallConfigBuilder;
-import net.stackoverflow.fastcall.registry.JsonUtils;
+import net.stackoverflow.fastcall.util.JsonUtils;
 import net.stackoverflow.fastcall.registry.RegistryManager;
 import net.stackoverflow.fastcall.registry.zookeeper.ZooKeeperRegistryManager;
 import net.stackoverflow.fastcall.serialize.JsonSerializeManager;
