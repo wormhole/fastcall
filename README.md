@@ -172,19 +172,19 @@ public class FastcallController {
 
 ## 六、支持情况
 
-|序列化类型|json|protobuf|msgpack|
+|序列化类型|json&emsp;&emsp;&emsp;&emsp;&emsp;|protobuf&emsp;|msgpack&emsp;&emsp;|
 |----|----|----|----|
 |是否支持|✔|❌|❌|
 
-|注册中心&emsp;|zookeeper|redis|eureka|
+|注册中心&emsp;|zookeeper|redis&emsp;&emsp;&emsp;&emsp;|eureka&emsp;&emsp;&emsp;|
 |----|----|----|----|
 |是否支持|✔|❌|❌|
 
-|负载均衡&emsp;|random|poll|weight|
+|负载均衡&emsp;|random&emsp;&emsp;&emsp;|poll&emsp;&emsp;&emsp;&emsp;&emsp;|weight&emsp;&emsp;&emsp;|
 |----|----|----|----|
 |是否支持|✔|✔|❌|
 
-|协议&emsp;&emsp;&emsp;|fastcall|rmi|http|
+|协议&emsp;&emsp;&emsp;|fastcall&emsp;|rmi&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;|http&emsp;&emsp;&emsp;&emsp;&emsp;|
 |----|----|----|----|
 |是否支持|✔|❌|❌|
 
