@@ -1,13 +1,13 @@
-### 准备
+#### 1. 准备
 * maven
 * git
 
-### 下载源码
+#### 2. 下载源码
 ```
 $ git clone https://github.com/wormhole/fastcall
 ```
 
-### 构建
+#### 3. 构建
 `windows`环境
 ```
 $ build.bat
