@@ -33,7 +33,7 @@ $ sh build.sh
 ```
 
 ## 四、使用
-
+>详细的使用文档，请参照[文档目录](fastcall-doc/SUMMARY.md)
 ### 4.1. 服务提供者 [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-provider) 
 1. 新建`Spring boot`项目，并添加`maven`依赖
 ```
