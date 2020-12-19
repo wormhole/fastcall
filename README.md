@@ -13,14 +13,7 @@
 ## 二、安装
 ```
 $ git clone https://github.com/wormhole/fastcall
-$ cd fastcall-parent
-$ mvn install
-$ cd ../fastcall-core
-$ mvn install
-$ cd ../fastcall-spring-boot-autoconfigure
-$ mvn install
-$ cd ../fastcall-spring-boot-starter
-$ mvn install
+$ sh build.sh
 ```
 
 ## 三、使用
