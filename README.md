@@ -17,7 +17,11 @@
 
 &emsp;&emsp;与`grpc`等其他`rpc`框架不同，`fastcall`拥有基本的服务治理能力，支持服务发现，服务发现，服务降级，负载均衡策略等功能。相比于`grpc`的一大堆配置和生成代码的引入，`fastcall`继承了`dubbo`的优点，做到了低业务入侵性。
 
-## 二、功能列表
+## 二、`gitbook`文档
+在线地址，[http://stackoverflow.net](http://stackoverflow.net)
+本地地址，[gitbook文档](fastcall-doc/SUMMARY.md)
+    
+## 三、功能列表
 * 服务注册
 * 服务发现
 * 服务调用
@@ -26,15 +30,15 @@
 * 服务降级
 * 资源限制
 
-## 三、安装
+## 四、安装
 ```
 $ git clone https://github.com/wormhole/fastcall
 $ sh build.sh
 ```
 
-## 四、使用
+## 五、使用
 >详细的使用文档，请参照[文档目录](fastcall-doc/SUMMARY.md)
-### 4.1. 服务提供者 [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-provider) 
+### 5.1. 服务提供者 [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-provider) 
 1. 新建`Spring boot`项目，并添加`maven`依赖
 ```
 <dependencies>
@@ -106,7 +110,7 @@ public class FastcallDemoProviderApplication {
 }
 ```
 
-### 4.2. 服务消费者 [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-consumer) 
+### 5.2. 服务消费者 [【样例代码】](https://github.com/wormhole/fastcall/tree/master/fastcall-demo-consumer) 
 
 1. 新建`Spring boot`项目，并添加`maven`依赖
 ```
@@ -158,7 +162,7 @@ public class FastcallController {
 }
 ```
 
-## 五、模块划分
+## 六、模块划分
 |模块名|说明|
 |----|----|
 |fastcall-parent|对依赖版本进行统一管理|
@@ -170,7 +174,7 @@ public class FastcallController {
 |fastcall-demo-provider|样例工程，服务提供者|
 |fastcall-demo-consumer|样例工程，服务消费者|
 
-## 六、支持情况
+## 七、支持情况
 
 |序列化类型|json|protobuf|msgpack|
 |----|----|----|----|
@@ -188,6 +192,6 @@ public class FastcallController {
 |----|----|----|----|
 |是否支持|✔|❌|❌|
 
-## 七、LICENSE
+## 八、LICENSE
 Fastcall software is licenced under the [MIT](LICENSE) License
 
