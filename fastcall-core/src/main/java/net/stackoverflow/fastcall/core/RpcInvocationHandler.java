@@ -1,7 +1,7 @@
 package net.stackoverflow.fastcall.core;
 
 import net.stackoverflow.fastcall.ConsumerManager;
-import net.stackoverflow.fastcall.exception.RpcTimeout;
+import net.stackoverflow.fastcall.exception.RpcTimeoutException;
 import net.stackoverflow.fastcall.transport.proto.RpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,14 +58,19 @@ public class RpcInvocationHandler implements InvocationHandler {
                         throw throwable;
                     }
                 } else {
-                    throw new RpcTimeout();
+                    throw new RpcTimeoutException();
+                }
+            } catch (RpcTimeoutException exception) {
+                if (retry > 0) {
+                    log.warn("Proxy execute rpc timeout and retry, retry:{}, requestId:{}", retry, future.getRequestId());
+                    --retry;
+                } else {
+                    log.error("Proxy execute rpc timeout, requestId:{}", future.getRequestId());
+                    throw exception;
                 }
             } catch (Throwable throwable) {
-                if (retry > 0) {
-                    log.debug("Proxy retry rpc, retry:{}, requestId:{}", retry, future.getRequestId());
-                    --retry;
-                } else if (fallback != Void.class) {
-                    log.debug("Proxy execute fallback method, requestId:{}", future.getRequestId());
+                if (fallback != Void.class) {
+                    log.warn("Proxy execute fallback method, requestId:{}", future.getRequestId());
                     Object object = fallback.newInstance();
                     Object response = method.invoke(object, args);
                     return response;

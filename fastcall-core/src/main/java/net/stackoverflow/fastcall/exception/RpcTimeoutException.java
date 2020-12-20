@@ -5,13 +5,13 @@ package net.stackoverflow.fastcall.exception;
  *
  * @author wormhole
  */
-public class RpcTimeout extends Exception {
+public class RpcTimeoutException extends Exception {
 
-    public RpcTimeout() {
+    public RpcTimeoutException() {
         super();
     }
 
-    public RpcTimeout(String msg) {
+    public RpcTimeoutException(String msg) {
         super(msg);
     }
 }

@@ -24,14 +24,14 @@ public class ServerAuthHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         nodeCheck.remove(ctx.channel().remoteAddress().toString());
-        log.error("[L:{} R:{}] Server caught exception and remove auth info", ctx.channel().localAddress(), ctx.channel().remoteAddress());
+        log.warn("[L:{} R:{}] Server caught exception and remove auth info", ctx.channel().localAddress(), ctx.channel().remoteAddress());
         super.exceptionCaught(ctx, cause);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         nodeCheck.remove(ctx.channel().remoteAddress().toString());
-        log.error("[L:{} R:{}] Server channel inactive and remove auth info", ctx.channel().localAddress(), ctx.channel().remoteAddress());
+        log.warn("[L:{} R:{}] Server channel inactive and remove auth info", ctx.channel().localAddress(), ctx.channel().remoteAddress());
         super.channelInactive(ctx);
     }
 
