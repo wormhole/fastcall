@@ -18,8 +18,8 @@
 &emsp;&emsp;与`grpc`等其他`rpc`框架不同，`fastcall`拥有基本的服务治理能力，支持服务发现，服务发现，服务降级，负载均衡策略等功能。相比于`grpc`的一大堆配置和生成代码的引入，`fastcall`继承了`dubbo`的优点，做到了低业务入侵性。
 
 ## 二、`gitbook`文档
-在线地址，[http://stackoverflow.net](http://stackoverflow.net)
-本地地址，[gitbook文档](fastcall-doc/SUMMARY.md)
+在线地址：[http://stackoverflow.net](http://stackoverflow.net)  
+本地地址：[gitbook文档](fastcall-doc/SUMMARY.md)
     
 ## 三、功能列表
 * 服务注册
