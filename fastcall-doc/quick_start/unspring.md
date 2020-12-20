@@ -81,8 +81,8 @@ public class FastcallDemoConsumerApplication {
         FastcallConfig config = new FastcallConfig();
         FastcallManagerFactory factory = new ConfigFastcallManagerFactory(config);
         FastcallManager manager = factory.getInstance();
-        //生成代理对象，指定分组，版本，超时时间
-        SayService proxy = manager.createProxy(SayService.class, "group-1", "1.0", 5000);
+        //生成代理对象，指定分组，版本，超时时间，降级类
+        SayService proxy = manager.createProxy(SayService.class, "group-1", "1.0", 5000, Void.class);
         //rpc调用
         proxy.say("hello world");
         //关闭服务释放连接
