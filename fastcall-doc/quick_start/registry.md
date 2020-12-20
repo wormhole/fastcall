@@ -23,7 +23,18 @@ public @interface FastcallService {
 实际上，该注解会从指定的扫描路径中去扫描`@FastcallService`指定的服务类，并自动将他们注册为`bean`，同时将服务的元数据信息注册到
 服务注册中心，告诉服务消费者，该应用中有哪些服务可供调用。一切都是自动配置的，就是那么简单，仅仅只需要在服务实现类上添加一个注解而已，
 做到了对业务的***低入侵***。
+```
+@FastcallService(group = "group-1", version="1.0")
+public class SayServiceImpl implements SayService {
 
+    private static final Logger log = LoggerFactory.getLogger(SayServiceImpl.class);
+
+    @Override
+    public String say(String content) {
+        return content;
+    }
+}
+```
 
 #### 三、在`非Spring`应用中进行服务注册
 对于`非Spring`应用的支持一切来源于框架提供的外观类`FastcallManager`，外观类中提供了`void register(Class<?> clazz, Object bean);`方法，第一个参数指明了服务的接口，第二个参数是服务的实例化对象。

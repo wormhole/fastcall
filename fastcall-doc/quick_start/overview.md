@@ -46,7 +46,7 @@ FastcallManager manager = factory.getInstance();
 
 #### 四、在`Spring`应用中使用，以`Spring boot`为例
 该框架提供了`fastcall-spring-boot-autoconfigure`和`fastcall-spring-boot-starter`两个模块，以便对`Spring boot`应用进行支持。在`Spring boot`应用中添加框架
-的`starter`后，只需要少量的配置就可以使用该框架，完美体现了`Spring boot`的***约定优于配置***的理念。
+的`starter`后，只需要少量的配置就可以使用该框架，完美体现了`Spring boot`的**约定优于配置**的理念。
 
 ##### 1. 添加依赖
 ```
