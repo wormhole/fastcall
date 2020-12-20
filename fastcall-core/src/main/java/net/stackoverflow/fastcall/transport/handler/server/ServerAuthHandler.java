@@ -24,7 +24,7 @@ public class ServerAuthHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         nodeCheck.remove(ctx.channel().remoteAddress().toString());
-        log.error("[L:{} R:{}] Server caught exception and remove auth info", ctx.channel().localAddress(), ctx.channel().remoteAddress(), cause);
+        log.error("[L:{} R:{}] Server caught exception and remove auth info", ctx.channel().localAddress(), ctx.channel().remoteAddress());
         super.exceptionCaught(ctx, cause);
     }
 
