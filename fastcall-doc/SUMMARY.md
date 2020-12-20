@@ -11,3 +11,4 @@
     * [3.6. 服务降级](quick_start/fallback.md)
     * [3.7. 资源限制与线程池](quick_start/threads.md)
     * [3.8. 详细配置](quick_start/properties.md)
+* [四、关于作者](about/README.md)

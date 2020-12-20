@@ -8,6 +8,11 @@
     "github",
     "donate"
   ],
+  "links": {
+    "sidebar": {
+      "GitHub项目地址": "https://github.com/wormhole/fastcall"
+    }
+  },
   "pluginsConfig": {
     "github": {
       "url": "https://github.com/wormhole"
