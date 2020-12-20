@@ -1,6 +1,5 @@
 package net.stackoverflow.fastcall.demo.provider;
 
-import net.stackoverflow.fastcall.annotation.FastcallFallback;
 import net.stackoverflow.fastcall.annotation.FastcallService;
 import net.stackoverflow.fastcall.demo.api.ContentDTO;
 import net.stackoverflow.fastcall.demo.api.SayService;
@@ -18,9 +17,8 @@ public class SayServiceImpl implements SayService {
     }
 
     @Override
-    @FastcallFallback(method = "sayFallback")
     public String sayWithFallback(String content) {
-        throw new RuntimeException("fall back");
+        throw new RuntimeException("fallback");
     }
 
     @Override
@@ -36,9 +34,5 @@ public class SayServiceImpl implements SayService {
             log.error("", e);
         }
         return "hello " + content;
-    }
-
-    public String sayFallback(String content) {
-        return "fallback " + content;
     }
 }

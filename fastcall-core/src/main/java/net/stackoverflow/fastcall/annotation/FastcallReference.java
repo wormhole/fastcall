@@ -17,4 +17,6 @@ public @interface FastcallReference {
     String version() default "";
 
     long timeout() default -1;
+
+    Class<?> fallback() default Void.class;
 }

@@ -26,11 +26,14 @@ public class RpcInvocationHandler implements InvocationHandler {
 
     private final Long timeout;
 
-    public RpcInvocationHandler(ConsumerManager consumerManager, String group, String version, Long timeout) {
+    private final Class<?> fallback;
+
+    public RpcInvocationHandler(ConsumerManager consumerManager, String group, String version, Long timeout, Class<?> fallback) {
         this.consumerManager = consumerManager;
         this.group = group;
         this.version = version;
         this.timeout = timeout;
+        this.fallback = fallback;
     }
 
     @Override
@@ -61,6 +64,11 @@ public class RpcInvocationHandler implements InvocationHandler {
                 if (retry > 0) {
                     log.debug("Proxy retry rpc, retry:{}, requestId:{}", retry, future.getRequestId());
                     --retry;
+                } else if (fallback != Void.class) {
+                    log.debug("Proxy execute fallback method, requestId:{}", future.getRequestId());
+                    Object object = fallback.newInstance();
+                    Object response = method.invoke(object, args);
+                    return response;
                 } else {
                     log.error("Proxy fail to call rpc, requestId:{}", future.getRequestId());
                     throw throwable;

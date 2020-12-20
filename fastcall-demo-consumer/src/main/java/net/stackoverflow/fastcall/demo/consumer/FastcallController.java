@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class FastcallController {
 
-    @FastcallReference(group = "group-1", version = "0.0.1", timeout = 5000)
+    @FastcallReference(group = "group-1", version = "0.0.1", timeout = 5000, fallback = FallbackSayServiceImpl.class)
     private SayService sayService;
 
     @GetMapping("/say")

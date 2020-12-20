@@ -1,7 +1,6 @@
 package net.stackoverflow.fastcall.core;
 
 import io.netty.channel.Channel;
-import net.stackoverflow.fastcall.annotation.FastcallFallback;
 import net.stackoverflow.fastcall.context.BeanContext;
 import net.stackoverflow.fastcall.exception.BeanNotFoundException;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
@@ -63,21 +62,7 @@ public class RpcRequestHandler implements Runnable {
             Object response = method.invoke(obj, params == null ? null : params.toArray());
             rpcResponse = new RpcResponse(request.getId(), 0, response.getClass(), serializeManager.serialize(response), null, null);
         } catch (InvocationTargetException e) {
-            try {
-                Class<?> clazz = obj.getClass();
-                Method method = clazz.getMethod(request.getMethod(), paramsType.toArray(new Class[0]));
-                FastcallFallback fastcallFallback = method.getAnnotation(FastcallFallback.class);
-                if (fastcallFallback != null) {
-                    String fallback = fastcallFallback.method();
-                    Method fallbackMethod = clazz.getMethod(fallback, paramsType.toArray(new Class[0]));
-                    Object response = fallbackMethod.invoke(obj, params == null ? null : params.toArray());
-                    rpcResponse = new RpcResponse(request.getId(), 0, response.getClass(), serializeManager.serialize(response), null, null);
-                } else {
-                    rpcResponse = new RpcResponse(request.getId(), -1, null, null, e.getTargetException().getClass(), serializeManager.serialize(e.getTargetException()));
-                }
-            } catch (Throwable throwable) {
-                rpcResponse = new RpcResponse(request.getId(), -1, null, null, throwable.getClass(), serializeManager.serialize(throwable));
-            }
+            rpcResponse = new RpcResponse(request.getId(), -1, null, null, e.getTargetException().getClass(), serializeManager.serialize(e.getTargetException()));
         } catch (Throwable throwable) {
             rpcResponse = new RpcResponse(request.getId(), -1, null, null, throwable.getClass(), serializeManager.serialize(throwable));
         }
