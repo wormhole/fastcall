@@ -1,4 +1,4 @@
-### 基本知识
+### 基础知识
 
 #### 一、框架基本调用流程
 ![overview](../image/overview.png)
@@ -17,11 +17,11 @@
 * `ProviderManager`:服务提供子系统
 * `ConsumerManager`:服务消费子系统
 
-#### 二、在`非Spring`应用中使用
+#### 三、在`非Spring`应用中使用
 该框架在设计模式上采用了`Facade`外观模式，`FastcallManager`的默认实现类`DefaultFastcallManager`是系统的外观，封装了所有子系统的功能，对外提供统一的接口。
 在`非Spring`应用中使用时，我们只需要通过`FastcallManager`的工厂类，生成`DefaultFastcallManager`单例对象，就可以通过该对象，调用框架的所有功能。
 
-1. 添加依赖
+##### 1. 添加依赖
 ```
 <dependency>
     <groupId>net.stackoverflow.fastcall</groupId>
@@ -30,7 +30,7 @@
 </dependency>
 ```
 
-2. 生成外观对象
+##### 2. 生成外观对象
 ```
 //实例化配置类（亦可通过FastcallConfigBuilder建造者，一步一步生成配置类）
 FastcallConfig config = new FastcallConfig();
@@ -42,14 +42,13 @@ FastcallManagerFactory factory = new ConfigFastcallManagerFactory(config);
 FastcallManager manager = factory.getInstance();
 
 //接下来可以使用FastcallManager对象，调用框架提供的功能
-...
 ```
 
-#### 三、在`Spring`应用中使用，以`Spring boot`为例
+#### 四、在`Spring`应用中使用，以`Spring boot`为例
 该框架提供了`fastcall-spring-boot-autoconfigure`和`fastcall-spring-boot-starter`两个模块，以便对`Spring boot`应用进行支持。在`Spring boot`应用中添加框架
 的`starter`后，只需要少量的配置就可以使用该框架，完美体现了`Spring boot`的***约定优于配置***的理念。
 
-1. 添加依赖
+##### 1. 添加依赖
 ```
 <dependency>
     <groupId>net.stackoverflow.fastcall</groupId>
@@ -58,7 +57,7 @@ FastcallManager manager = factory.getInstance();
 </dependency>
 ```
 
-2. 必要的配置
+##### 2. 必要的配置
 ```
 #启用服务提供子系统（只使用服务消费功能可以不加）
 fastcall.provider.enabled=true
@@ -67,7 +66,7 @@ fastcall.registry.zookeeper.host=127.0.0.1
 fastcall.registry.zookeeper.port=2181
 ```
 
-3. 在启动类上添加注解（只使用服务消费功能可以不加此注解，此注解的功能类似于`@ComponentScan`，`basePackages`属性标识了注解扫描的包路径）
+##### 3. 在启动类上添加注解（只使用服务消费功能可以不加此注解，此注解的功能类似于`@ComponentScan`，`basePackages`属性标识了注解扫描的包路径）
 ```
 @EnableFastcall(basePackages = {"net.stackoverflow.fastcall.demo.provider"})
 ```

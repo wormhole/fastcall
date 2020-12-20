@@ -3,7 +3,7 @@
 * [一、简介](README.md)
 * [二、安装](install/README.md)
 * [三、快速入门]()
-    * [3.1. 基本知识](quick_start/overview.md)
+    * [3.1. 基础知识](quick_start/overview.md)
     * [3.2. 服务注册与服务发现](quick_start/registry.md)
     * [3.3. 在Spring应用中使用](quick_start/spring.md)
     * [3.4. 在非Spring应用中使用](quick_start/unspring.md)
