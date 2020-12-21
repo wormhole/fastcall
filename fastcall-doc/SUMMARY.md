@@ -2,7 +2,7 @@
 
 * [一、简介](README.md)
 * [二、安装](install/README.md)
-* [三、快速入门]()
+* [三、快速入门](quick_start/README.md)
     * [3.1. 基础知识](quick_start/overview.md)
     * [3.2. 服务注册](quick_start/registry.md)
     * [3.3. 服务发现与服务调用](quick_start/discovery.md)
