@@ -79,6 +79,7 @@ public class RedisRegistryManager extends AbstractRegistryManager {
                 metaDataList.add(metaData);
             }
         }
+        jedis.close();
         cache.setCache(latestCache);
     }
 
