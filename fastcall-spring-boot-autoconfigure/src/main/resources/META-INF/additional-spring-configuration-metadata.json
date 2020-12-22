@@ -24,6 +24,12 @@
       "sourceMethod": "getRegistry()"
     },
     {
+      "name": "fastcall.registry.redis",
+      "type": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Redis",
+      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Registry",
+      "sourceMethod": "getRedis()"
+    },
+    {
       "name": "fastcall.registry.zookeeper",
       "type": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Zookeeper",
       "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Registry",
@@ -88,6 +94,29 @@
       "type": "java.lang.Integer",
       "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Provider",
       "defaultValue": 60
+    },
+    {
+      "name": "fastcall.registry.redis.host",
+      "type": "java.lang.String",
+      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Redis",
+      "defaultValue": "127.0.0.1"
+    },
+    {
+      "name": "fastcall.registry.redis.password",
+      "type": "java.lang.String",
+      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Redis"
+    },
+    {
+      "name": "fastcall.registry.redis.port",
+      "type": "java.lang.Integer",
+      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Redis",
+      "defaultValue": 6379
+    },
+    {
+      "name": "fastcall.registry.redis.timeout",
+      "type": "java.lang.Integer",
+      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Redis",
+      "defaultValue": 10000
     },
     {
       "name": "fastcall.registry.type",
