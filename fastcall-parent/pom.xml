@@ -17,6 +17,7 @@
         <spring.boot.version>2.2.10.RELEASE</spring.boot.version>
         <netty.version>4.1.52.Final</netty.version>
         <zookeeper.version>3.6.2</zookeeper.version>
+        <jedis.version>3.2.0</jedis.version>
         <jackson.version>2.11.3</jackson.version>
         <slf4j.version>1.7.30</slf4j.version>
         <logback.version>1.2.3</logback.version>
@@ -55,6 +56,11 @@
                 <groupId>org.apache.zookeeper</groupId>
                 <artifactId>zookeeper</artifactId>
                 <version>${zookeeper.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${jedis.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>

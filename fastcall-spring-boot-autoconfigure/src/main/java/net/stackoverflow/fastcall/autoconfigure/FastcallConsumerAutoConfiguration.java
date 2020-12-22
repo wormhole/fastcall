@@ -7,6 +7,7 @@ import net.stackoverflow.fastcall.balance.PollBalanceManager;
 import net.stackoverflow.fastcall.balance.RandomBalanceManager;
 import net.stackoverflow.fastcall.config.FastcallConfig;
 import net.stackoverflow.fastcall.config.FastcallConfigBuilder;
+import net.stackoverflow.fastcall.registry.redis.RedisRegistryManager;
 import net.stackoverflow.fastcall.util.JsonUtils;
 import net.stackoverflow.fastcall.registry.RegistryManager;
 import net.stackoverflow.fastcall.registry.zookeeper.ZooKeeperRegistryManager;
@@ -79,6 +80,11 @@ public class FastcallConsumerAutoConfiguration {
                 FastcallProperties.Zookeeper zk = properties.getRegistry().getZookeeper();
                 manager = new ZooKeeperRegistryManager(zk.getHost(), zk.getPort(), zk.getSessionTimeout());
                 log.info("Instance ZooKeeperRegistryManager");
+                break;
+            case "redis":
+                FastcallProperties.Redis redis = properties.getRegistry().getRedis();
+                manager = new RedisRegistryManager(redis.getHost(), redis.getPort(), redis.getPassword(), redis.getTimeout());
+                log.info("Instance RedisRegistryManager");
                 break;
             default:
                 break;

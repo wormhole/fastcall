@@ -11,6 +11,8 @@ public class RegistryConfig {
 
     private ZooKeeperConfig zookeeper = new ZooKeeperConfig();
 
+    private RedisConfig redis = new RedisConfig();
+
     public String getType() {
         return type;
     }
@@ -27,10 +29,16 @@ public class RegistryConfig {
         this.zookeeper = zookeeper;
     }
 
+    public RedisConfig getRedis() {
+        return redis;
+    }
+
+    public void setRedis(RedisConfig redis) {
+        this.redis = redis;
+    }
+
     /**
      * zookeeper配置
-     *
-     * @wormhole
      */
     public static class ZooKeeperConfig {
         private String host = "127.0.0.1";
@@ -61,6 +69,51 @@ public class RegistryConfig {
 
         public void setSessionTimeout(Integer sessionTimeout) {
             this.sessionTimeout = sessionTimeout;
+        }
+    }
+
+    /**
+     * redis配置
+     */
+    public static class RedisConfig {
+        private String host = "127.0.0.1";
+
+        private Integer port = 6379;
+
+        private Integer timeout = 10000;
+
+        private String password;
+
+        public String getHost() {
+            return host;
+        }
+
+        public void setHost(String host) {
+            this.host = host;
+        }
+
+        public Integer getPort() {
+            return port;
+        }
+
+        public void setPort(Integer port) {
+            this.port = port;
+        }
+
+        public Integer getTimeout() {
+            return timeout;
+        }
+
+        public void setTimeout(Integer timeout) {
+            this.timeout = timeout;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
         }
     }
 }

@@ -127,6 +127,8 @@ public class FastcallProperties {
 
         private Zookeeper zookeeper = new Zookeeper();
 
+        private Redis redis = new Redis();
+
         public String getType() {
             return type;
         }
@@ -141,6 +143,14 @@ public class FastcallProperties {
 
         public void setZookeeper(Zookeeper zookeeper) {
             this.zookeeper = zookeeper;
+        }
+
+        public Redis getRedis() {
+            return redis;
+        }
+
+        public void setRedis(Redis redis) {
+            this.redis = redis;
         }
     }
 
@@ -173,6 +183,48 @@ public class FastcallProperties {
 
         public void setSessionTimeout(Integer sessionTimeout) {
             this.sessionTimeout = sessionTimeout;
+        }
+    }
+
+    public static class Redis {
+        private String host = "127.0.0.1";
+
+        private Integer port = 6379;
+
+        private Integer timeout = 10000;
+
+        private String password;
+
+        public String getHost() {
+            return host;
+        }
+
+        public void setHost(String host) {
+            this.host = host;
+        }
+
+        public Integer getPort() {
+            return port;
+        }
+
+        public void setPort(Integer port) {
+            this.port = port;
+        }
+
+        public Integer getTimeout() {
+            return timeout;
+        }
+
+        public void setTimeout(Integer timeout) {
+            this.timeout = timeout;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
         }
     }
 

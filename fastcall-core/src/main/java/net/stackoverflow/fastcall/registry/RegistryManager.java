@@ -36,6 +36,11 @@ public interface RegistryManager {
     void subscribe();
 
     /**
+     * 更新缓存
+     */
+    void updateCache();
+
+    /**
      * 关闭连接
      */
     void close();

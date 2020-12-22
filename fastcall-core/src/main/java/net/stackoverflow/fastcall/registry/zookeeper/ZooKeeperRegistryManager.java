@@ -1,6 +1,7 @@
 package net.stackoverflow.fastcall.registry.zookeeper;
 
 import net.stackoverflow.fastcall.exception.ServiceNotFoundException;
+import net.stackoverflow.fastcall.registry.AbstractRegistryManager;
 import net.stackoverflow.fastcall.util.JsonUtils;
 import net.stackoverflow.fastcall.registry.RegistryCache;
 import net.stackoverflow.fastcall.registry.RegistryManager;
@@ -22,7 +23,7 @@ import java.util.concurrent.CountDownLatch;
  *
  * @author wormhole
  */
-public class ZooKeeperRegistryManager implements RegistryManager {
+public class ZooKeeperRegistryManager extends AbstractRegistryManager {
 
     private static final Logger log = LoggerFactory.getLogger(ZooKeeperRegistryManager.class);
 
@@ -38,13 +39,10 @@ public class ZooKeeperRegistryManager implements RegistryManager {
 
     private Watcher childrenWatcher;
 
-    private final RegistryCache cache;
-
     public ZooKeeperRegistryManager(String host, Integer port, Integer sessionTimeout) {
         this.host = host;
         this.port = port;
         this.sessionTimeout = sessionTimeout;
-        this.cache = new RegistryCache();
         this.connect();
     }
 
@@ -85,28 +83,15 @@ public class ZooKeeperRegistryManager implements RegistryManager {
     }
 
     /**
-     * 获取服务地址
-     *
-     * @param clazz   接口Class对象
-     * @param group   所属分组
-     * @param version 版本号
-     * @return
-     */
-    @Override
-    public List<ServiceMetaData> getService(Class<?> clazz, String group, String version) {
-        List<ServiceMetaData> metas = cache.get(clazz.getName(), group, version);
-        if (metas != null && metas.size() > 0) {
-            return metas;
-        } else {
-            throw new ServiceNotFoundException(clazz.getName(), group, String.format("Service not found, interfaceName:%s, group:%s, version:%s", clazz.getName(), group, version));
-        }
-    }
-
-    /**
      * 订阅服务
      */
     @Override
     public void subscribe() {
+        this.updateCache();
+    }
+
+    @Override
+    public void updateCache() {
         try {
             Map<String, List<ServiceMetaData>> latestCache = new ConcurrentHashMap<>();
             List<String> itfChildPaths = zookeeper.getChildren(ROOT_PATH, childrenWatcher);
@@ -130,7 +115,7 @@ public class ZooKeeperRegistryManager implements RegistryManager {
             }
             cache.setCache(latestCache);
         } catch (Exception e) {
-            log.error("RegistryManager fail to subscribe service", e);
+            log.error("RegistryManager fail to update cache", e);
         }
     }
 
