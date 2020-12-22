@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Redis注册中心管理器
@@ -26,26 +28,20 @@ public class RedisRegistryManager extends AbstractRegistryManager {
 
     private static final String ROOT_PREFIX = "fastcall:";
 
-    private final String host;
-
-    private final Integer port;
-
-    private final String password;
-
-    private final Integer timeout;
+    private static final String CHANNEL = "fastcall";
 
     private final JedisPool jedisPool;
 
+    private final ExecutorService executorService;
+
     public RedisRegistryManager(String host, Integer port, String password, Integer timeout) {
-        this.host = host;
-        this.port = port;
-        this.password = password;
-        this.timeout = timeout;
+        this.executorService = Executors.newSingleThreadExecutor();
         if (password != null && password.length() > 0) {
             this.jedisPool = new JedisPool(new JedisPoolConfig(), host, port, timeout, password);
         } else {
             this.jedisPool = new JedisPool(new JedisPoolConfig(), host, port, timeout);
         }
+        this.updateCache();
     }
 
     @Override
@@ -55,12 +51,15 @@ public class RedisRegistryManager extends AbstractRegistryManager {
         String hashKey = meta.getHost() + ":" + meta.getPort();
         String json = JsonUtils.bean2json(meta);
         jedis.hset(key, hashKey, json);
+        jedis.publish(CHANNEL, meta.getInterfaceName());
         jedis.close();
+        log.info("RegistryManager register service: {}", meta);
     }
 
     @Override
     public void subscribe() {
-        this.updateCache();
+        Jedis jedis = jedisPool.getResource();
+        executorService.execute(() -> jedis.subscribe(new FastcallJedisPubSub(this), CHANNEL));
     }
 
     @Override
@@ -85,6 +84,7 @@ public class RedisRegistryManager extends AbstractRegistryManager {
 
     @Override
     public void close() {
+        executorService.shutdown();
         jedisPool.close();
     }
 }
