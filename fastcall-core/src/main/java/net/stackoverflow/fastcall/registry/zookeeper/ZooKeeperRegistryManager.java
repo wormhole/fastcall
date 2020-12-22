@@ -43,7 +43,9 @@ public class ZooKeeperRegistryManager extends AbstractRegistryManager {
         this.host = host;
         this.port = port;
         this.sessionTimeout = sessionTimeout;
+        this.childrenWatcher = new ChildrenWatcher(this);
         this.connect();
+        this.updateCache();
     }
 
     /**
@@ -56,7 +58,6 @@ public class ZooKeeperRegistryManager extends AbstractRegistryManager {
             ZooKeeper zooKeeper = new ZooKeeper(connection, sessionTimeout, new InitWatcher(countDownLatch));
             countDownLatch.await();
             this.zookeeper = zooKeeper;
-            this.childrenWatcher = new ChildrenWatcher(cache, zookeeper);
         } catch (Exception e) {
             log.error("RegistryManager fail to connected zookeeper", e);
         }
@@ -87,13 +88,7 @@ public class ZooKeeperRegistryManager extends AbstractRegistryManager {
      */
     @Override
     public void subscribe() {
-        this.updateCache();
-    }
-
-    @Override
-    public void updateCache() {
         try {
-            Map<String, List<ServiceMetaData>> latestCache = new ConcurrentHashMap<>();
             List<String> itfChildPaths = zookeeper.getChildren(ROOT_PATH, childrenWatcher);
             log.debug("Zookeeper watched children of path {}", ROOT_PATH);
             for (String itfChildPath : itfChildPaths) {
@@ -101,12 +96,27 @@ public class ZooKeeperRegistryManager extends AbstractRegistryManager {
                 List<String> serviceChildPaths = zookeeper.getChildren(itfPath, childrenWatcher);
                 Collections.sort(serviceChildPaths);
                 log.debug("Zookeeper watched children of path {}", itfPath);
+            }
+        } catch (Exception e) {
+            log.error("RegistryManager fail to subscribe", e);
+        }
+    }
+
+    @Override
+    public void updateCache() {
+        try {
+            Map<String, List<ServiceMetaData>> latestCache = new ConcurrentHashMap<>();
+            List<String> itfChildPaths = zookeeper.getChildren(ROOT_PATH, false);
+            for (String itfChildPath : itfChildPaths) {
+                String itfPath = ROOT_PATH + "/" + itfChildPath;
+                List<String> serviceChildPaths = zookeeper.getChildren(itfPath, false);
+                Collections.sort(serviceChildPaths);
 
                 List<ServiceMetaData> metaDataList = new ArrayList<>();
                 latestCache.put(itfChildPath, metaDataList);
                 for (String serviceChildPath : serviceChildPaths) {
                     String servicePath = itfPath + "/" + serviceChildPath;
-                    //目前没有在服务运行过程中，动态修改地址的情况，因此此事件不监听
+
                     byte[] bytes = zookeeper.getData(servicePath, false, new Stat());
                     String json = new String(bytes);
                     ServiceMetaData meta = JsonUtils.json2bean(json, ServiceMetaData.class);
