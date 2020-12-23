@@ -1,4 +1,4 @@
-![logo](logo.png)
+![logo](fastcall-doc/image/logo.png)
 
 [![release](https://img.shields.io/github/v/release/wormhole/fastcall)](https://github.com/wormhole/fastcall/releases)
 [![build status](https://www.travis-ci.org/wormhole/fastcall.svg?branch=master)](https://www.travis-ci.org/wormhole/fastcall)
@@ -182,7 +182,7 @@ public class FastcallController {
 
 |注册中心&emsp;|zookeeper|redis|eureka|
 |----|----|----|----|
-|是否支持|✔|❌|❌|
+|是否支持|✔|✔|❌|
 
 |负载均衡&emsp;|random|poll|weight|
 |----|----|----|----|
