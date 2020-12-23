@@ -76,7 +76,9 @@ public class DefaultFastcallManager implements FastcallManager {
      */
     @Override
     public void start() {
-        providerManager.start();
+        if (providerManager != null) {
+            providerManager.start();
+        }
     }
 
     /**
@@ -84,12 +86,11 @@ public class DefaultFastcallManager implements FastcallManager {
      */
     @Override
     public void stop() {
-        if (config.getProvider().getEnabled()) {
+        if (providerManager != null) {
             providerManager.close();
         }
         consumerManager.close();
         registryManager.close();
     }
-
 
 }

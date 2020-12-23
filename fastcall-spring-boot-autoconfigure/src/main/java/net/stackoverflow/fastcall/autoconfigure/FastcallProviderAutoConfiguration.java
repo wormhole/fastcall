@@ -29,7 +29,7 @@ import java.util.Map;
 @Configuration
 @AutoConfigureAfter(FastcallConsumerAutoConfiguration.class)
 @ConditionalOnProperty(prefix = "fastcall.provider", name = "enabled", havingValue = "true")
-public class FastcallProviderAutoConfiguration implements InitializingBean, ApplicationContextAware {
+public class FastcallProviderAutoConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(FastcallProviderAutoConfiguration.class);
 
@@ -42,22 +42,6 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
     @Autowired
     private RegistryManager registryManager;
 
-    private ApplicationContext applicationContext;
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
-
-    /**
-     * 向注册中心注册服务信息，并启动netty服务
-     */
-    @Override
-    public void afterPropertiesSet() {
-        this.registerService();
-        this.start();
-    }
-
     /**
      * 初始化ProviderManager
      *
@@ -69,29 +53,5 @@ public class FastcallProviderAutoConfiguration implements InitializingBean, Appl
         ProviderManager providerManager = new DefaultProviderManager(config, serializeManager, registryManager);
         log.info("Instance DefaultProviderManager");
         return providerManager;
-    }
-
-    /**
-     * 向注册中心注册服务信息
-     */
-    private void registerService() {
-        ProviderManager providerManager = providerManager();
-        Map<String, Object> map = applicationContext.getBeansWithAnnotation(FastcallService.class);
-
-        for (Object obj : map.values()) {
-            Class<?> clazz = obj.getClass();
-            Class<?>[] interfaces = clazz.getInterfaces();
-            for (Class<?> itf : interfaces) {
-                providerManager.register(itf, obj);
-            }
-        }
-    }
-
-    /**
-     * 绑定服务端
-     */
-    private void start() {
-        ProviderManager providerManager = providerManager();
-        providerManager.start();
     }
 }

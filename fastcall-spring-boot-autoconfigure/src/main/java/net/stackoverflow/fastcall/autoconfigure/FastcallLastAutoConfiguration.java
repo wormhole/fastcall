@@ -54,4 +54,14 @@ public class FastcallLastAutoConfiguration {
         log.info("Instance FastcallBeanPostProcessor");
         return fastcallBeanPostProcessor;
     }
+
+    /**
+     * 生命周期
+     *
+     * @return
+     */
+    @Bean
+    public FastcallLifecycle fastcallLifecycle() {
+        return new FastcallLifecycle();
+    }
 }
