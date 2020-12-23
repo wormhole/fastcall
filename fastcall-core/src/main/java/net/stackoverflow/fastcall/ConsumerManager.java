@@ -7,7 +7,7 @@ import net.stackoverflow.fastcall.serialize.SerializeManager;
 import java.lang.reflect.Method;
 
 /**
- * 消费者管理类
+ * 服务消费Manager接口
  *
  * @author wormhole
  */
@@ -19,13 +19,6 @@ public interface ConsumerManager {
      * @return Consumer配置类
      */
     ConsumerConfig config();
-
-    /**
-     * 获取SerializeManager
-     *
-     * @return SerializeManager实例
-     */
-    SerializeManager getSerializeManager();
 
     /**
      * RPC调用
@@ -44,11 +37,6 @@ public interface ConsumerManager {
      * @param requestId 唯一标识
      */
     void removeFuture(String requestId);
-
-    /**
-     * 订阅服务
-     */
-    void subscribe();
 
     /**
      * 关闭客户端所有连接

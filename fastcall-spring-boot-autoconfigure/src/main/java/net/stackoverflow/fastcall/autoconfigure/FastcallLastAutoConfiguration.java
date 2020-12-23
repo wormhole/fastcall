@@ -6,6 +6,7 @@ import net.stackoverflow.fastcall.FastcallManager;
 import net.stackoverflow.fastcall.ProviderManager;
 import net.stackoverflow.fastcall.config.FastcallConfig;
 import net.stackoverflow.fastcall.registry.RegistryManager;
+import net.stackoverflow.fastcall.serialize.SerializeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class FastcallLastAutoConfiguration {
     private FastcallConfig fastcallConfig;
 
     @Autowired
+    private SerializeManager serializeManager;
+
+    @Autowired
     private RegistryManager registryManager;
 
     @Autowired
@@ -34,7 +38,7 @@ public class FastcallLastAutoConfiguration {
 
     @Bean
     public FastcallManager fastcallManager() {
-        FastcallManager manager = new DefaultFastcallManager(fastcallConfig, registryManager, providerManager, consumerManager);
+        FastcallManager manager = new DefaultFastcallManager(fastcallConfig, serializeManager, registryManager, providerManager, consumerManager);
         log.info("Instance FastcallManager");
         return manager;
     }

@@ -45,7 +45,7 @@ public class ConfigFastcallManagerFactory implements FastcallManagerFactory {
                     if (config.getProvider().getEnabled()) {
                         providerManager = this.providerManager(config.getProvider(), serializeManager, registryManager);
                     }
-                    fastcallManager = new DefaultFastcallManager(config, registryManager, providerManager, consumerManager);
+                    fastcallManager = new DefaultFastcallManager(config, serializeManager, registryManager, providerManager, consumerManager);
                 }
             }
         }

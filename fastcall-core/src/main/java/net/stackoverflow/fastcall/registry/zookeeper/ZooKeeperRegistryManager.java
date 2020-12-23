@@ -1,11 +1,8 @@
 package net.stackoverflow.fastcall.registry.zookeeper;
 
-import net.stackoverflow.fastcall.exception.ServiceNotFoundException;
 import net.stackoverflow.fastcall.registry.AbstractRegistryManager;
-import net.stackoverflow.fastcall.util.JsonUtils;
-import net.stackoverflow.fastcall.registry.RegistryCache;
-import net.stackoverflow.fastcall.registry.RegistryManager;
 import net.stackoverflow.fastcall.registry.ServiceMetaData;
+import net.stackoverflow.fastcall.util.JsonUtils;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
@@ -19,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * zookeeper注册中心管理器
+ * zookeeper注册中心Manager
  *
  * @author wormhole
  */
@@ -37,15 +34,16 @@ public class ZooKeeperRegistryManager extends AbstractRegistryManager {
 
     private final Integer sessionTimeout;
 
-    private Watcher childrenWatcher;
+    private Watcher serviceWatcher;
 
     public ZooKeeperRegistryManager(String host, Integer port, Integer sessionTimeout) {
         this.host = host;
         this.port = port;
         this.sessionTimeout = sessionTimeout;
-        this.childrenWatcher = new ChildrenWatcher(this);
+        this.serviceWatcher = new ServiceWatcher(this);
         this.connect();
         this.updateCache();
+        this.subscribe();
     }
 
     /**
@@ -62,7 +60,6 @@ public class ZooKeeperRegistryManager extends AbstractRegistryManager {
             log.error("RegistryManager fail to connected zookeeper", e);
         }
         this.checkPathAndCreate(ROOT_PATH);
-        log.info("RegistryManager connected zookeeper success");
     }
 
     /**
@@ -87,15 +84,15 @@ public class ZooKeeperRegistryManager extends AbstractRegistryManager {
      * 订阅服务
      */
     @Override
-    public void subscribe() {
+    public synchronized void subscribe() {
         try {
-            List<String> itfChildPaths = zookeeper.getChildren(ROOT_PATH, childrenWatcher);
-            log.debug("Zookeeper watched children of path {}", ROOT_PATH);
+            List<String> itfChildPaths = zookeeper.getChildren(ROOT_PATH, serviceWatcher);
+            log.debug("RegistryManager watched children of path {}", ROOT_PATH);
             for (String itfChildPath : itfChildPaths) {
                 String itfPath = ROOT_PATH + "/" + itfChildPath;
-                List<String> serviceChildPaths = zookeeper.getChildren(itfPath, childrenWatcher);
+                List<String> serviceChildPaths = zookeeper.getChildren(itfPath, serviceWatcher);
                 Collections.sort(serviceChildPaths);
-                log.debug("Zookeeper watched children of path {}", itfPath);
+                log.debug("RegistryManager watched children of path {}", itfPath);
             }
         } catch (Exception e) {
             log.error("RegistryManager fail to subscribe", e);
@@ -103,7 +100,7 @@ public class ZooKeeperRegistryManager extends AbstractRegistryManager {
     }
 
     @Override
-    public void updateCache() {
+    public synchronized void updateCache() {
         try {
             Map<String, List<ServiceMetaData>> latestCache = new ConcurrentHashMap<>();
             List<String> itfChildPaths = zookeeper.getChildren(ROOT_PATH, false);
@@ -136,7 +133,7 @@ public class ZooKeeperRegistryManager extends AbstractRegistryManager {
     public void close() {
         try {
             zookeeper.close();
-            log.info("RegistryManager close zookeeper success");
+            log.info("RegistryManager closed");
         } catch (InterruptedException e) {
             log.error("RegistryManager fail to close zookeeper", e);
         }

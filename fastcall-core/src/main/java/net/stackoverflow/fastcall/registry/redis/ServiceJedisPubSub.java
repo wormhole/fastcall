@@ -10,19 +10,19 @@ import redis.clients.jedis.JedisPubSub;
  *
  * @author wormhole
  */
-public class FastcallJedisPubSub extends JedisPubSub {
+public class ServiceJedisPubSub extends JedisPubSub {
 
-    private static final Logger log = LoggerFactory.getLogger(FastcallJedisPubSub.class);
+    private static final Logger log = LoggerFactory.getLogger(ServiceJedisPubSub.class);
 
     private final RegistryManager registryManager;
 
-    public FastcallJedisPubSub(RegistryManager registryManager) {
+    public ServiceJedisPubSub(RegistryManager registryManager) {
         this.registryManager = registryManager;
     }
 
     @Override
     public void onMessage(String channel, String message) {
-        log.debug("JedisPubSub receive message {}", message);
+        log.debug("ServiceJedisPubSub received message, {}", message);
         registryManager.updateCache();
     }
 }

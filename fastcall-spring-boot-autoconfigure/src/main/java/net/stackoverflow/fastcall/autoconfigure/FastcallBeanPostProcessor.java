@@ -3,6 +3,7 @@ package net.stackoverflow.fastcall.autoconfigure;
 import net.stackoverflow.fastcall.ConsumerManager;
 import net.stackoverflow.fastcall.annotation.FastcallReference;
 import net.stackoverflow.fastcall.factory.RpcProxyFactory;
+import net.stackoverflow.fastcall.serialize.SerializeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;
@@ -33,12 +34,13 @@ public class FastcallBeanPostProcessor implements BeanPostProcessor, Application
             clazz = bean.getClass();
         }
         ConsumerManager consumerManager = applicationContext.getBean(ConsumerManager.class);
+        SerializeManager serializeManager = applicationContext.getBean(SerializeManager.class);
         for (Field field : clazz.getDeclaredFields()) {
             FastcallReference reference = field.getAnnotation(FastcallReference.class);
             if (reference != null) {
                 try {
                     field.setAccessible(true);
-                    field.set(bean, RpcProxyFactory.create(field.getType(), reference.group(), reference.version(), reference.timeout(), reference.fallback(), consumerManager));
+                    field.set(bean, RpcProxyFactory.create(field.getType(), reference.group(), reference.version(), reference.timeout(), reference.fallback(), consumerManager, serializeManager));
                 } catch (IllegalAccessException e) {
                     log.error("BeanPostProcessor fail to set field", e);
                 }

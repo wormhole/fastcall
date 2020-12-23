@@ -3,6 +3,7 @@ package net.stackoverflow.fastcall;
 import net.stackoverflow.fastcall.config.FastcallConfig;
 import net.stackoverflow.fastcall.factory.RpcProxyFactory;
 import net.stackoverflow.fastcall.registry.RegistryManager;
+import net.stackoverflow.fastcall.serialize.SerializeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +16,8 @@ public class DefaultFastcallManager implements FastcallManager {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultFastcallManager.class);
 
+    private final SerializeManager serializeManager;
+
     private final RegistryManager registryManager;
 
     private final ProviderManager providerManager;
@@ -23,8 +26,9 @@ public class DefaultFastcallManager implements FastcallManager {
 
     private final FastcallConfig config;
 
-    public DefaultFastcallManager(FastcallConfig config, RegistryManager registryManager, ProviderManager providerManager, ConsumerManager consumerManager) {
+    public DefaultFastcallManager(FastcallConfig config, SerializeManager serializeManager, RegistryManager registryManager, ProviderManager providerManager, ConsumerManager consumerManager) {
         this.config = config;
+        this.serializeManager = serializeManager;
         this.registryManager = registryManager;
         this.providerManager = providerManager;
         this.consumerManager = consumerManager;
@@ -53,7 +57,7 @@ public class DefaultFastcallManager implements FastcallManager {
      */
     @Override
     public <T> T createProxy(Class<T> clazz, String group, String version, Long timeout, Class<?> fallback) {
-        return RpcProxyFactory.create(clazz, group, version, timeout, fallback, consumerManager);
+        return RpcProxyFactory.create(clazz, group, version, timeout, fallback, consumerManager, serializeManager);
     }
 
     /**

@@ -1,7 +1,9 @@
 package net.stackoverflow.fastcall.core;
 
 import net.stackoverflow.fastcall.ConsumerManager;
+import net.stackoverflow.fastcall.DefaultConsumerManager;
 import net.stackoverflow.fastcall.exception.RpcTimeoutException;
+import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.proto.RpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,8 @@ public class RpcInvocationHandler implements InvocationHandler {
 
     private final ConsumerManager consumerManager;
 
+    private final SerializeManager serializeManager;
+
     private final String group;
 
     private final String version;
@@ -28,8 +32,9 @@ public class RpcInvocationHandler implements InvocationHandler {
 
     private final Class<?> fallback;
 
-    public RpcInvocationHandler(ConsumerManager consumerManager, String group, String version, Long timeout, Class<?> fallback) {
+    public RpcInvocationHandler(ConsumerManager consumerManager, SerializeManager serializeManager, String group, String version, Long timeout, Class<?> fallback) {
         this.consumerManager = consumerManager;
+        this.serializeManager = serializeManager;
         this.group = group;
         this.version = version;
         this.timeout = timeout;
@@ -49,12 +54,12 @@ public class RpcInvocationHandler implements InvocationHandler {
                     if (response.getCode() == 0) {
                         byte[] responseBytes = response.getResponseBytes();
                         Class<?> responseType = response.getResponseType();
-                        Object object = consumerManager.getSerializeManager().deserialize(responseBytes, responseType);
+                        Object object = serializeManager.deserialize(responseBytes, responseType);
                         return object;
                     } else {
                         byte[] throwableBytes = response.getThrowableBytes();
                         Class<?> throwableType = response.getThrowableType();
-                        Throwable throwable = (Throwable) consumerManager.getSerializeManager().deserialize(throwableBytes, throwableType);
+                        Throwable throwable = (Throwable) serializeManager.deserialize(throwableBytes, throwableType);
                         throw throwable;
                     }
                 } else {
@@ -79,7 +84,9 @@ public class RpcInvocationHandler implements InvocationHandler {
                     throw throwable;
                 }
             } finally {
-                consumerManager.removeFuture(future.getRequestId());
+                if (future != null) {
+                    consumerManager.removeFuture(future.getRequestId());
+                }
             }
         }
     }

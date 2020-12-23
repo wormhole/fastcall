@@ -18,7 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Redis注册中心管理器
+ * Redis注册中心Manager
  *
  * @author wormhole
  */
@@ -42,6 +42,7 @@ public class RedisRegistryManager extends AbstractRegistryManager {
             this.jedisPool = new JedisPool(new JedisPoolConfig(), host, port, timeout);
         }
         this.updateCache();
+        this.subscribe();
     }
 
     @Override
@@ -57,13 +58,13 @@ public class RedisRegistryManager extends AbstractRegistryManager {
     }
 
     @Override
-    public void subscribe() {
+    public synchronized void subscribe() {
         Jedis jedis = jedisPool.getResource();
-        executorService.execute(() -> jedis.subscribe(new FastcallJedisPubSub(this), CHANNEL));
+        executorService.execute(() -> jedis.subscribe(new ServiceJedisPubSub(this), CHANNEL));
     }
 
     @Override
-    public void updateCache() {
+    public synchronized void updateCache() {
         Map<String, List<ServiceMetaData>> latestCache = new ConcurrentHashMap<>();
         Jedis jedis = jedisPool.getResource();
         Set<String> keys = jedis.keys(ROOT_PREFIX + "*");
@@ -86,5 +87,6 @@ public class RedisRegistryManager extends AbstractRegistryManager {
     public void close() {
         executorService.shutdown();
         jedisPool.close();
+        log.info("RegistryManager closed");
     }
 }

@@ -51,17 +51,11 @@ public class DefaultConsumerManager implements ConsumerManager {
         this.clientPool = new ConcurrentHashMap<>();
         this.responseFutureContext = new ResponseFutureContext();
         this.connectionExecutorService = new ThreadPoolExecutor(0, config.getMaxConnection(), 60, TimeUnit.SECONDS, new SynchronousQueue<>(), new NameThreadFactory("Connection"));
-        this.subscribe();
     }
 
     @Override
     public ConsumerConfig config() {
         return config;
-    }
-
-    @Override
-    public SerializeManager getSerializeManager() {
-        return this.serializeManager;
     }
 
     @Override
@@ -89,14 +83,6 @@ public class DefaultConsumerManager implements ConsumerManager {
     @Override
     public void removeFuture(String requestId) {
         responseFutureContext.removeFuture(requestId);
-    }
-
-    /**
-     * 订阅服务
-     */
-    @Override
-    public void subscribe() {
-        registryManager.subscribe();
     }
 
     /**
