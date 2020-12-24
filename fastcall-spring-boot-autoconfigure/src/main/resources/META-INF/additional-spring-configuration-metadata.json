@@ -6,18 +6,6 @@
       "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties"
     },
     {
-      "name": "fastcall.consumer",
-      "type": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Consumer",
-      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties",
-      "sourceMethod": "getConsumer()"
-    },
-    {
-      "name": "fastcall.provider",
-      "type": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Provider",
-      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties",
-      "sourceMethod": "getProvider()"
-    },
-    {
       "name": "fastcall.registry",
       "type": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Registry",
       "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties",
@@ -34,66 +22,20 @@
       "type": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Zookeeper",
       "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Registry",
       "sourceMethod": "getZookeeper()"
+    },
+    {
+      "name": "fastcall.transport",
+      "type": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Transport",
+      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties",
+      "sourceMethod": "getTransport()"
     }
   ],
   "properties": [
     {
-      "name": "fastcall.consumer.balance",
+      "name": "fastcall.balance",
       "type": "java.lang.String",
-      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Consumer",
+      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties",
       "defaultValue": "random"
-    },
-    {
-      "name": "fastcall.consumer.max-connection",
-      "type": "java.lang.Integer",
-      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Consumer"
-    },
-    {
-      "name": "fastcall.consumer.retry",
-      "type": "java.lang.Integer",
-      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Consumer",
-      "defaultValue": 0
-    },
-    {
-      "name": "fastcall.consumer.timeout",
-      "type": "java.lang.Integer",
-      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Consumer",
-      "defaultValue": 60
-    },
-    {
-      "name": "fastcall.provider.backlog",
-      "type": "java.lang.Integer",
-      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Provider",
-      "defaultValue": 1024
-    },
-    {
-      "name": "fastcall.provider.enabled",
-      "type": "java.lang.Boolean",
-      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Provider",
-      "defaultValue": false
-    },
-    {
-      "name": "fastcall.provider.host",
-      "type": "java.lang.String",
-      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Provider",
-      "defaultValue": "0.0.0.0"
-    },
-    {
-      "name": "fastcall.provider.port",
-      "type": "java.lang.Integer",
-      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Provider",
-      "defaultValue": 9966
-    },
-    {
-      "name": "fastcall.provider.threads",
-      "type": "java.lang.Integer",
-      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Provider"
-    },
-    {
-      "name": "fastcall.provider.timeout",
-      "type": "java.lang.Integer",
-      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Provider",
-      "defaultValue": 60
     },
     {
       "name": "fastcall.registry.redis.host",
@@ -143,10 +85,39 @@
       "defaultValue": 5000
     },
     {
+      "name": "fastcall.retry",
+      "type": "java.lang.Integer",
+      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties",
+      "defaultValue": 0
+    },
+    {
       "name": "fastcall.serialize",
       "type": "java.lang.String",
       "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties",
       "defaultValue": "json"
+    },
+    {
+      "name": "fastcall.threads",
+      "type": "java.lang.Integer",
+      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties"
+    },
+    {
+      "name": "fastcall.transport.host",
+      "type": "java.lang.String",
+      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Transport",
+      "defaultValue": "0.0.0.0"
+    },
+    {
+      "name": "fastcall.transport.port",
+      "type": "java.lang.Integer",
+      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Transport",
+      "defaultValue": 9966
+    },
+    {
+      "name": "fastcall.transport.proto",
+      "type": "java.lang.String",
+      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Transport",
+      "defaultValue": "fastcall"
     }
   ],
   "hints": []

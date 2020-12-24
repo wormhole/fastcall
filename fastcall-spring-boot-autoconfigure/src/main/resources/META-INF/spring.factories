@@ -1,4 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-net.stackoverflow.fastcall.autoconfigure.FastcallConsumerAutoConfiguration,\
-net.stackoverflow.fastcall.autoconfigure.FastcallProviderAutoConfiguration,\
-net.stackoverflow.fastcall.autoconfigure.FastcallLastAutoConfiguration  
+net.stackoverflow.fastcall.autoconfigure.FastcallSubSystemAutoConfiguration,\
+net.stackoverflow.fastcall.autoconfigure.FastcallAutoConfiguration

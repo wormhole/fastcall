@@ -17,8 +17,21 @@ public class BeanContext {
 
     private final Map<String, Set<Object>> beans;
 
-    public BeanContext() {
+    private static BeanContext instance;
+
+    private BeanContext() {
         this.beans = new ConcurrentHashMap<>();
+    }
+
+    public static BeanContext getInstance() {
+        if (instance == null) {
+            synchronized (BeanContext.class) {
+                if (instance == null) {
+                    instance = new BeanContext();
+                }
+            }
+        }
+        return instance;
     }
 
     public void setBean(String name, Object bean) {
@@ -54,5 +67,9 @@ public class BeanContext {
 
     public <T> T getBean(Class<?> clazz, String group, String version) {
         return (T) this.getBean(clazz.getName(), group, version);
+    }
+
+    public Integer size() {
+        return this.beans.size();
     }
 }

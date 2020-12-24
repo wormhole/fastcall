@@ -1,5 +1,8 @@
 package net.stackoverflow.fastcall.transport;
 
+import net.stackoverflow.fastcall.core.ResponseFuture;
+import net.stackoverflow.fastcall.transport.fastcall.proto.RpcRequest;
+
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
@@ -21,10 +24,9 @@ public interface TransportManager {
      * 发送报文给远程地址
      *
      * @param remoteSocketAddress
-     * @param message
-     * @param <T>
+     * @param request
      */
-    <T> void sendTo(InetSocketAddress remoteSocketAddress, T message);
+    ResponseFuture sendTo(InetSocketAddress remoteSocketAddress, RpcRequest request);
 
     /**
      * 关闭所有连接与线程池

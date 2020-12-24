@@ -10,6 +10,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import net.stackoverflow.fastcall.context.BeanContext;
 import net.stackoverflow.fastcall.context.ResponseFutureContext;
+import net.stackoverflow.fastcall.core.ResponseFuture;
 import net.stackoverflow.fastcall.factory.NameThreadFactory;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.TransportManager;
@@ -21,6 +22,9 @@ import net.stackoverflow.fastcall.transport.fastcall.handler.client.ClientRpcHan
 import net.stackoverflow.fastcall.transport.fastcall.handler.server.ServerAuthHandler;
 import net.stackoverflow.fastcall.transport.fastcall.handler.server.ServerHeatBeatHandler;
 import net.stackoverflow.fastcall.transport.fastcall.handler.server.ServerRpcHandler;
+import net.stackoverflow.fastcall.transport.fastcall.proto.Message;
+import net.stackoverflow.fastcall.transport.fastcall.proto.MessageType;
+import net.stackoverflow.fastcall.transport.fastcall.proto.RpcRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,10 +45,6 @@ public class FastcallTransportManager implements TransportManager {
 
     private final SerializeManager serializeManager;
 
-    private final BeanContext beanContext;
-
-    private final ResponseFutureContext responseFutureContext;
-
     private final ExecutorService serverExecutorService;
 
     private final ExecutorService rpcExecutorService;
@@ -55,15 +55,13 @@ public class FastcallTransportManager implements TransportManager {
 
     private Channel sChannel;
 
-    public FastcallTransportManager(SerializeManager serializeManager, BeanContext beanContext, ResponseFutureContext responseFutureContext, int nThreads, int maxConnection) {
+    public FastcallTransportManager(SerializeManager serializeManager, int nThreads) {
         this.serializeManager = serializeManager;
-        this.beanContext = beanContext;
-        this.responseFutureContext = responseFutureContext;
 
         this.channelPool = new ConcurrentHashMap<>();
         this.serverExecutorService = Executors.newSingleThreadExecutor(new NameThreadFactory("Server"));
         this.rpcExecutorService = new ThreadPoolExecutor(0, nThreads, 60, TimeUnit.SECONDS, new SynchronousQueue<>(), new NameThreadFactory("Rpc"));
-        this.connectionExecutorService = new ThreadPoolExecutor(0, maxConnection, 60, TimeUnit.SECONDS, new SynchronousQueue<>(), new NameThreadFactory("Connection"));
+        this.connectionExecutorService = Executors.newCachedThreadPool(new NameThreadFactory("connection"));
     }
 
     @Override
@@ -84,7 +82,7 @@ public class FastcallTransportManager implements TransportManager {
                                 pipeline.addLast(new ReadTimeoutHandler(TIMEOUT));
                                 pipeline.addLast(new ServerAuthHandler());
                                 pipeline.addLast(new ServerHeatBeatHandler());
-                                pipeline.addLast(new ServerRpcHandler(serializeManager, beanContext, rpcExecutorService));
+                                pipeline.addLast(new ServerRpcHandler(serializeManager, rpcExecutorService));
                             }
                         });
                 ChannelFuture channelFuture = bootstrap.bind(localSocketAddress).sync();
@@ -102,15 +100,19 @@ public class FastcallTransportManager implements TransportManager {
     }
 
     @Override
-    public <T> void sendTo(InetSocketAddress remoteSocketAddress, T message) {
+    public ResponseFuture sendTo(InetSocketAddress remoteSocketAddress, RpcRequest request) {
+        ResponseFutureContext context = ResponseFutureContext.getInstance();
+        ResponseFuture future = context.createFuture(request.getId());
         String host = remoteSocketAddress.getAddress().getHostAddress();
         Integer port = remoteSocketAddress.getPort();
         String key = host + ":" + port;
         Channel channel = channelPool.get(key);
         if (channel == null || !channel.isActive()) {
-            channel = initChannel(remoteSocketAddress);
+            channel = connect(remoteSocketAddress);
         }
-        channel.writeAndFlush(message);
+        channel.writeAndFlush(new Message(MessageType.BUSINESS_REQUEST, request));
+        log.trace("[L:{} R:{}] TransportManager send request, responseId:{}", channel.localAddress(), channel.remoteAddress(), request.getId());
+        return future;
     }
 
     @Override
@@ -133,7 +135,7 @@ public class FastcallTransportManager implements TransportManager {
      * @param remoteSocketAddress
      * @return
      */
-    private synchronized Channel initChannel(InetSocketAddress remoteSocketAddress) {
+    private synchronized Channel connect(InetSocketAddress remoteSocketAddress) {
         String host = remoteSocketAddress.getAddress().getHostAddress();
         Integer port = remoteSocketAddress.getPort();
         String key = host + ":" + port;
@@ -157,12 +159,12 @@ public class FastcallTransportManager implements TransportManager {
                                     pipeline.addLast(new ReadTimeoutHandler(TIMEOUT));
                                     pipeline.addLast(new ClientAuthHandler());
                                     pipeline.addLast(new ClientHeatBeatHandler());
-                                    pipeline.addLast(new ClientRpcHandler(responseFutureContext));
+                                    pipeline.addLast(new ClientRpcHandler());
                                 }
                             });
                     ChannelFuture channelFuture = bootstrap.connect(remoteSocketAddress).sync();
-                    log.info("[L:{} R:{}] TransportManager connect success", host, port);
                     Channel chl = channelFuture.channel();
+                    log.info("[L:{} R:{}] TransportManager connect success", chl.localAddress(), chl.remoteAddress());
                     channelPool.put(key, chl);
                     countDownLatch.countDown();
                     chl.closeFuture().sync();

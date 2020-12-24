@@ -28,14 +28,11 @@ public class RpcRequestHandler implements Runnable {
 
     private final Channel channel;
 
-    private final BeanContext beanContext;
-
     private final SerializeManager serializeManager;
 
-    public RpcRequestHandler(RpcRequest request, Channel channel, BeanContext beanContext, SerializeManager serializeManager) {
+    public RpcRequestHandler(RpcRequest request, Channel channel, SerializeManager serializeManager) {
         this.request = request;
         this.channel = channel;
-        this.beanContext = beanContext;
         this.serializeManager = serializeManager;
     }
 
@@ -52,7 +49,8 @@ public class RpcRequestHandler implements Runnable {
         List<Object> params = request.getParams();
         List<Class<?>> paramsType = request.getParamsType();
 
-        Object obj = beanContext.getBean(request.getInterfaceType(), request.getGroup(), request.getVersion());
+        BeanContext context = BeanContext.getInstance();
+        Object obj = context.getBean(request.getInterfaceType(), request.getGroup(), request.getVersion());
         if (obj == null) {
             return new RpcResponse(request.getId(), -1, null, null, BeanNotFoundException.class, serializeManager.serialize(new BeanNotFoundException()));
         }

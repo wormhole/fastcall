@@ -22,13 +22,10 @@ public class ServerRpcHandler extends ChannelInboundHandlerAdapter {
 
     private final SerializeManager serializeManager;
 
-    private final BeanContext beanContext;
-
     private final ExecutorService rpcExecutorService;
 
-    public ServerRpcHandler(SerializeManager serializeManager, BeanContext beanContext, ExecutorService rpcExecutorService) {
+    public ServerRpcHandler(SerializeManager serializeManager, ExecutorService rpcExecutorService) {
         this.serializeManager = serializeManager;
-        this.beanContext = beanContext;
         this.rpcExecutorService = rpcExecutorService;
     }
 
@@ -38,7 +35,7 @@ public class ServerRpcHandler extends ChannelInboundHandlerAdapter {
         Header header = message.getHeader();
         if (header.getType() == MessageType.BUSINESS_REQUEST.value()) {
             RpcRequest request = (RpcRequest) message.getBody();
-            Runnable runnable = new RpcRequestHandler(request, ctx.channel(), beanContext, serializeManager);
+            Runnable runnable = new RpcRequestHandler(request, ctx.channel(), serializeManager);
             rpcExecutorService.execute(runnable);
         }
         super.channelRead(ctx, msg);

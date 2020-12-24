@@ -20,26 +20,6 @@ public class FastcallConfigBuilder {
         return this;
     }
 
-    public FastcallConfigBuilder setSerialize(String serialize) {
-        this.config.setSerialize(serialize);
-        return this;
-    }
-
-    public FastcallConfigBuilder setProviderConfig(ProviderConfig providerConfig) {
-        this.config.setProvider(providerConfig);
-        return this;
-    }
-
-    public FastcallConfigBuilder setConsumerConfig(ConsumerConfig consumerConfig) {
-        this.config.setConsumer(consumerConfig);
-        return this;
-    }
-
-    public FastcallConfigBuilder setRegistry(RegistryConfig registryConfig) {
-        this.config.setRegistry(registryConfig);
-        return this;
-    }
-
     public FastcallConfig build() {
         return this.config;
     }

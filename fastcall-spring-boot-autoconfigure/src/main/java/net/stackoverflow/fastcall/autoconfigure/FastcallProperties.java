@@ -12,47 +12,29 @@ public class FastcallProperties {
 
     private String serialize = "json";
 
-    private Provider provider = new Provider();
+    private String balance = "random";
 
-    private Consumer consumer = new Consumer();
+    private Integer retry = 0;
+
+    private Integer threads = Integer.MAX_VALUE;
 
     private Registry registry = new Registry();
 
-    public static class Provider {
-        private Boolean enabled = false;
+    private Transport transport = new Transport();
 
-        private Integer backlog = 1024;
-
-        private Integer timeout = 60;
+    public static class Transport {
+        private String proto = "fastcall";
 
         private String host = "0.0.0.0";
 
         private Integer port = 9966;
 
-        private Integer threads = Integer.MAX_VALUE;
-
-        public Boolean getEnabled() {
-            return enabled;
+        public String getProto() {
+            return proto;
         }
 
-        public void setEnabled(Boolean enabled) {
-            this.enabled = enabled;
-        }
-
-        public Integer getBacklog() {
-            return backlog;
-        }
-
-        public void setBacklog(Integer backlog) {
-            this.backlog = backlog;
-        }
-
-        public Integer getTimeout() {
-            return timeout;
-        }
-
-        public void setTimeout(Integer timeout) {
-            this.timeout = timeout;
+        public void setProto(String proto) {
+            this.proto = proto;
         }
 
         public String getHost() {
@@ -69,56 +51,6 @@ public class FastcallProperties {
 
         public void setPort(Integer port) {
             this.port = port;
-        }
-
-        public Integer getThreads() {
-            return threads;
-        }
-
-        public void setThreads(Integer threads) {
-            this.threads = threads;
-        }
-    }
-
-    public static class Consumer {
-        private Integer timeout = 60;
-
-        private Integer maxConnection = Integer.MAX_VALUE;
-
-        private Integer retry = 0;
-
-        private String balance = "random";
-
-        public Integer getTimeout() {
-            return timeout;
-        }
-
-        public void setTimeout(Integer timeout) {
-            this.timeout = timeout;
-        }
-
-        public Integer getMaxConnection() {
-            return maxConnection;
-        }
-
-        public void setMaxConnection(Integer maxConnection) {
-            this.maxConnection = maxConnection;
-        }
-
-        public Integer getRetry() {
-            return retry;
-        }
-
-        public void setRetry(Integer retry) {
-            this.retry = retry;
-        }
-
-        public String getBalance() {
-            return balance;
-        }
-
-        public void setBalance(String balance) {
-            this.balance = balance;
         }
     }
 
@@ -236,20 +168,28 @@ public class FastcallProperties {
         this.serialize = serialize;
     }
 
-    public Provider getProvider() {
-        return provider;
+    public String getBalance() {
+        return balance;
     }
 
-    public void setProvider(Provider provider) {
-        this.provider = provider;
+    public void setBalance(String balance) {
+        this.balance = balance;
     }
 
-    public Consumer getConsumer() {
-        return consumer;
+    public Integer getRetry() {
+        return retry;
     }
 
-    public void setConsumer(Consumer consumer) {
-        this.consumer = consumer;
+    public void setRetry(Integer retry) {
+        this.retry = retry;
+    }
+
+    public Integer getThreads() {
+        return threads;
+    }
+
+    public void setThreads(Integer threads) {
+        this.threads = threads;
     }
 
     public Registry getRegistry() {
@@ -258,5 +198,13 @@ public class FastcallProperties {
 
     public void setRegistry(Registry registry) {
         this.registry = registry;
+    }
+
+    public Transport getTransport() {
+        return transport;
+    }
+
+    public void setTransport(Transport transport) {
+        this.transport = transport;
     }
 }

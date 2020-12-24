@@ -1,6 +1,13 @@
 package net.stackoverflow.fastcall;
 
+import net.stackoverflow.fastcall.balance.BalanceManager;
 import net.stackoverflow.fastcall.config.FastcallConfig;
+import net.stackoverflow.fastcall.core.ResponseFuture;
+import net.stackoverflow.fastcall.registry.RegistryManager;
+import net.stackoverflow.fastcall.serialize.SerializeManager;
+import net.stackoverflow.fastcall.transport.TransportManager;
+
+import java.lang.reflect.Method;
 
 /**
  * Fastcall对外统一外观
@@ -38,6 +45,17 @@ public interface FastcallManager {
     void register(Class<?> clazz, Object bean);
 
     /**
+     * RPC调用
+     *
+     * @param method  方法
+     * @param args    参数
+     * @param group   所属分组
+     * @param version 版本号
+     * @return ResponseFuture对象
+     */
+    ResponseFuture call(Method method, Object[] args, String group, String version);
+
+    /**
      * 启动服务
      */
     void start();
@@ -46,4 +64,12 @@ public interface FastcallManager {
      * 停止服务
      */
     void stop();
+
+    SerializeManager serializeManager();
+
+    BalanceManager balanceManager();
+
+    RegistryManager registryManager();
+
+    TransportManager transportManager();
 }

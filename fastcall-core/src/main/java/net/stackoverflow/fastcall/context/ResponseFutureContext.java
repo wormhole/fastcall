@@ -19,7 +19,20 @@ public class ResponseFutureContext {
 
     private final Map<String, ResponseFuture> futurePool;
 
-    public ResponseFutureContext() {
+    private static ResponseFutureContext instance;
+
+    public static ResponseFutureContext getInstance() {
+        if (instance == null) {
+            synchronized (ResponseFutureContext.class) {
+                if (instance == null) {
+                    instance = new ResponseFutureContext();
+                }
+            }
+        }
+        return instance;
+    }
+
+    private ResponseFutureContext() {
         this.futurePool = new ConcurrentHashMap<>();
     }
 

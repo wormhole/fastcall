@@ -1,13 +1,13 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
-import net.stackoverflow.fastcall.ConsumerManager;
-import net.stackoverflow.fastcall.DefaultConsumerManager;
 import net.stackoverflow.fastcall.balance.BalanceManager;
 import net.stackoverflow.fastcall.balance.PollBalanceManager;
 import net.stackoverflow.fastcall.balance.RandomBalanceManager;
 import net.stackoverflow.fastcall.config.FastcallConfig;
 import net.stackoverflow.fastcall.config.FastcallConfigBuilder;
 import net.stackoverflow.fastcall.registry.redis.RedisRegistryManager;
+import net.stackoverflow.fastcall.transport.TransportManager;
+import net.stackoverflow.fastcall.transport.fastcall.FastcallTransportManager;
 import net.stackoverflow.fastcall.util.JsonUtils;
 import net.stackoverflow.fastcall.registry.RegistryManager;
 import net.stackoverflow.fastcall.registry.zookeeper.ZooKeeperRegistryManager;
@@ -27,9 +27,9 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableConfigurationProperties(FastcallProperties.class)
-public class FastcallConsumerAutoConfiguration {
+public class FastcallSubSystemAutoConfiguration {
 
-    private static final Logger log = LoggerFactory.getLogger(FastcallConsumerAutoConfiguration.class);
+    private static final Logger log = LoggerFactory.getLogger(FastcallSubSystemAutoConfiguration.class);
 
     @Autowired
     private FastcallProperties properties;
@@ -100,7 +100,7 @@ public class FastcallConsumerAutoConfiguration {
     @Bean
     public BalanceManager balanceManager() {
         BalanceManager balanceManager = null;
-        switch (properties.getConsumer().getBalance()) {
+        switch (properties.getBalance()) {
             case "random":
                 balanceManager = new RandomBalanceManager();
                 log.info("Instance RandomBalanceManager");
@@ -115,14 +115,22 @@ public class FastcallConsumerAutoConfiguration {
         return balanceManager;
     }
 
+    /**
+     * 传输管理
+     *
+     * @return
+     */
     @Bean
-    public ConsumerManager consumerManager() {
-        FastcallConfig config = fastcallConfig();
-        SerializeManager serializeManager = serializeManager();
-        RegistryManager registryManager = registryManager();
-        BalanceManager balanceManager = balanceManager();
-        ConsumerManager manager = new DefaultConsumerManager(config.getConsumer(), serializeManager, registryManager, balanceManager);
-        log.info("Instance DefaultConsumerManager");
-        return manager;
+    public TransportManager transportManager() {
+        TransportManager transportManager = null;
+        switch (properties.getTransport().getProto()) {
+            case "fastcall":
+                transportManager = new FastcallTransportManager(serializeManager(), properties.getThreads());
+                log.info("Instance FastcallTransportManager");
+                break;
+            default:
+                break;
+        }
+        return transportManager;
     }
 }

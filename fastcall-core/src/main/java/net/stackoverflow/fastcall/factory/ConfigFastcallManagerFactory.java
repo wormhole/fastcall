@@ -4,14 +4,17 @@ import net.stackoverflow.fastcall.*;
 import net.stackoverflow.fastcall.balance.BalanceManager;
 import net.stackoverflow.fastcall.balance.PollBalanceManager;
 import net.stackoverflow.fastcall.balance.RandomBalanceManager;
-import net.stackoverflow.fastcall.config.ConsumerConfig;
 import net.stackoverflow.fastcall.config.FastcallConfig;
-import net.stackoverflow.fastcall.config.ProviderConfig;
 import net.stackoverflow.fastcall.config.RegistryConfig;
+import net.stackoverflow.fastcall.context.BeanContext;
+import net.stackoverflow.fastcall.context.ResponseFutureContext;
+import net.stackoverflow.fastcall.core.ResponseFuture;
 import net.stackoverflow.fastcall.registry.RegistryManager;
 import net.stackoverflow.fastcall.registry.zookeeper.ZooKeeperRegistryManager;
 import net.stackoverflow.fastcall.serialize.JsonSerializeManager;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
+import net.stackoverflow.fastcall.transport.TransportManager;
+import net.stackoverflow.fastcall.transport.fastcall.FastcallTransportManager;
 
 /**
  * ConfigFastcallManager工厂类
@@ -39,13 +42,9 @@ public class ConfigFastcallManagerFactory implements FastcallManagerFactory {
                 if (fastcallManager == null) {
                     SerializeManager serializeManager = this.serializeManager(config.getSerialize());
                     RegistryManager registryManager = this.registryManager(config.getRegistry());
-                    BalanceManager balanceManager = this.balanceManager(config.getConsumer().getBalance());
-                    ConsumerManager consumerManager = this.consumerManager(config.getConsumer(), serializeManager, registryManager, balanceManager);
-                    ProviderManager providerManager = null;
-                    if (config.getProvider().getEnabled()) {
-                        providerManager = this.providerManager(config.getProvider(), serializeManager, registryManager);
-                    }
-                    fastcallManager = new DefaultFastcallManager(config, serializeManager, registryManager, providerManager, consumerManager);
+                    BalanceManager balanceManager = this.balanceManager(config.getBalance());
+                    TransportManager transportManager = this.transportManager(config.getTransport().getProto(), config.getThreads(), serializeManager);
+                    fastcallManager = new DefaultFastcallManager(config, serializeManager, registryManager, balanceManager, transportManager);
                 }
             }
         }
@@ -79,12 +78,12 @@ public class ConfigFastcallManagerFactory implements FastcallManagerFactory {
         }
     }
 
-    private ConsumerManager consumerManager(ConsumerConfig config, SerializeManager serializeManager, RegistryManager registryManager, BalanceManager balanceManager) {
-        return new DefaultConsumerManager(config, serializeManager, registryManager, balanceManager);
-    }
-
-    private ProviderManager providerManager(ProviderConfig config, SerializeManager serializeManager, RegistryManager registryManager) {
-        return new DefaultProviderManager(config, serializeManager, registryManager);
+    private TransportManager transportManager(String proto, Integer threads, SerializeManager serializeManager) {
+        if ("fastcall".equals(proto)) {
+            return new FastcallTransportManager(serializeManager, threads);
+        } else {
+            return null;
+        }
     }
 
 }

@@ -9,11 +9,15 @@ public class FastcallConfig {
 
     private String serialize = "json";
 
-    private ProviderConfig provider = new ProviderConfig();
+    private String balance = "random";
 
-    private ConsumerConfig consumer = new ConsumerConfig();
+    private Integer retry = 0;
+
+    private Integer threads = Integer.MAX_VALUE;
 
     private RegistryConfig registry = new RegistryConfig();
+
+    private TransportConfig transport = new TransportConfig();
 
     public String getSerialize() {
         return serialize;
@@ -23,20 +27,28 @@ public class FastcallConfig {
         this.serialize = serialize;
     }
 
-    public ProviderConfig getProvider() {
-        return provider;
+    public String getBalance() {
+        return balance;
     }
 
-    public void setProvider(ProviderConfig provider) {
-        this.provider = provider;
+    public void setBalance(String balance) {
+        this.balance = balance;
     }
 
-    public ConsumerConfig getConsumer() {
-        return consumer;
+    public Integer getRetry() {
+        return retry;
     }
 
-    public void setConsumer(ConsumerConfig consumer) {
-        this.consumer = consumer;
+    public void setRetry(Integer retry) {
+        this.retry = retry;
+    }
+
+    public Integer getThreads() {
+        return threads;
+    }
+
+    public void setThreads(Integer threads) {
+        this.threads = threads;
     }
 
     public void setRegistry(RegistryConfig registry) {
@@ -45,5 +57,13 @@ public class FastcallConfig {
 
     public RegistryConfig getRegistry() {
         return registry;
+    }
+
+    public TransportConfig getTransport() {
+        return transport;
+    }
+
+    public void setTransport(TransportConfig transport) {
+        this.transport = transport;
     }
 }

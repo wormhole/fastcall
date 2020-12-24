@@ -1,12 +1,12 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
-import net.stackoverflow.fastcall.ConsumerManager;
 import net.stackoverflow.fastcall.DefaultFastcallManager;
 import net.stackoverflow.fastcall.FastcallManager;
-import net.stackoverflow.fastcall.ProviderManager;
+import net.stackoverflow.fastcall.balance.BalanceManager;
 import net.stackoverflow.fastcall.config.FastcallConfig;
 import net.stackoverflow.fastcall.registry.RegistryManager;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
+import net.stackoverflow.fastcall.transport.TransportManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +16,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@AutoConfigureAfter({FastcallConsumerAutoConfiguration.class, FastcallProviderAutoConfiguration.class})
-public class FastcallLastAutoConfiguration {
+@AutoConfigureAfter({FastcallSubSystemAutoConfiguration.class})
+public class FastcallAutoConfiguration {
 
-    private static final Logger log = LoggerFactory.getLogger(FastcallLastAutoConfiguration.class);
+    private static final Logger log = LoggerFactory.getLogger(FastcallAutoConfiguration.class);
 
     @Autowired
     private FastcallConfig fastcallConfig;
@@ -31,15 +31,15 @@ public class FastcallLastAutoConfiguration {
     private RegistryManager registryManager;
 
     @Autowired
-    private ConsumerManager consumerManager;
+    private BalanceManager balanceManager;
 
-    @Autowired(required = false)
-    private ProviderManager providerManager;
+    @Autowired
+    private TransportManager transportManager;
 
     @Bean
     public FastcallManager fastcallManager() {
-        FastcallManager manager = new DefaultFastcallManager(fastcallConfig, serializeManager, registryManager, providerManager, consumerManager);
-        log.info("Instance FastcallManager");
+        FastcallManager manager = new DefaultFastcallManager(fastcallConfig, serializeManager, registryManager, balanceManager, transportManager);
+        log.info("Instance DefaultFastcallManager");
         return manager;
     }
 
