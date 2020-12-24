@@ -1,9 +1,9 @@
-package net.stackoverflow.fastcall.transport.handler.client;
+package net.stackoverflow.fastcall.transport.fastcall.handler.client;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import net.stackoverflow.fastcall.transport.proto.Message;
-import net.stackoverflow.fastcall.transport.proto.MessageType;
+import net.stackoverflow.fastcall.transport.fastcall.proto.Message;
+import net.stackoverflow.fastcall.transport.fastcall.proto.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

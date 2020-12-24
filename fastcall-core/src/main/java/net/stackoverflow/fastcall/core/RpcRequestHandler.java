@@ -4,10 +4,10 @@ import io.netty.channel.Channel;
 import net.stackoverflow.fastcall.context.BeanContext;
 import net.stackoverflow.fastcall.exception.BeanNotFoundException;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
-import net.stackoverflow.fastcall.transport.proto.Message;
-import net.stackoverflow.fastcall.transport.proto.MessageType;
-import net.stackoverflow.fastcall.transport.proto.RpcRequest;
-import net.stackoverflow.fastcall.transport.proto.RpcResponse;
+import net.stackoverflow.fastcall.transport.fastcall.proto.Message;
+import net.stackoverflow.fastcall.transport.fastcall.proto.MessageType;
+import net.stackoverflow.fastcall.transport.fastcall.proto.RpcRequest;
+import net.stackoverflow.fastcall.transport.fastcall.proto.RpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

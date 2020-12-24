@@ -1,4 +1,4 @@
-package net.stackoverflow.fastcall.transport.proto;
+package net.stackoverflow.fastcall.transport.fastcall.proto;
 
 /**
  * 消息类型

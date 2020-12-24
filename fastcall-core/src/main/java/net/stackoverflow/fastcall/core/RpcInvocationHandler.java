@@ -1,10 +1,9 @@
 package net.stackoverflow.fastcall.core;
 
 import net.stackoverflow.fastcall.ConsumerManager;
-import net.stackoverflow.fastcall.DefaultConsumerManager;
 import net.stackoverflow.fastcall.exception.RpcTimeoutException;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
-import net.stackoverflow.fastcall.transport.proto.RpcResponse;
+import net.stackoverflow.fastcall.transport.fastcall.proto.RpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

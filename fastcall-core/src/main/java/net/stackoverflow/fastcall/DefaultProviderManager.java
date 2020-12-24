@@ -7,7 +7,7 @@ import net.stackoverflow.fastcall.factory.NameThreadFactory;
 import net.stackoverflow.fastcall.registry.RegistryManager;
 import net.stackoverflow.fastcall.registry.ServiceMetaData;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
-import net.stackoverflow.fastcall.transport.NettyServer;
+import net.stackoverflow.fastcall.transport.fastcall.NettyServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

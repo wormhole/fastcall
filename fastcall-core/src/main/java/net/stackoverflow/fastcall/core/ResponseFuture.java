@@ -1,6 +1,6 @@
 package net.stackoverflow.fastcall.core;
 
-import net.stackoverflow.fastcall.transport.proto.RpcResponse;
+import net.stackoverflow.fastcall.transport.fastcall.proto.RpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

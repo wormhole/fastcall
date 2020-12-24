@@ -1,11 +1,11 @@
-package net.stackoverflow.fastcall.transport.codec;
+package net.stackoverflow.fastcall.transport.fastcall.codec;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
-import net.stackoverflow.fastcall.transport.proto.Header;
-import net.stackoverflow.fastcall.transport.proto.Message;
+import net.stackoverflow.fastcall.transport.fastcall.proto.Header;
+import net.stackoverflow.fastcall.transport.fastcall.proto.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
