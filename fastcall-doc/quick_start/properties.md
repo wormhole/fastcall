@@ -4,8 +4,8 @@
 |----|----|----|----|----|
 |fastcall.serialize|序列化方式|json|json|-|
 |fastcall.balance|负载均衡策略|random|random/poll|-|
-|fastcall.retry|超时重试次数|0|<Integer.MAX_VALUE|-|
-|fastcall.threads|rpc并发处理线程数|Integer.MAX_VALUE|<Integer.MAX_VALUE|-|
+|fastcall.retry|超时重试次数|0|-|-|
+|fastcall.threads|rpc并发处理线程数|Integer.MAX_VALUE|-|-|
 |fastcall.registry.type|服务注册中心类型|zookeeper|zookeeper/redis|-|
 |fastcall.registry.zookeeper.host|zookeeper地址|127.0.0.1|-|-|
 |fastcall.registry.zookeeper.port|zookeeper端口|2181|-|-|
