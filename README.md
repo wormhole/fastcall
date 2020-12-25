@@ -57,15 +57,23 @@ $ sh build.sh
 
 2. `application.properties`定义配置
 ```
+#序列化方式
+fastcall.serialize=json
+#rpc处理并发线程数
+fastcall.threads=10000
+
+#应用层协议，及服务地址与端口
 fastcall.transport.proto=fastcall
 fastcall.transport.host=0.0.0.0
 fastcall.transport.port=9966
 
+#注册中心类型，及地址与端口
 fastcall.registry.type=zookeeper
 fastcall.registry.zookeeper.host=127.0.0.1
 fastcall.registry.zookeeper.port=2181
 fastcall.registry.zookeeper.session-timeout=5000
 
+#日志
 logging.level.root=INFO
 logging.level.net.stackoverflow.fastcall=DEBUG
 ```
@@ -124,13 +132,23 @@ public class FastcallDemoProviderApplication {
 
 2. `application.properties`定义配置
 ```
+#序列化方式
+fastcall.serialize=json
+#负载均衡策略
+fastcall.balance=poll
+#重试次数
+fastcall.retry=0
+
+#应用层协议
 fastcall.transport.proto=fastcall
 
+#注册中心类型，及地址与端口
 fastcall.registry.type=zookeeper
 fastcall.registry.zookeeper.host=127.0.0.1
 fastcall.registry.zookeeper.port=2181
 fastcall.registry.zookeeper.session-timeout=5000
 
+#日志
 logging.level.root=INFO
 logging.level.net.stackoverflow.fastcall=DEBUG
 ```

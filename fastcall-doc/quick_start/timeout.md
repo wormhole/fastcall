@@ -5,7 +5,7 @@
 选择地址，并不会一直重试同一个地址）
 
 #### 一、在`Springboot`应用中设置超时与重试
-对于`Springboot`应用，在注解`@FastcallReference`上指定`timeout`属性即可，单位为毫秒，并且在配置文件`application.properties`中指定`fastcall.consumer.retry`的值即可设置重试次数，
+对于`Springboot`应用，在注解`@FastcallReference`上指定`timeout`属性即可，单位为毫秒，并且在配置文件`application.properties`中指定`fastcall.retry`的值即可设置重试次数，
 特别的，超时只对`@FastcallReference`注解的服务接口生效，而重试是对该服务消费者所引用的所有的远程调用生效。
 ```
 @RestController
@@ -24,9 +24,11 @@ public class FastcallController {
 
 #### 二、在非`Spring`应用中设置超时与重试
 ```
-//生成配置类，并设置重试次数
+//生成配置类
 FastcallConfig config = new FastcallConfig();
-config.getConsumer().setRetry(1);
+//设置重试次数
+config.setRetry(1);
+
 //生成工厂类对象
 FastcallManagerFactory factory = new ConfigFastcallManagerFactory(config);
 //生成外观类对象

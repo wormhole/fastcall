@@ -36,8 +36,13 @@ public class FastcallController {
 ```
 //利用工厂类生成外观类对象
 FastcallConfig config = new FastcallConfig();
+//如有必要，修改默认配置（序列化方式，负载均衡策略，注册中心类型地址等）
+...
+
+//获取外观对象
 FastcallManagerFactory factory = new ConfigFastcallManagerFactory(config);
 FastcallManager manager = factory.getInstance();
+
 //生成代理对象，指定分组，版本，超时时间，降级类
 SayService proxy = manager.createProxy(SayService.class, "group-1", "0.0.1", 5000, FallbackSayServiceImpl.class);
 ```

@@ -1,6 +1,7 @@
 ### 服务注册
 
-上一章中详细地介绍了框架使用的基础知识和`rpc`调用的基本流程，从这一章开始，我们将介绍如何使用`fastcall`框架来来进行服务注册和服务发现
+上一章中详细地介绍了框架使用的基础知识和`rpc`调用的基本流程，从这一章开始，我们将介绍如何使用`fastcall`框架来来进行服务注册和服务发现，当前框架支持两种类型的注册中心，
+分别是`zookeeper`（默认且推荐）和`redis`。
 
 #### 一、`@FastcallService`注解
 `@FastcallService`是框架提供的一个注解，它注解在服务实现类上，标识这是一个需要暴露的服务，通过查看源码，可以发现他有以下几个属性
@@ -42,8 +43,8 @@ public class SayServiceImpl implements SayService {
 ```
 //实例化配置类（亦可通过FastcallConfigBuilder建造者，一步一步生成配置类）
 FastcallConfig config = new FastcallConfig();
-//修改默认配置（此处启用了服务提供子系统）
-config.getProvider().setEnabled(true);
+//如有必要，修改默认配置（序列化方式，负载均衡策略，注册中心类型地址等）
+...
 
 //生成工厂类，并由工厂类生成DefaultFastcallManager的单例对象
 FastcallManagerFactory factory = new ConfigFastcallManagerFactory(config);

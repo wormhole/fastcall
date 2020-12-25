@@ -14,8 +14,7 @@
 * `SerializeManager`:序列化子系统
 * `RegistryManager`:服务注册子系统
 * `BalanceManager`:负载均衡子系统
-* `ProviderManager`:服务提供子系统
-* `ConsumerManager`:服务消费子系统
+* `TransportManager`:传输层子系统
 
 #### 三、在`非Spring`应用中使用
 该框架在设计模式上采用了`Facade`外观模式，`FastcallManager`的默认实现类`DefaultFastcallManager`是系统的外观，封装了所有子系统的功能，对外提供统一的接口。
@@ -34,8 +33,8 @@
 ```
 //实例化配置类（亦可通过FastcallConfigBuilder建造者，一步一步生成配置类）
 FastcallConfig config = new FastcallConfig();
-//修改默认配置（此处启用了服务提供子系统）
-config.getProvider().setEnabled(true);
+//如有必要，修改默认配置（序列化方式，负载均衡策略，注册中心类型地址等）
+...
 
 //生成工厂类，并由工厂类生成DefaultFastcallManager的单例对象
 FastcallManagerFactory factory = new ConfigFastcallManagerFactory(config);
@@ -57,13 +56,27 @@ FastcallManager manager = factory.getInstance();
 </dependency>
 ```
 
-##### 2. 必要的配置
+##### 2. 配置（大多可以采用默认配置）
 ```
-#启用服务提供子系统（只使用服务消费功能可以不加）
-fastcall.provider.enabled=true
-#配置服务注册中心的地址
+#序列化方式
+fastcall.serialize=json
+#rpc处理并发线程数
+fastcall.threads=10000
+#负载均衡策略
+fastcall.balance=poll
+#重试次数
+fastcall.retry=0
+
+#应用层协议，及服务地址与端口
+fastcall.transport.proto=fastcall
+fastcall.transport.host=0.0.0.0
+fastcall.transport.port=9966
+
+#注册中心类型，及地址与端口
+fastcall.registry.type=zookeeper
 fastcall.registry.zookeeper.host=127.0.0.1
 fastcall.registry.zookeeper.port=2181
+fastcall.registry.zookeeper.session-timeout=5000
 ```
 
 ##### 3. 在启动类上添加注解（只使用服务消费功能可以不加此注解，此注解的功能类似于`@ComponentScan`，`basePackages`属性标识了注解扫描的包路径）
