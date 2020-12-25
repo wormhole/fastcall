@@ -55,23 +55,17 @@ $ sh build.sh
 </dependencies>
 ```
 
-2. `application.properties`定义配置，对于服务提供者，`fastcall.provider.enabled`必须指定为`true`
+2. `application.properties`定义配置
 ```
-#序列化方式
-fastcall.serialize=json
-#注册中心配置
+fastcall.transport.proto=fastcall
+fastcall.transport.host=0.0.0.0
+fastcall.transport.port=9966
+
 fastcall.registry.type=zookeeper
 fastcall.registry.zookeeper.host=127.0.0.1
 fastcall.registry.zookeeper.port=2181
 fastcall.registry.zookeeper.session-timeout=5000
-#Provider服务配置
-fastcall.provider.enabled=true
-fastcall.provider.backlog=1024
-fastcall.provider.host=0.0.0.0
-fastcall.provider.port=9966
-fastcall.provider.timeout=60
-fastcall.provider.threads=1024
-#日志配置
+
 logging.level.root=INFO
 logging.level.net.stackoverflow.fastcall=DEBUG
 ```
@@ -130,19 +124,13 @@ public class FastcallDemoProviderApplication {
 
 2. `application.properties`定义配置
 ```
-#序列化方式
-fastcall.serialize=json
-#服务注册中心配置
+fastcall.transport.proto=fastcall
+
 fastcall.registry.type=zookeeper
 fastcall.registry.zookeeper.host=127.0.0.1
 fastcall.registry.zookeeper.port=2181
 fastcall.registry.zookeeper.session-timeout=5000
-#Consumer配置
-fastcall.consumer.timeout=60
-fastcall.consumer.max-connection=1024
-fastcall.consumer.retry=0
-fastcall.consumer.balance=random
-#日志配置
+
 logging.level.root=INFO
 logging.level.net.stackoverflow.fastcall=DEBUG
 ```
