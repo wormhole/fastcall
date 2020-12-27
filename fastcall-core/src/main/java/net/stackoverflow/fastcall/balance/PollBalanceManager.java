@@ -1,7 +1,7 @@
 package net.stackoverflow.fastcall.balance;
 
 
-import net.stackoverflow.fastcall.registry.ServiceMetaData;
+import net.stackoverflow.fastcall.registry.ServiceDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +23,7 @@ public class PollBalanceManager implements BalanceManager {
 
     private final static Logger log = LoggerFactory.getLogger(PollBalanceManager.class);
 
-    private final Map<String, ServiceMetaData> history;
+    private final Map<String, ServiceDefinition> history;
 
     private final ReentrantLock lock;
 
@@ -33,32 +33,32 @@ public class PollBalanceManager implements BalanceManager {
     }
 
     @Override
-    public InetSocketAddress choose(List<ServiceMetaData> serviceMetaDataList) {
-        ServiceMetaData meta = serviceMetaDataList.get(0);
-        if (serviceMetaDataList.size() == 1) {
-            return new InetSocketAddress(meta.getHost(), meta.getPort());
+    public InetSocketAddress choose(List<ServiceDefinition> definitions) {
+        ServiceDefinition definition = definitions.get(0);
+        if (definitions.size() == 1) {
+            return new InetSocketAddress(definition.getHost(), definition.getPort());
         }
         try {
-            String key = getKey(meta.getInterfaceName(), meta.getGroup(), meta.getVersion());
+            String key = getKey(definition.getInterfaceName(), definition.getGroup(), definition.getVersion());
             lock.lock();
-            ServiceMetaData last = history.get(key);
+            ServiceDefinition last = history.get(key);
             if (last != null) {
-                int index = serviceMetaDataList.indexOf(last);
+                int index = definitions.indexOf(last);
                 if (index != -1) {
-                    int next = (index + 1) % serviceMetaDataList.size();
-                    meta = serviceMetaDataList.get(next);
-                    history.put(key, meta);
+                    int next = (index + 1) % definitions.size();
+                    definition = definitions.get(next);
+                    history.put(key, definition);
                 }
             } else {
-                history.put(key, meta);
+                history.put(key, definition);
             }
         } catch (Exception e) {
             log.error("BalanceManager fail to choose", e);
         } finally {
-            log.trace("BalanceManager choose remote {}", meta.getHost() + ":" + meta.getPort());
+            log.trace("BalanceManager choose remote {}", definition.getHost() + ":" + definition.getPort());
             lock.unlock();
         }
-        return new InetSocketAddress(meta.getHost(), meta.getPort());
+        return new InetSocketAddress(definition.getHost(), definition.getPort());
     }
 
     private String getKey(String interfaceName, String group, String version) throws NoSuchAlgorithmException, UnsupportedEncodingException {
