@@ -4,7 +4,6 @@ import net.stackoverflow.fastcall.core.ResponseFuture;
 import net.stackoverflow.fastcall.transport.fastcall.proto.RpcRequest;
 
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 
 /**
  * 传输层Manager接口
