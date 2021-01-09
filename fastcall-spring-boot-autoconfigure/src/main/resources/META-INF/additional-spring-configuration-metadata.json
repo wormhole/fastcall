@@ -67,6 +67,12 @@
       "defaultValue": "zookeeper"
     },
     {
+      "name": "fastcall.registry.zookeeper.address",
+      "type": "java.lang.String",
+      "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Zookeeper",
+      "defaultValue": "127.0.0.1:2181"
+    },
+    {
       "name": "fastcall.registry.zookeeper.host",
       "type": "java.lang.String",
       "sourceType": "net.stackoverflow.fastcall.autoconfigure.FastcallProperties$Zookeeper",

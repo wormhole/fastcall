@@ -59,7 +59,7 @@ public class ConfigFastcallManagerFactory implements FastcallManagerFactory {
     private RegistryManager registryManager(RegistryConfig config) {
         if ("zookeeper".equals(config.getType())) {
             RegistryConfig.ZooKeeperConfig zk = config.getZookeeper();
-            return new ZooKeeperRegistryManager(zk.getHost(), zk.getPort(), zk.getSessionTimeout());
+            return new ZooKeeperRegistryManager(zk.getAddress(), zk.getSessionTimeout());
         } else {
             return null;
         }

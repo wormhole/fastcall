@@ -28,17 +28,14 @@ public class ZooKeeperRegistryManager extends AbstractRegistryManager {
 
     private ZooKeeper zookeeper;
 
-    private final String host;
-
-    private final Integer port;
+    private final String address;
 
     private final Integer sessionTimeout;
 
     private Watcher serviceWatcher;
 
-    public ZooKeeperRegistryManager(String host, Integer port, Integer sessionTimeout) {
-        this.host = host;
-        this.port = port;
+    public ZooKeeperRegistryManager(String address, Integer sessionTimeout) {
+        this.address = address;
         this.sessionTimeout = sessionTimeout;
         this.serviceWatcher = new ServiceWatcher(this);
         this.connect();
@@ -50,10 +47,9 @@ public class ZooKeeperRegistryManager extends AbstractRegistryManager {
      * 连接zookeeper集群
      */
     private void connect() {
-        String connection = host + ":" + port;
         CountDownLatch countDownLatch = new CountDownLatch(1);
         try {
-            ZooKeeper zooKeeper = new ZooKeeper(connection, sessionTimeout, new InitWatcher(countDownLatch));
+            ZooKeeper zooKeeper = new ZooKeeper(address, sessionTimeout, new InitWatcher(countDownLatch));
             countDownLatch.await();
             this.zookeeper = zooKeeper;
         } catch (Exception e) {

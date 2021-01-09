@@ -78,7 +78,7 @@ public class FastcallSubSystemAutoConfiguration {
         switch (properties.getRegistry().getType()) {
             case "zookeeper":
                 FastcallProperties.Zookeeper zk = properties.getRegistry().getZookeeper();
-                manager = new ZooKeeperRegistryManager(zk.getHost(), zk.getPort(), zk.getSessionTimeout());
+                manager = new ZooKeeperRegistryManager(zk.getAddress(), zk.getSessionTimeout());
                 log.info("Instance ZooKeeperRegistryManager");
                 break;
             case "redis":
