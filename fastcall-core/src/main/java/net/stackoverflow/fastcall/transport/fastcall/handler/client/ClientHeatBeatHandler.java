@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ClientHeatBeatHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Logger log = LoggerFactory.getLogger(ClientAuthHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(ClientHeatBeatHandler.class);
 
     private volatile ScheduledFuture<?> heartBeatFuture;
 
