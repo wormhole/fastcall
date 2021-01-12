@@ -1,7 +1,7 @@
 package net.stackoverflow.fastcall.registry.zookeeper;
 
 import net.stackoverflow.fastcall.registry.AbstractRegistryManager;
-import net.stackoverflow.fastcall.registry.ServiceMetaData;
+import net.stackoverflow.fastcall.registry.ServiceDefinition;
 import net.stackoverflow.fastcall.util.JsonUtils;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
@@ -28,17 +28,14 @@ public class ZooKeeperRegistryManager extends AbstractRegistryManager {
 
     private ZooKeeper zookeeper;
 
-    private final String host;
-
-    private final Integer port;
+    private final String address;
 
     private final Integer sessionTimeout;
 
     private Watcher serviceWatcher;
 
-    public ZooKeeperRegistryManager(String host, Integer port, Integer sessionTimeout) {
-        this.host = host;
-        this.port = port;
+    public ZooKeeperRegistryManager(String address, Integer sessionTimeout) {
+        this.address = address;
         this.sessionTimeout = sessionTimeout;
         this.serviceWatcher = new ServiceWatcher(this);
         this.connect();
@@ -50,10 +47,9 @@ public class ZooKeeperRegistryManager extends AbstractRegistryManager {
      * 连接zookeeper集群
      */
     private void connect() {
-        String connection = host + ":" + port;
         CountDownLatch countDownLatch = new CountDownLatch(1);
         try {
-            ZooKeeper zooKeeper = new ZooKeeper(connection, sessionTimeout, new InitWatcher(countDownLatch));
+            ZooKeeper zooKeeper = new ZooKeeper(address, sessionTimeout, new InitWatcher(countDownLatch));
             countDownLatch.await();
             this.zookeeper = zooKeeper;
         } catch (Exception e) {
@@ -65,18 +61,18 @@ public class ZooKeeperRegistryManager extends AbstractRegistryManager {
     /**
      * 注册服务
      *
-     * @param meta 服务元数据
+     * @param definition 服务定义
      */
     @Override
-    public void register(ServiceMetaData meta) {
-        String path = ROOT_PATH + "/" + meta.getInterfaceName();
+    public void register(ServiceDefinition definition) {
+        String path = ROOT_PATH + "/" + definition.getInterfaceName();
         this.checkPathAndCreate(path);
         try {
-            String json = JsonUtils.bean2json(meta);
+            String json = JsonUtils.bean2json(definition);
             zookeeper.create(path + "/service_", json.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
-            log.info("RegistryManager register service: {}", meta);
+            log.info("RegistryManager register service: {}", definition);
         } catch (InterruptedException | KeeperException e) {
-            log.error("RegistryManager fail to register service: {}", meta, e);
+            log.error("RegistryManager fail to register service: {}", definition, e);
         }
     }
 
@@ -102,22 +98,22 @@ public class ZooKeeperRegistryManager extends AbstractRegistryManager {
     @Override
     public synchronized void updateCache() {
         try {
-            Map<String, List<ServiceMetaData>> latestCache = new ConcurrentHashMap<>();
+            Map<String, List<ServiceDefinition>> latestCache = new ConcurrentHashMap<>();
             List<String> itfChildPaths = zookeeper.getChildren(ROOT_PATH, false);
             for (String itfChildPath : itfChildPaths) {
                 String itfPath = ROOT_PATH + "/" + itfChildPath;
                 List<String> serviceChildPaths = zookeeper.getChildren(itfPath, false);
                 Collections.sort(serviceChildPaths);
 
-                List<ServiceMetaData> metaDataList = new ArrayList<>();
-                latestCache.put(itfChildPath, metaDataList);
+                List<ServiceDefinition> definitions = new ArrayList<>();
+                latestCache.put(itfChildPath, definitions);
                 for (String serviceChildPath : serviceChildPaths) {
                     String servicePath = itfPath + "/" + serviceChildPath;
 
                     byte[] bytes = zookeeper.getData(servicePath, false, new Stat());
                     String json = new String(bytes);
-                    ServiceMetaData meta = JsonUtils.json2bean(json, ServiceMetaData.class);
-                    metaDataList.add(meta);
+                    ServiceDefinition definition = JsonUtils.json2bean(json, ServiceDefinition.class);
+                    definitions.add(definition);
                 }
             }
             cache.setCache(latestCache);

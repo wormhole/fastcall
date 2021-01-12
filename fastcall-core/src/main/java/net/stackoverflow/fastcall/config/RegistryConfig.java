@@ -41,26 +41,16 @@ public class RegistryConfig {
      * zookeeper配置
      */
     public static class ZooKeeperConfig {
-        private String host = "127.0.0.1";
-
-        private Integer port = 2181;
+        private String address = "127.0.0.1:2181";
 
         private Integer sessionTimeout = 5000;
 
-        public String getHost() {
-            return host;
+        public String getAddress() {
+            return address;
         }
 
-        public void setHost(String host) {
-            this.host = host;
-        }
-
-        public Integer getPort() {
-            return port;
-        }
-
-        public void setPort(Integer port) {
-            this.port = port;
+        public void setAddress(String address) {
+            this.address = address;
         }
 
         public Integer getSessionTimeout() {

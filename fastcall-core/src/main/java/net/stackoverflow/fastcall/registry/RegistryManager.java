@@ -14,9 +14,9 @@ public interface RegistryManager {
     /**
      * 注册服务元数据
      *
-     * @param meta 服务元数据
+     * @param definition 服务定义
      */
-    void register(ServiceMetaData meta);
+    void register(ServiceDefinition definition);
 
     /**
      * 获取服务
@@ -26,7 +26,7 @@ public interface RegistryManager {
      * @param version 版本号
      * @return
      */
-    List<ServiceMetaData> getService(Class<?> clazz, String group, String version) throws ServiceNotFoundException;
+    List<ServiceDefinition> getService(Class<?> clazz, String group, String version) throws ServiceNotFoundException;
 
     /**
      * 订阅服务

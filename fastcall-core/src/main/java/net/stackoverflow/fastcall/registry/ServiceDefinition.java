@@ -5,7 +5,7 @@ package net.stackoverflow.fastcall.registry;
  *
  * @author wormhole
  */
-public class ServiceMetaData {
+public class ServiceDefinition {
 
     private String group;
 
@@ -17,7 +17,7 @@ public class ServiceMetaData {
 
     private Integer port;
 
-    public ServiceMetaData() {
+    public ServiceDefinition() {
 
     }
 
@@ -30,7 +30,7 @@ public class ServiceMetaData {
      * @param host          服务ip
      * @param port          服务端口
      */
-    public ServiceMetaData(String group, String version, String interfaceName, String host, Integer port) {
+    public ServiceDefinition(String group, String version, String interfaceName, String host, Integer port) {
         this.group = group;
         this.version = version;
         this.interfaceName = interfaceName;
@@ -80,7 +80,7 @@ public class ServiceMetaData {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("ServiceMetaData{");
+        final StringBuffer sb = new StringBuffer("ServiceDefinition{");
         sb.append("group='").append(group).append('\'');
         sb.append(", version='").append(version).append('\'');
         sb.append(", interfaceName='").append(interfaceName).append('\'');
@@ -92,7 +92,7 @@ public class ServiceMetaData {
 
     @Override
     public boolean equals(Object obj) {
-        ServiceMetaData other = (ServiceMetaData) obj;
+        ServiceDefinition other = (ServiceDefinition) obj;
         return group.equals(other.group) && version.equals(other.version) && interfaceName.equals(other.interfaceName) && host.equals(other.host) && port.equals(other.port);
     }
 }

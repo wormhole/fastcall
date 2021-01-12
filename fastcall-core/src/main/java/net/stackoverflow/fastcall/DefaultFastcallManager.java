@@ -4,12 +4,11 @@ import net.stackoverflow.fastcall.annotation.FastcallService;
 import net.stackoverflow.fastcall.balance.BalanceManager;
 import net.stackoverflow.fastcall.config.FastcallConfig;
 import net.stackoverflow.fastcall.config.TransportConfig;
-import net.stackoverflow.fastcall.context.BeanContext;
-import net.stackoverflow.fastcall.context.ResponseFutureContext;
+import net.stackoverflow.fastcall.core.BeanContext;
 import net.stackoverflow.fastcall.core.ResponseFuture;
 import net.stackoverflow.fastcall.factory.RpcProxyFactory;
 import net.stackoverflow.fastcall.registry.RegistryManager;
-import net.stackoverflow.fastcall.registry.ServiceMetaData;
+import net.stackoverflow.fastcall.registry.ServiceDefinition;
 import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.TransportManager;
 import net.stackoverflow.fastcall.transport.fastcall.proto.RpcRequest;
@@ -70,7 +69,7 @@ public class DefaultFastcallManager implements FastcallManager {
             String group = fastcallService.group();
             String version = fastcallService.version();
             TransportConfig transportConfig = config.getTransport();
-            registryManager.register(new ServiceMetaData(group, version, clazz.getName(), IpUtils.getIp(transportConfig.getHost()), transportConfig.getPort()));
+            registryManager.register(new ServiceDefinition(group, version, clazz.getName(), IpUtils.getIp(transportConfig.getHost()), transportConfig.getPort()));
         }
     }
 
@@ -85,8 +84,8 @@ public class DefaultFastcallManager implements FastcallManager {
         request.setParams(args == null ? null : Arrays.asList(args));
         request.setParamsType(Arrays.asList(method.getParameterTypes()));
 
-        List<ServiceMetaData> serviceMetaDataList = registryManager.getService(request.getInterfaceType(), group, version);
-        InetSocketAddress address = balanceManager.choose(serviceMetaDataList);
+        List<ServiceDefinition> definitions = registryManager.getService(request.getInterfaceType(), group, version);
+        InetSocketAddress address = balanceManager.choose(definitions);
         return transportManager.sendTo(address, request);
     }
 

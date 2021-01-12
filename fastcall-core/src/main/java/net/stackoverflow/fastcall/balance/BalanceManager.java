@@ -1,10 +1,9 @@
 package net.stackoverflow.fastcall.balance;
 
-import net.stackoverflow.fastcall.registry.ServiceMetaData;
+import net.stackoverflow.fastcall.registry.ServiceDefinition;
 
 import java.net.InetSocketAddress;
 import java.util.List;
-import java.util.Set;
 
 /**
  * 负载均衡接口
@@ -13,5 +12,5 @@ import java.util.Set;
  */
 public interface BalanceManager {
 
-    InetSocketAddress choose(List<ServiceMetaData> serviceMetaDataList);
+    InetSocketAddress choose(List<ServiceDefinition> definitions);
 }

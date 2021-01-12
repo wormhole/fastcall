@@ -1,6 +1,6 @@
 package net.stackoverflow.fastcall.balance;
 
-import net.stackoverflow.fastcall.registry.ServiceMetaData;
+import net.stackoverflow.fastcall.registry.ServiceDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,15 +18,15 @@ public class RandomBalanceManager implements BalanceManager {
     private static final Logger log = LoggerFactory.getLogger(RandomBalanceManager.class);
 
     @Override
-    public InetSocketAddress choose(List<ServiceMetaData> serviceMetaDataList) {
-        ServiceMetaData meta = serviceMetaDataList.get(0);
-        if (serviceMetaDataList.size() == 1) {
-            return new InetSocketAddress(meta.getHost(), meta.getPort());
+    public InetSocketAddress choose(List<ServiceDefinition> definitions) {
+        ServiceDefinition definition = definitions.get(0);
+        if (definitions.size() == 1) {
+            return new InetSocketAddress(definition.getHost(), definition.getPort());
         }
         Random random = new Random(System.currentTimeMillis());
-        int index = random.nextInt(serviceMetaDataList.size());
-        meta = serviceMetaDataList.get(index);
-        log.trace("BalanceManager choose remote {}", meta.getHost() + ":" + meta.getPort());
-        return new InetSocketAddress(meta.getHost(), meta.getPort());
+        int index = random.nextInt(definitions.size());
+        definition = definitions.get(index);
+        log.trace("BalanceManager choose remote {}", definition.getHost() + ":" + definition.getPort());
+        return new InetSocketAddress(definition.getHost(), definition.getPort());
     }
 }

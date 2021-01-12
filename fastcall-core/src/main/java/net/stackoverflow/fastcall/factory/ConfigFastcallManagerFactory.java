@@ -6,9 +6,6 @@ import net.stackoverflow.fastcall.balance.PollBalanceManager;
 import net.stackoverflow.fastcall.balance.RandomBalanceManager;
 import net.stackoverflow.fastcall.config.FastcallConfig;
 import net.stackoverflow.fastcall.config.RegistryConfig;
-import net.stackoverflow.fastcall.context.BeanContext;
-import net.stackoverflow.fastcall.context.ResponseFutureContext;
-import net.stackoverflow.fastcall.core.ResponseFuture;
 import net.stackoverflow.fastcall.registry.RegistryManager;
 import net.stackoverflow.fastcall.registry.zookeeper.ZooKeeperRegistryManager;
 import net.stackoverflow.fastcall.serialize.JsonSerializeManager;
@@ -62,7 +59,7 @@ public class ConfigFastcallManagerFactory implements FastcallManagerFactory {
     private RegistryManager registryManager(RegistryConfig config) {
         if ("zookeeper".equals(config.getType())) {
             RegistryConfig.ZooKeeperConfig zk = config.getZookeeper();
-            return new ZooKeeperRegistryManager(zk.getHost(), zk.getPort(), zk.getSessionTimeout());
+            return new ZooKeeperRegistryManager(zk.getAddress(), zk.getSessionTimeout());
         } else {
             return null;
         }

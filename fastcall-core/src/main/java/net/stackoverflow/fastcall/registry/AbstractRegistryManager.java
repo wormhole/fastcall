@@ -26,10 +26,10 @@ public abstract class AbstractRegistryManager implements RegistryManager {
      * @return
      */
     @Override
-    public List<ServiceMetaData> getService(Class<?> clazz, String group, String version) {
-        List<ServiceMetaData> metas = cache.get(clazz.getName(), group, version);
-        if (metas != null && metas.size() > 0) {
-            return metas;
+    public List<ServiceDefinition> getService(Class<?> clazz, String group, String version) {
+        List<ServiceDefinition> definitions = cache.get(clazz.getName(), group, version);
+        if (definitions != null && definitions.size() > 0) {
+            return definitions;
         } else {
             throw new ServiceNotFoundException(clazz.getName(), group, String.format("Service not found, interfaceName:%s, group:%s, version:%s", clazz.getName(), group, version));
         }
