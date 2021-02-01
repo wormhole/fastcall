@@ -122,7 +122,6 @@ public class FastcallTransportManager implements TransportManager {
         if (sChannel != null) {
             sChannel.close();
         }
-        rpcExecutorService.shutdown();
     }
 
     /**
