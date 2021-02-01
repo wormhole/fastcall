@@ -37,21 +37,21 @@ public enum MessageType {
      */
     BUSINESS_RESPONSE((byte) 5);
 
-    private byte type;
+    private final byte value;
 
-    MessageType(byte type) {
-        this.type = type;
+    MessageType(byte value) {
+        this.value = value;
     }
 
     public byte value() {
-        return type;
+        return value;
     }
 
-    public static MessageType valueOf(byte type) {
+    public static MessageType valueOf(byte value) {
         MessageType messageType = null;
-        for (MessageType value : values()) {
-            if (value.value() == type) {
-                messageType = value;
+        for (MessageType type : values()) {
+            if (type.value == value) {
+                messageType = type;
             }
         }
         return messageType;
@@ -60,7 +60,7 @@ public enum MessageType {
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("MessageType{");
-        sb.append("type=").append(type);
+        sb.append("value=").append(value);
         sb.append(", name=").append(name());
         sb.append('}');
         return sb.toString();
