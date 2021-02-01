@@ -22,7 +22,7 @@ public class ServerHeatBeatHandler extends ChannelInboundHandlerAdapter {
         Message message = (Message) msg;
         Header header = message.getHeader();
         if (header.getType() == MessageType.HEARTBEAT_PING.value()) {
-            ctx.writeAndFlush(new Message(MessageType.HEARTBEAT_PONG));
+            ctx.writeAndFlush(Message.from(MessageType.HEARTBEAT_PONG));
         }
         super.channelRead(ctx, msg);
     }

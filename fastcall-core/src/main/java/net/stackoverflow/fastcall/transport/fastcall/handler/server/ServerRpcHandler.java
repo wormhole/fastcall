@@ -45,7 +45,7 @@ public class ServerRpcHandler extends ChannelInboundHandlerAdapter {
         super.channelRead(ctx, msg);
     }
 
-    private static class RpcRequestHandler implements Runnable{
+    private static class RpcRequestHandler implements Runnable {
         private static final Logger log = LoggerFactory.getLogger(RpcRequestHandler.class);
 
         private final RpcRequest request;
@@ -64,7 +64,7 @@ public class ServerRpcHandler extends ChannelInboundHandlerAdapter {
         public void run() {
             RpcResponse response = handlerRequest(request);
             log.trace("[L:{} R:{}] RpcRequestHandler set response, responseId:{}, responseCode:{}", channel.localAddress(), channel.remoteAddress(), response.getId(), response.getCode());
-            channel.writeAndFlush(new Message(MessageType.BUSINESS_RESPONSE, response));
+            channel.writeAndFlush(Message.from(MessageType.BUSINESS_RESPONSE).body(response));
         }
 
         private RpcResponse handlerRequest(RpcRequest request) {

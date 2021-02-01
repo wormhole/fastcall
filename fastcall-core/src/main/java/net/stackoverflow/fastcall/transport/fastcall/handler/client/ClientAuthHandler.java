@@ -19,8 +19,7 @@ public class ClientAuthHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        Message request = new Message(MessageType.AUTH_REQUEST);
-        ctx.writeAndFlush(request);
+        ctx.writeAndFlush(Message.from(MessageType.AUTH_REQUEST));
     }
 
     @Override

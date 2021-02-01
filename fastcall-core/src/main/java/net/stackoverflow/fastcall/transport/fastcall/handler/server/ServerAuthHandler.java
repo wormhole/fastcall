@@ -43,17 +43,17 @@ public class ServerAuthHandler extends ChannelInboundHandlerAdapter {
         if (header.getType() == MessageType.AUTH_REQUEST.value()) {
             Message response = null;
             if (nodeCheck.containsKey(nodeIndex)) {
-                response = new Message(MessageType.AUTH_RESPONSE, (byte) -1);
+                response = Message.from(MessageType.AUTH_RESPONSE).body((byte) -1);
                 log.error("[L:{} R:{}] Server auth fail", ctx.channel().localAddress(), ctx.channel().remoteAddress());
             } else {
-                response = new Message(MessageType.AUTH_RESPONSE, (byte) 0);
+                response = Message.from(MessageType.AUTH_RESPONSE).body((byte) 0);
                 nodeCheck.put(nodeIndex, true);
                 log.debug("[L:{} R:{}] Server auth success", ctx.channel().localAddress(), ctx.channel().remoteAddress());
             }
             ctx.writeAndFlush(response);
         } else {
             if (!nodeCheck.containsKey(nodeIndex)) {
-                ctx.writeAndFlush(new Message(MessageType.AUTH_RESPONSE, (byte) -1));
+                ctx.writeAndFlush(Message.from(MessageType.AUTH_RESPONSE).body((byte) -1));
                 log.error("[L:{} R:{}] Server receive message before auth", ctx.channel().localAddress(), ctx.channel().remoteAddress());
             }
         }

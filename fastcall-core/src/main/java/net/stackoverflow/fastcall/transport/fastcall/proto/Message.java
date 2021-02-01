@@ -32,6 +32,15 @@ public class Message {
         this.body = body;
     }
 
+    public static Message from(MessageType type) {
+        return new Message(type);
+    }
+
+    public Message body(Object body) {
+        this.body = body;
+        return this;
+    }
+
     public Header getHeader() {
         return header;
     }

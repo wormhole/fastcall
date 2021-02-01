@@ -35,8 +35,7 @@ public class ClientHeatBeatHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (heartBeatFuture == null) {
             heartBeatFuture = ctx.executor().scheduleAtFixedRate(() -> {
-                Message ping = new Message(MessageType.HEARTBEAT_PING);
-                ctx.writeAndFlush(ping);
+                ctx.writeAndFlush(Message.from(MessageType.HEARTBEAT_PING));
             }, 0, 5000, TimeUnit.MILLISECONDS);
         }
         super.channelRead(ctx, msg);

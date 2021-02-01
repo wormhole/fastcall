@@ -109,7 +109,7 @@ public class FastcallTransportManager implements TransportManager {
         if (channel == null || !channel.isActive()) {
             channel = connect(remoteSocketAddress);
         }
-        channel.writeAndFlush(new Message(MessageType.BUSINESS_REQUEST, request));
+        channel.writeAndFlush(Message.from(MessageType.BUSINESS_REQUEST).body(request));
         log.trace("[L:{} R:{}] TransportManager send request, responseId:{}", channel.localAddress(), channel.remoteAddress(), request.getId());
         return future;
     }
