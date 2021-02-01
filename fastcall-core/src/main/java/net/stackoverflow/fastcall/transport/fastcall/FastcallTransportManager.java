@@ -15,10 +15,8 @@ import net.stackoverflow.fastcall.serialize.SerializeManager;
 import net.stackoverflow.fastcall.transport.TransportManager;
 import net.stackoverflow.fastcall.transport.fastcall.codec.MessageDecoder;
 import net.stackoverflow.fastcall.transport.fastcall.codec.MessageEncoder;
-import net.stackoverflow.fastcall.transport.fastcall.handler.client.ClientAuthHandler;
 import net.stackoverflow.fastcall.transport.fastcall.handler.client.ClientHeatBeatHandler;
 import net.stackoverflow.fastcall.transport.fastcall.handler.client.ClientRpcHandler;
-import net.stackoverflow.fastcall.transport.fastcall.handler.server.ServerAuthHandler;
 import net.stackoverflow.fastcall.transport.fastcall.handler.server.ServerHeatBeatHandler;
 import net.stackoverflow.fastcall.transport.fastcall.handler.server.ServerRpcHandler;
 import net.stackoverflow.fastcall.transport.fastcall.proto.Message;
@@ -79,7 +77,6 @@ public class FastcallTransportManager implements TransportManager {
                                 pipeline.addLast(new MessageDecoder(serializeManager));
                                 pipeline.addLast(new MessageEncoder(serializeManager));
                                 pipeline.addLast(new ReadTimeoutHandler(TIMEOUT));
-                                pipeline.addLast(new ServerAuthHandler());
                                 pipeline.addLast(new ServerHeatBeatHandler());
                                 pipeline.addLast(new ServerRpcHandler(serializeManager, rpcExecutorService));
                             }
@@ -156,7 +153,6 @@ public class FastcallTransportManager implements TransportManager {
                                     pipeline.addLast(new MessageDecoder(serializeManager));
                                     pipeline.addLast(new MessageEncoder(serializeManager));
                                     pipeline.addLast(new ReadTimeoutHandler(TIMEOUT));
-                                    pipeline.addLast(new ClientAuthHandler());
                                     pipeline.addLast(new ClientHeatBeatHandler());
                                     pipeline.addLast(new ClientRpcHandler());
                                 }
