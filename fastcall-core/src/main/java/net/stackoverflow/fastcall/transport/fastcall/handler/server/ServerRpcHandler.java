@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
@@ -70,8 +71,12 @@ public class ServerRpcHandler extends ChannelInboundHandlerAdapter {
         private RpcResponse handlerRequest(RpcRequest request) {
             RpcResponse rpcResponse = null;
 
-            List<Object> params = request.getParams();
+            List<byte[]> bytes = request.getParams();
             List<Class<?>> paramsType = request.getParamsType();
+            List<Object> params = new ArrayList<>();
+            for (int i = 0; i < bytes.size(); i++) {
+                params.add(serializeManager.deserialize(bytes.get(i), paramsType.get(i)));
+            }
 
             BeanContext context = BeanContext.getInstance();
             Object obj = context.getBean(request.getInterfaceType(), request.getGroup(), request.getVersion());
@@ -81,7 +86,7 @@ public class ServerRpcHandler extends ChannelInboundHandlerAdapter {
 
             try {
                 Method method = obj.getClass().getMethod(request.getMethod(), paramsType.toArray(new Class[0]));
-                Object response = method.invoke(obj, params == null ? null : params.toArray());
+                Object response = method.invoke(obj, bytes == null ? null : params.toArray());
                 rpcResponse = new RpcResponse(request.getId(), 0, response.getClass(), serializeManager.serialize(response), null, null);
             } catch (InvocationTargetException e) {
                 rpcResponse = new RpcResponse(request.getId(), -1, null, null, e.getTargetException().getClass(), serializeManager.serialize(e.getTargetException()));

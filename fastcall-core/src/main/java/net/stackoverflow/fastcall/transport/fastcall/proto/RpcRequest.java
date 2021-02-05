@@ -42,7 +42,7 @@ public class RpcRequest {
     /**
      * 参数
      */
-    private List<Object> params;
+    private List<byte[]> params;
 
     public String getId() {
         return id;
@@ -92,11 +92,11 @@ public class RpcRequest {
         this.paramsType = paramsType;
     }
 
-    public List<Object> getParams() {
+    public List<byte[]> getParams() {
         return params;
     }
 
-    public void setParams(List<Object> params) {
+    public void setParams(List<byte[]> params) {
         this.params = params;
     }
 
@@ -109,7 +109,7 @@ public class RpcRequest {
         sb.append(", interfaceType=").append(interfaceType);
         sb.append(", method='").append(method).append('\'');
         sb.append(", paramsType=").append(paramsType);
-        sb.append(", params=").append(params);
+        //sb.append(", params=").append(params);
         sb.append('}');
         return sb.toString();
     }

@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -81,7 +82,15 @@ public class DefaultFastcallManager implements FastcallManager {
         request.setMethod(method.getName());
         request.setGroup(group);
         request.setVersion(version);
-        request.setParams(args == null ? null : Arrays.asList(args));
+        if (args == null) {
+            request.setParams(null);
+        } else {
+            List<byte[]> bytes = new ArrayList<>();
+            for (Object arg : args) {
+                bytes.add(serializeManager.serialize(arg));
+            }
+            request.setParams(bytes);
+        }
         request.setParamsType(Arrays.asList(method.getParameterTypes()));
 
         List<ServiceDefinition> definitions = registryManager.getService(request.getInterfaceType(), group, version);

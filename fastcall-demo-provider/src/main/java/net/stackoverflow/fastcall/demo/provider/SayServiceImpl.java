@@ -35,4 +35,9 @@ public class SayServiceImpl implements SayService {
         }
         return "hello " + content;
     }
+
+    @Override
+    public String[] sayWithArray(String[] content) {
+        return content;
+    }
 }

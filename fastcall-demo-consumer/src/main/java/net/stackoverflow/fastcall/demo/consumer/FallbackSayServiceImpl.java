@@ -23,4 +23,9 @@ public class FallbackSayServiceImpl implements SayService {
     public String sayWithTimeout(String content) {
         return null;
     }
+
+    @Override
+    public String[] sayWithArray(String[] content) {
+        return null;
+    }
 }

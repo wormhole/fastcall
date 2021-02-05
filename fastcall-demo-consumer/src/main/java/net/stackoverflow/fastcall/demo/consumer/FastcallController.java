@@ -32,4 +32,9 @@ public class FastcallController {
     public String sayWithTimeout(@RequestParam("content") String content) {
         return sayService.sayWithTimeout(content);
     }
+
+    @GetMapping("/say_with_array")
+    public String[] sayWithArray() {
+        return sayService.sayWithArray(new String[]{"a", "b"});
+    }
 }

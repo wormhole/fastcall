@@ -10,4 +10,6 @@ public interface SayService {
 
     String sayWithTimeout(String content);
 
+    String[] sayWithArray(String[] content);
+
 }
