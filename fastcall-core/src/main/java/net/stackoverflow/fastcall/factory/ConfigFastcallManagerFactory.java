@@ -33,7 +33,7 @@ public class ConfigFastcallManagerFactory implements FastcallManagerFactory {
     }
 
     @Override
-    public FastcallManager getInstance() {
+    public FastcallManager buildFastcallManager() {
         if (fastcallManager == null) {
             synchronized (this) {
                 if (fastcallManager == null) {

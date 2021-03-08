@@ -11,5 +11,5 @@ import java.io.IOException;
  */
 public interface FastcallManagerFactory {
 
-    FastcallManager getInstance() throws IOException, InterruptedException;
+    FastcallManager buildFastcallManager() throws IOException, InterruptedException;
 }
