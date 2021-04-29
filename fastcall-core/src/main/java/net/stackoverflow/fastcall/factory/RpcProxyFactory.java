@@ -1,6 +1,6 @@
 package net.stackoverflow.fastcall.factory;
 
-import net.stackoverflow.fastcall.FastcallManager;
+import net.stackoverflow.fastcall.FastcallFacade;
 import net.stackoverflow.fastcall.core.RpcInvocationHandler;
 
 import java.lang.reflect.Proxy;
@@ -15,7 +15,7 @@ public class RpcProxyFactory {
     /**
      * 工厂类方法
      *
-     * @param fastcallManager fastcallManager对象
+     * @param fastcallFacade fastcallManager对象
      * @param clazz           接口Class对象
      * @param group           所属分组
      * @param version         版本号
@@ -24,7 +24,7 @@ public class RpcProxyFactory {
      * @param <T>             泛型
      * @return
      */
-    public static <T> T create(FastcallManager fastcallManager, Class<T> clazz, String group, String version, Long timeout, Class<?> fallback) {
-        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, new RpcInvocationHandler(fastcallManager, group, version, timeout, fallback));
+    public static <T> T create(FastcallFacade fastcallFacade, Class<T> clazz, String group, String version, Long timeout, Class<?> fallback) {
+        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, new RpcInvocationHandler(fastcallFacade, group, version, timeout, fallback));
     }
 }

@@ -1,6 +1,6 @@
 package net.stackoverflow.fastcall.factory;
 
-import net.stackoverflow.fastcall.FastcallManager;
+import net.stackoverflow.fastcall.FastcallFacade;
 
 import java.io.IOException;
 
@@ -11,5 +11,5 @@ import java.io.IOException;
  */
 public interface FastcallManagerFactory {
 
-    FastcallManager buildFastcallManager() throws IOException, InterruptedException;
+    FastcallFacade buildFastcallManager() throws IOException, InterruptedException;
 }

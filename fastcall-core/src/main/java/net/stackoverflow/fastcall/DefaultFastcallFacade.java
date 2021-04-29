@@ -28,9 +28,9 @@ import java.util.UUID;
  *
  * @author wormhole
  */
-public class DefaultFastcallManager implements FastcallManager {
+public class DefaultFastcallFacade implements FastcallFacade {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultFastcallManager.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultFastcallFacade.class);
 
     private final SerializeManager serializeManager;
 
@@ -42,7 +42,7 @@ public class DefaultFastcallManager implements FastcallManager {
 
     private final FastcallConfig config;
 
-    public DefaultFastcallManager(FastcallConfig config, SerializeManager serializeManager, RegistryManager registryManager, BalanceManager balanceManager, TransportManager transportManager) {
+    public DefaultFastcallFacade(FastcallConfig config, SerializeManager serializeManager, RegistryManager registryManager, BalanceManager balanceManager, TransportManager transportManager) {
         this.config = config;
         this.serializeManager = serializeManager;
         this.registryManager = registryManager;

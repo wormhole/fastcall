@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
  *
  * @author wormhole
  */
-public interface FastcallManager {
+public interface FastcallFacade {
 
     /**
      * 获取配置

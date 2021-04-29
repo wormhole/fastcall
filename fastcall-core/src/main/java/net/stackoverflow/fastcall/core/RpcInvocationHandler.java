@@ -1,6 +1,6 @@
 package net.stackoverflow.fastcall.core;
 
-import net.stackoverflow.fastcall.FastcallManager;
+import net.stackoverflow.fastcall.FastcallFacade;
 import net.stackoverflow.fastcall.exception.RpcTimeoutException;
 import net.stackoverflow.fastcall.transport.fastcall.proto.RpcResponse;
 import org.slf4j.Logger;
@@ -18,7 +18,7 @@ public class RpcInvocationHandler implements InvocationHandler {
 
     private static final Logger log = LoggerFactory.getLogger(RpcInvocationHandler.class);
 
-    private final FastcallManager fastcallManager;
+    private final FastcallFacade fastcallFacade;
 
     private final String group;
 
@@ -28,8 +28,8 @@ public class RpcInvocationHandler implements InvocationHandler {
 
     private final Class<?> fallback;
 
-    public RpcInvocationHandler(FastcallManager fastcallManager, String group, String version, Long timeout, Class<?> fallback) {
-        this.fastcallManager = fastcallManager;
+    public RpcInvocationHandler(FastcallFacade fastcallFacade, String group, String version, Long timeout, Class<?> fallback) {
+        this.fastcallFacade = fastcallFacade;
         this.group = group;
         this.version = version;
         this.timeout = timeout;
@@ -39,22 +39,22 @@ public class RpcInvocationHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         ResponseFuture future = null;
-        int retry = fastcallManager.config().getRetry();
+        int retry = fastcallFacade.config().getRetry();
         while (true) {
             try {
-                future = fastcallManager.call(method, args, group, version);
+                future = fastcallFacade.call(method, args, group, version);
                 RpcResponse response = future.getResponse(timeout);
                 if (response != null) {
                     log.trace("Method: {}, code: {}", method.getName(), response.getCode());
                     if (response.getCode() == 0) {
                         byte[] responseBytes = response.getResponseBytes();
                         Class<?> responseType = response.getResponseType();
-                        Object object = fastcallManager.serializeManager().deserialize(responseBytes, responseType);
+                        Object object = fastcallFacade.serializeManager().deserialize(responseBytes, responseType);
                         return object;
                     } else {
                         byte[] throwableBytes = response.getThrowableBytes();
                         Class<?> throwableType = response.getThrowableType();
-                        Throwable throwable = (Throwable) fastcallManager.serializeManager().deserialize(throwableBytes, throwableType);
+                        Throwable throwable = (Throwable) fastcallFacade.serializeManager().deserialize(throwableBytes, throwableType);
                         throw throwable;
                     }
                 } else {

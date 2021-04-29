@@ -22,7 +22,7 @@ public class ConfigFastcallManagerFactory implements FastcallManagerFactory {
 
     private final FastcallConfig config;
 
-    private FastcallManager fastcallManager;
+    private FastcallFacade fastcallFacade;
 
     public ConfigFastcallManagerFactory() {
         this.config = new FastcallConfig();
@@ -33,19 +33,19 @@ public class ConfigFastcallManagerFactory implements FastcallManagerFactory {
     }
 
     @Override
-    public FastcallManager buildFastcallManager() {
-        if (fastcallManager == null) {
+    public FastcallFacade buildFastcallManager() {
+        if (fastcallFacade == null) {
             synchronized (this) {
-                if (fastcallManager == null) {
+                if (fastcallFacade == null) {
                     SerializeManager serializeManager = this.serializeManager(config.getSerialize());
                     RegistryManager registryManager = this.registryManager(config.getRegistry());
                     BalanceManager balanceManager = this.balanceManager(config.getBalance());
                     TransportManager transportManager = this.transportManager(config.getTransport().getProto(), config.getThreads(), serializeManager);
-                    fastcallManager = new DefaultFastcallManager(config, serializeManager, registryManager, balanceManager, transportManager);
+                    fastcallFacade = new DefaultFastcallFacade(config, serializeManager, registryManager, balanceManager, transportManager);
                 }
             }
         }
-        return this.fastcallManager;
+        return this.fastcallFacade;
     }
 
     private SerializeManager serializeManager(String serialize) {

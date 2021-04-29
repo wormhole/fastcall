@@ -1,6 +1,6 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
-import net.stackoverflow.fastcall.FastcallManager;
+import net.stackoverflow.fastcall.FastcallFacade;
 import net.stackoverflow.fastcall.annotation.FastcallService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
@@ -32,21 +32,21 @@ public class FastcallLifecycle implements DisposableBean, InitializingBean, Appl
 
     @Override
     public void destroy() {
-        FastcallManager fastcallManager = applicationContext.getBean(FastcallManager.class);
-        fastcallManager.stop();
+        FastcallFacade fastcallFacade = applicationContext.getBean(FastcallFacade.class);
+        fastcallFacade.stop();
     }
 
     /**
      * 向注册中心注册服务信息
      */
     private void registerService() {
-        FastcallManager fastcallManager = applicationContext.getBean(FastcallManager.class);
+        FastcallFacade fastcallFacade = applicationContext.getBean(FastcallFacade.class);
         Map<String, Object> map = applicationContext.getBeansWithAnnotation(FastcallService.class);
         for (Object obj : map.values()) {
             Class<?> clazz = obj.getClass();
             Class<?>[] interfaces = clazz.getInterfaces();
             for (Class<?> itf : interfaces) {
-                fastcallManager.register(itf, obj);
+                fastcallFacade.register(itf, obj);
             }
         }
     }
@@ -55,7 +55,7 @@ public class FastcallLifecycle implements DisposableBean, InitializingBean, Appl
      * 绑定服务端
      */
     private void start() {
-        FastcallManager fastcallManager = applicationContext.getBean(FastcallManager.class);
-        fastcallManager.start();
+        FastcallFacade fastcallFacade = applicationContext.getBean(FastcallFacade.class);
+        fastcallFacade.start();
     }
 }
