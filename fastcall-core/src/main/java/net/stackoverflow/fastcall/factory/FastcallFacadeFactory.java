@@ -5,7 +5,7 @@ import net.stackoverflow.fastcall.FastcallFacade;
 import java.io.IOException;
 
 /**
- * FastcallManager工厂
+ * FastcallFacade工厂
  *
  * @author wormhole
  */

@@ -14,7 +14,7 @@ import net.stackoverflow.fastcall.transport.TransportManager;
 import net.stackoverflow.fastcall.transport.fastcall.FastcallTransportManager;
 
 /**
- * ConfigFastcallManager工厂类
+ * ConfigFastcallFacade工厂类
  *
  * @author wormhole
  */
