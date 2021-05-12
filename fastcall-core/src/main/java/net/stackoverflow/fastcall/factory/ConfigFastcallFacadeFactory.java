@@ -18,22 +18,22 @@ import net.stackoverflow.fastcall.transport.fastcall.FastcallTransportManager;
  *
  * @author wormhole
  */
-public class ConfigFastcallManagerFactory implements FastcallManagerFactory {
+public class ConfigFastcallFacadeFactory implements FastcallFacadeFactory {
 
     private final FastcallConfig config;
 
     private FastcallFacade fastcallFacade;
 
-    public ConfigFastcallManagerFactory() {
+    public ConfigFastcallFacadeFactory() {
         this.config = new FastcallConfig();
     }
 
-    public ConfigFastcallManagerFactory(FastcallConfig config) {
+    public ConfigFastcallFacadeFactory(FastcallConfig config) {
         this.config = config;
     }
 
     @Override
-    public FastcallFacade buildFastcallManager() {
+    public FastcallFacade getFacade() {
         if (fastcallFacade == null) {
             synchronized (this) {
                 if (fastcallFacade == null) {
@@ -41,7 +41,7 @@ public class ConfigFastcallManagerFactory implements FastcallManagerFactory {
                     RegistryManager registryManager = this.registryManager(config.getRegistry());
                     BalanceManager balanceManager = this.balanceManager(config.getBalance());
                     TransportManager transportManager = this.transportManager(config.getTransport().getProto(), config.getThreads(), serializeManager);
-                    fastcallFacade = new DefaultFastcallFacade(config, serializeManager, registryManager, balanceManager, transportManager);
+                    fastcallFacade = new FastcallFacade(config, serializeManager, registryManager, balanceManager, transportManager);
                 }
             }
         }

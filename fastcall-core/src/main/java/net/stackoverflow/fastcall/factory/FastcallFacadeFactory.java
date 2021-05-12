@@ -9,7 +9,7 @@ import java.io.IOException;
  *
  * @author wormhole
  */
-public interface FastcallManagerFactory {
+public interface FastcallFacadeFactory {
 
-    FastcallFacade buildFastcallManager() throws IOException, InterruptedException;
+    FastcallFacade getFacade() throws IOException, InterruptedException;
 }

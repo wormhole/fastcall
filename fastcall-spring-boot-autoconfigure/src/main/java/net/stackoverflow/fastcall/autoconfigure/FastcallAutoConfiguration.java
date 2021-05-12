@@ -1,6 +1,5 @@
 package net.stackoverflow.fastcall.autoconfigure;
 
-import net.stackoverflow.fastcall.DefaultFastcallFacade;
 import net.stackoverflow.fastcall.FastcallFacade;
 import net.stackoverflow.fastcall.balance.BalanceManager;
 import net.stackoverflow.fastcall.config.FastcallConfig;
@@ -38,9 +37,9 @@ public class FastcallAutoConfiguration {
 
     @Bean
     public FastcallFacade fastcallManager() {
-        FastcallFacade manager = new DefaultFastcallFacade(fastcallConfig, serializeManager, registryManager, balanceManager, transportManager);
-        log.info("Instance DefaultFastcallFacade");
-        return manager;
+        FastcallFacade facade = new FastcallFacade(fastcallConfig, serializeManager, registryManager, balanceManager, transportManager);
+        log.info("Instance FastcallFacade");
+        return facade;
     }
 
     /**
